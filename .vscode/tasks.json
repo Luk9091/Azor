@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: avr-gcc kompiluj aktywny plik",
+			"command": "/usr/bin/avr-gcc",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}/${fileBasenameNoExtension}",
+				"-mmcu=atmega8535",
+				"-D F_CPU=1000000UL",
+				"-Os"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "kompilator: /usr/bin/avr-gcc"
+		}
+	]
+}
