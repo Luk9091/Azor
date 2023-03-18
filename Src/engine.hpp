@@ -1,16 +1,20 @@
 #ifndef __ENGINE__HPP
 #define __ENGINE__HPP
 
-#define LEFT_ENGINE_PIN
-#define LEFT_ENGINE_PORT
-
-#define RIGHT_ENGINE_PIN
-#define RIGHT_ENGINE_PORT
+#include <avr/io.h>
 
 
-void move_forward(uint16 distance);
-void move_left(uint8_t angle);
-void move_right(uint8_t angle);
+
+void ENGINE_init();
+// uint16_t calculate_distance();
+
+// Distance in cm
+void move_forward(uint16_t distance = 0);
+
+void move_stop();
+
+// void move_left(uint8_t angle = 0);
+// void move_right(uint8_t angle = 0);
 
 
 

@@ -12,8 +12,8 @@
 #define UART_DISABLE_INTERRUPT_TX UCSRB &= ~(1 << TXCIE)
 
 
-volatile char string[16];
-volatile uint8_t readSize = 0;
+extern char string[16];
+extern uint8_t readSize;
 
 void UART_Init(uint16_t baud);
 

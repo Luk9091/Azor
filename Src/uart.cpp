@@ -1,7 +1,11 @@
 #include "uart.hpp"
 
-ISR(USART_RX_vect){
+char string[16];
+uint8_t readSize = 0;
+
+ISR(USART_RXC_vect){
     readSize = UART_read(string, 16);
+    UART_write("read\n");
 }
 
 void UART_Init(uint16_t baud){
