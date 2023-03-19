@@ -1,2 +1,11 @@
 main
 *.hex
+*.bin
+main.pdf
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.gz
+*.toc
