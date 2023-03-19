@@ -5,14 +5,12 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+#include "uart.hpp"
 
-void PWM_init(uint8_t run = 1);
 
-void PWM_start();
-void PWM_stop();
+void TIMER_Init();
+void TIMER_set(uint8_t limit);
 
-void PWM_setDuty(uint8_t duty);
-void PWM_setPulse(uint8_t duty);
-
+uint32_t TIMER_getValue();
 
 #endif

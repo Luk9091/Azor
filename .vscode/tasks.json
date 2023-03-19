@@ -4,16 +4,14 @@
 		{
 			"type": "cppbuild",
 			"label": "C/C++: avr-gcc kompiluj aktywny plik",
-			"command": "/usr/bin/avr-gcc",
+			"command": "/home/lukasz/DriversAndScripts/AVR.sh",
 			"args": [
-				"-fdiagnostics-color=always",
-				"-g",
-				"${file}",
-				"-o",
-				"${fileDirname}/${fileBasenameNoExtension}",
-				"-mmcu=atmega8535",
-				"-D F_CPU=1000000UL",
-				"-Os"
+				"build",
+				"-p",
+				"atmega8535",
+				"-f",
+				"1000000",
+				"Src/*.cpp"
 			],
 			"options": {
 				"cwd": "${fileDirname}"

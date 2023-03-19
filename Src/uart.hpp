@@ -3,7 +3,8 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <stddef.h>
+// #include <stddef.h>
+#include <stdlib.h>
 
 #define UART_ENABLE_INTERRUPT_RX UCSRB |= (1 << RXCIE)
 #define UART_DISABLE_INTERRUPT_RX UCSRB &= ~(1 << RXCIE)
@@ -15,10 +16,14 @@
 extern char string[16];
 extern uint8_t readSize;
 
-void UART_Init(uint16_t baud);
+void UART_Init(uint16_t baud, bool enableEchoInterrupt = false);
 
-void UART_write_char(uint8_t c);
-void UART_write(const char *str);
+void UART_print_char(uint8_t c);
+void UART_print(const char *str);
+void UART_println(const char *str);
+
+void UART_print(uint16_t value, uint8_t base = 10);
+void UART_println(uint16_t value, uint8_t base = 10);
 
 uint8_t UART_read_char();
 uint8_t UART_read(char *buf, uint8_t buf_size = 255, char terminator = '\n');

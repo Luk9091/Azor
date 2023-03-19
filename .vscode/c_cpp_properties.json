@@ -11,7 +11,7 @@
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-x64",
             "compilerArgs": [
-                "-mmcu=atmega8535",
+                "-mmcu=atmega8",
                 "-D F_CPU=1000000UL",
                 "-Os"
             ]

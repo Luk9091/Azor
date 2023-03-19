@@ -5,15 +5,15 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#define SOUND_V 34300
+#include "timer.hpp"
+
+#define SOUND_V 34300/2
 
 #define TRIG_PIN PD4
 #define ECHO_PIN PD3
 
-// #define SONIC_PRESCALER 1
 
-
-void SONIC_init();
+void SONIC_Init();
 uint16_t SONIC_measure();
 
 

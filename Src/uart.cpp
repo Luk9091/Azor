@@ -5,10 +5,10 @@ uint8_t readSize = 0;
 
 ISR(USART_RXC_vect){
     readSize = UART_read(string, 16);
-    UART_write("read\n");
+    UART_print("read\n");
 }
 
-void UART_Init(uint16_t baud){
+void UART_Init(uint16_t baud, bool enableEchoInterrupt){
     baud = F_CPU/8/baud-1;
     UCSRA |= (1 << U2X);
 
@@ -17,20 +17,38 @@ void UART_Init(uint16_t baud){
 
     UCSRB |= (1<<RXEN) | (1<<TXEN);
 
+    if(enableEchoInterrupt)
+        UART_ENABLE_INTERRUPT_RX;
+
     // Frame: 8bin 0parity 1stop
 }
 
 
-void UART_write_char(uint8_t c){
+void UART_print_char(uint8_t c){
     while(!(UCSRA & (1 << UDRE)));
     UDR = c;
 }
 
-void UART_write(const char *str){
+void UART_print(const char *str){
     while(*str != '\0'){
-        UART_write_char(*str);
+        UART_print_char(*str);
         str++;
     }
+}
+
+void UART_println(const char *str){
+    UART_print(str);
+    UART_print_char('\n');
+}
+
+void UART_print(uint16_t value, uint8_t base){
+    itoa(value, string, 10);
+    UART_print(value);
+}
+
+void UART_println(uint16_t value, uint8_t base){
+    itoa(value, string, base);
+    UART_println(string);
 }
 
 
