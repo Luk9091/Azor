@@ -12,7 +12,7 @@
 #define TIMER_stop()    TCCR1B &= ~(7 <<CS10)
 
 void TIMER_Init();
-void TIMER_set(uint8_t limit);
+void TIMER_set(uint8_t limit, uint8_t *overflow);
 
 uint32_t TIMER_getValue();
 // #define TIMER_getValue() _TIMER_counter * 65535 + TCNT1

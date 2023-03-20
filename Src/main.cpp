@@ -59,35 +59,37 @@ int main(){
 
             switch(string[0]){
                 case 'L':{
-                    char time[3];
+                    char time[2];
                     time[0] = string[1];
                     time[1] = string[2];
-                    time[2] = '\n';
                     LEFT_forward(atoi(time));
                 }break;;
                 case 'R':{
-                    char time[3];
+                    char time[2];
                     time[0] = string[1];
                     time[1] = string[2];
-                    time[2] = '\n';
                     RIGHT_forward(atoi(time));
                 }break;
                 case 'F':{
+                    char time[2];
+                    time[0] = string[1];
+                    time[1] = string[2];
+                    move_forward(atoi(time));
+                }break;
+                case 'A':{
+                    char angle[2];
+                    angle[0] = string[1];
+                    angle[1] = string[2];
+                    move_rotate(atoi(angle));
+                } break;
+
+                case 'H':{
                     char time[3];
                     time[0] = string[1];
                     time[1] = string[2];
-                    time[2] = '\n';
-                    move_forward(atoi(time));
-                }
-
-                case 'H':{
-                    char time[4];
-                    time[0] = string[1];
-                    time[1] = string[2];
-                    time[2] = '\n';
                     time[3] = '\0';
                     UART_print("Head move: ");
-                    UART_print(time);
+                    UART_println(time);
                     PWM_setDuty(atoi(time));
                     UART_print("\tOK\n");
                 }break;
@@ -100,7 +102,7 @@ int main(){
             }
 
             _delay_ms(100);
-            for(uint8_t i = 0; i < 16; i++)
+            for(uint8_t i = 0; i <= readSize; i++)
                 string[i] = '\0';
             readSize = 0;
 

@@ -4,12 +4,14 @@
 
 uint8_t _TIMER_counter = 0;
 uint8_t _TIMER_limit = 1;
+uint8_t *_TIMER_overflow;
 
 ISR(TIMER1_OVF_vect){
     ++_TIMER_counter;
     if(_TIMER_counter >= _TIMER_limit){
         TIMER_stop();
-        UART_println("Timer overflow");
+        *_TIMER_overflow = 1;
+        // UART_println("Timer overflow");
     }
 }
 
@@ -21,7 +23,8 @@ void TIMER_Init(){
     TIMSK |= (1 << TOIE1);
 }
 
-void TIMER_set(uint8_t limit){
+void TIMER_set(uint8_t limit, uint8_t *overflow){
+    _TIMER_overflow = overflow;
     _TIMER_limit = limit;
     _TIMER_counter = 0;
     TCNT1 = 0;
