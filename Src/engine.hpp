@@ -14,8 +14,8 @@ void move_forward(uint16_t distance = 0);
 
 void move_stop();
 
-void LEFT_move(uint16_t distance = 0);
-void RIGHT_move(uint16_t distance = 0);
+void LEFT_forward(uint16_t distance = 0);
+void RIGHT_forward(uint16_t distance = 0);
 
 // void move_left(uint8_t angle = 0);
 // void move_right(uint8_t angle = 0);

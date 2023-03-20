@@ -7,7 +7,7 @@
 
 #include "timer.hpp"
 
-#define SOUND_V 34300/2
+#define SOUND_V 1715/(F_CPU/1000) //34300/2
 
 #define TRIG_PIN PD4
 #define ECHO_PIN PD3

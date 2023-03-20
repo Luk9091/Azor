@@ -1,12 +1,14 @@
 #include "timer.hpp"
 
+// NIE DZIAŁA PRZEPISAĆ DO STAREJ WERSJI I NAPRAWIĆ PRZEKROCZENIE LIMITU!
+
 uint8_t _TIMER_counter = 0;
 uint8_t _TIMER_limit = 1;
 
 ISR(TIMER1_OVF_vect){
     ++_TIMER_counter;
     if(_TIMER_counter >= _TIMER_limit){
-        TCCR1B &= ~(7 << CS10);
+        TIMER_stop();
         UART_println("Timer overflow");
     }
 }
@@ -26,11 +28,6 @@ void TIMER_set(uint8_t limit){
 }
 
 uint32_t TIMER_getValue(){
-    // UART_print_char('\n');
-    // UART_print("Overflow: ");
-    // UART_println(_TIMER_counter);
-    // UART_print("Register: ");
-    // UART_println(TCNT1);
-
-    return (_TIMER_counter * 65535) + TCNT1;
+    uint32_t value = (_TIMER_counter *65536) | TCNT1;
+    return value;
 }

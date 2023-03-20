@@ -55,25 +55,55 @@ int main(){
     while (1)
     {
         if(readSize != 0){
-
-            UART_print("Move: ");
             UART_print(string);
-            PWM_setDuty(atoi(string));
-            UART_print("\tOK\n");
+
+            switch(string[0]){
+                case 'L':{
+                    char time[3];
+                    time[0] = string[1];
+                    time[1] = string[2];
+                    time[2] = '\n';
+                    LEFT_forward(atoi(time));
+                }break;;
+                case 'R':{
+                    char time[3];
+                    time[0] = string[1];
+                    time[1] = string[2];
+                    time[2] = '\n';
+                    RIGHT_forward(atoi(time));
+                }break;
+                case 'F':{
+                    char time[3];
+                    time[0] = string[1];
+                    time[1] = string[2];
+                    time[2] = '\n';
+                    move_forward(atoi(time));
+                }
+
+                case 'H':{
+                    char time[4];
+                    time[0] = string[1];
+                    time[1] = string[2];
+                    time[2] = '\n';
+                    time[3] = '\0';
+                    UART_print("Head move: ");
+                    UART_print(time);
+                    PWM_setDuty(atoi(time));
+                    UART_print("\tOK\n");
+                }break;
+
+                case 'D':{
+                    UART_print("Distance: ");
+                    itoa(SONIC_measure(), string, 10);
+                    UART_println(string);
+                } break;
+            }
 
             _delay_ms(100);
-
-            UART_print("Distance: ");
-            itoa(SONIC_measure(), string, 10);
-            UART_print(string);
-            UART_print("\n\n");
-
             for(uint8_t i = 0; i < 16; i++)
                 string[i] = '\0';
             readSize = 0;
 
-            // move_forward(10);
-            LEFT_move(100);
         }
         _delay_ms(10);
     }

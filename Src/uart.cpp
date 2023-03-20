@@ -5,7 +5,7 @@ uint8_t readSize = 0;
 
 ISR(USART_RXC_vect){
     readSize = UART_read(string, 16);
-    UART_print("read\n");
+    // UART_print("read\n");
 }
 
 void UART_Init(uint16_t baud, bool enableEchoInterrupt){

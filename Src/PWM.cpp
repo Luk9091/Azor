@@ -2,7 +2,6 @@
 #include "timer.hpp"
 #include "uart.hpp"
 
-#define PWM_prescaler 3
 
 void PWM_Init(bool run, uint8_t startDuty){
     DDRB |= 1 << PB3;
@@ -12,22 +11,22 @@ void PWM_Init(bool run, uint8_t startDuty){
     ;
     
     OCR2 = startDuty;
-    UART_println("PWM run");
+    // UART_println("PWM run");
 }
 
-void PWM_start(){
-    TCCR2 |= (PWM_prescaler << CS20);
-}
+// void PWM_start(){
+//     TCCR2 |= (PWM_prescaler << CS20);
+// }
 
-void PWM_stop(){
-    TCCR2 &= ~(7 << CS20);
-}
+// void PWM_stop(){
+//     TCCR2 &= ~(7 << CS20);
+// }
 
 
-void PWM_setDuty(uint8_t duty){
-    // duty = duty*255/100;
-    OCR2 = duty;
-}
+// void PWM_setDuty(uint8_t duty){
+//     // duty = duty*255/100;
+//     OCR2 = duty;
+// }
 
 
 void PWM_setPulse(uint8_t duty){

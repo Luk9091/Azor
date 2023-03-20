@@ -1,11 +1,11 @@
 #include "engine.hpp"
 #include "util/delay.h"
 
-#define LEFT_UP_PIN     0
-#define LEFT_DOWN_PIN   1
+#define LEFT_UP_PIN     1
+#define LEFT_DOWN_PIN   0
 
-#define RIGHT_UP_PIN    4
-#define RIGHT_DOWN_PIN  2
+#define RIGHT_UP_PIN    2
+#define RIGHT_DOWN_PIN  4
 
 #define ENABLE_PIN 7
 
