@@ -27,35 +27,40 @@ void ENGINE_Init(){
 }
 
 void ENGINE_enable(bool enable){
-    if(enable)
+    if(enable){
         PORTD |=  1 << ENABLE_PIN;
-    else
+    }else{
         PORTD &= ~1 << ENABLE_PIN;
+    }
 }
 
 void move_forward(int8_t distance){
-    uint16_t measure = 0;
-    if(distance >= 0)
+    uint8_t measure = 0;
+    if(distance >= 0){
         PORTB |= 1 << LEFT_UP_PIN | 1 << RIGHT_UP_PIN;
-    else
+    }else{
         PORTB |= 1 << LEFT_DOWN_PIN | 1 <<RIGHT_DOWN_PIN;
-    distance = distance & ~1<<8;
+        distance = ~distance+1;
+    }
+    UART_println(distance);
 
     while(distance){
         measure += calculate_distance();
-        if(distance == measure)
+        if(distance == measure){
             move_stop();
             break;
+        }
     }
 }
 
 void move_rotate(int8_t angle){
     uint8_t measure = 0;
-    if(angle >= 0)
+    if(angle >= 0){
         PORTB |= 1 << LEFT_DOWN_PIN | 1 << RIGHT_UP_PIN;
-    else
+    }else{
         PORTB |= 1 << LEFT_UP_PIN | 1 << RIGHT_DOWN_PIN;
-    angle = angle & ~1<<8;
+        angle = ~angle + 1;
+    }
 
     while(angle){
         measure += calculate_distance();
@@ -75,11 +80,12 @@ void move_stop(){
 
 void LEFT_forward(int8_t distance){
     uint8_t measure = 0;
-    if(distance >= 0)
+    if(distance >= 0){
         PORTB |= 1 << LEFT_UP_PIN;
-    else
+    }else{
         PORTB |= 1 << LEFT_DOWN_PIN;
-    distance = distance & ~1<<8;
+        distance = ~distance+1;
+    }
 
     while (distance)
     {
@@ -93,11 +99,12 @@ void LEFT_forward(int8_t distance){
 
 void RIGHT_forward(int8_t distance){
     uint8_t measure = 0;
-    if(measure >= 0)
+    if(distance >= 0){
         PORTB |= 1 << RIGHT_UP_PIN;
-    else
+    }else{
         PORTB |= 1 << RIGHT_DOWN_PIN;
-    distance = distance & ~1<<8;
+        distance = ~distance+1;
+    }
 
     while (distance)
     {

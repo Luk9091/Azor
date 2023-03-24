@@ -2,6 +2,7 @@
 #define __ENGINE__HPP
 
 #include <avr/io.h>
+#include "uart.hpp"
 
 
 

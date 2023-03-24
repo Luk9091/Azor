@@ -34,7 +34,7 @@
 #include "sonic.hpp"
 #include "engine.hpp"
 #include "timer.hpp"
-
+#include "I2C.hpp"
 
 
 
@@ -42,12 +42,14 @@ int main(){
     TIMER_Init();
 
     UART_Init(9600, true);
-    PWM_Init(true, 40);
+    PWM_Init(true, 42);
     SONIC_Init();
 
     ENGINE_Init();
     ENGINE_enable(true);
     UART_println("Hello world!");
+
+    I2C_Init(0x1C);
 
 
     sei();
@@ -56,49 +58,61 @@ int main(){
     {
         if(readSize != 0){
             UART_print(string);
+            char time_c[3];
+            time_c[0] = string[1];
+            time_c[1] = string[2];
+            time_c[2] = string[3];
+            int8_t time = atoi(time_c);
 
+            // _delay_ms(10);
             switch(string[0]){
-                case 'L':{
-                    char time[2];
-                    time[0] = string[1];
-                    time[1] = string[2];
-                    LEFT_forward(atoi(time));
+                case 'l':{
+                    // UART_print("Turn on LEFT on: ");
+                    UART_println(time);
+                    LEFT_forward(time);
                 }break;;
+                case 'r':{
+                    // UART_print("Turn on RIGHT on: ");
+                    UART_println(time);
+                    RIGHT_forward(time);
+                }break;
+                case 'f':{
+                    // UART_print("Turn on FORWARD on: ");
+                    UART_println(time);
+                    move_forward(time);
+                }break;
                 case 'R':{
-                    char time[2];
-                    time[0] = string[1];
-                    time[1] = string[2];
-                    RIGHT_forward(atoi(time));
-                }break;
-                case 'F':{
-                    char time[2];
-                    time[0] = string[1];
-                    time[1] = string[2];
-                    move_forward(atoi(time));
-                }break;
-                case 'A':{
-                    char angle[2];
-                    angle[0] = string[1];
-                    angle[1] = string[2];
-                    move_rotate(atoi(angle));
+                    // UART_print("Rotate in: ");
+                    UART_println(time);
+                    move_rotate(time);
                 } break;
 
-                case 'H':{
-                    char time[3];
-                    time[0] = string[1];
-                    time[1] = string[2];
-                    time[3] = '\0';
+                case 'h':{
                     UART_print("Head move: ");
                     UART_println(time);
-                    PWM_setDuty(atoi(time));
-                    UART_print("\tOK\n");
+                    PWM_setDuty(time);
                 }break;
 
-                case 'D':{
+                case 'd':{
                     UART_print("Distance: ");
                     itoa(SONIC_measure(), string, 10);
                     UART_println(string);
                 } break;
+
+                case 'a':{
+                    I2C_beginTransition(WRITE);
+                    I2C_write(time);
+                    I2C_beginTransition(READ);
+
+                    uint8_t data = 0;
+                    data=I2C_read();
+                    I2C_endTransition();
+
+                    UART_print("0x");
+                    if(data < 16)
+                        UART_print_char('0');
+                    UART_println(data, 16);
+                }break;
             }
 
             _delay_ms(100);
