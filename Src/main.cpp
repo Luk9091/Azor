@@ -37,7 +37,6 @@
 #include "I2C.hpp"
 
 
-
 int main(){
     TIMER_Init();
 
@@ -49,7 +48,7 @@ int main(){
     ENGINE_enable(true);
     UART_println("Hello world!");
 
-    I2C_Init(0x1C);
+    I2C_Init();
 
 
     sei();
@@ -59,9 +58,14 @@ int main(){
         if(readSize != 0){
             UART_print(string);
             char time_c[3];
-            time_c[0] = string[1];
-            time_c[1] = string[2];
-            time_c[2] = string[3];
+            for(uint8_t i = 0; i < 16; i++){
+                if(string[i] >= '0' && string[i] <= '9'){
+                    time_c[0] = string[i];
+                    time_c[1] = string[i+1];
+                    time_c[2] = string[i+2];
+                    break;
+                }
+            }
             int8_t time = atoi(time_c);
 
             // _delay_ms(10);
@@ -100,18 +104,16 @@ int main(){
                 } break;
 
                 case 'a':{
-                    I2C_beginTransition(WRITE);
+                    I2C_beginTransition(0x1C, WRITE);
                     I2C_write(time);
-                    I2C_beginTransition(READ);
-
-                    uint8_t data = 0;
-                    data=I2C_read();
+                    I2C_beginTransition(0x1C, READ);
+                    time = I2C_read(i);
                     I2C_endTransition();
 
                     UART_print("0x");
-                    if(data < 16)
+                    if(time < 16)
                         UART_print_char('0');
-                    UART_println(data, 16);
+                    UART_println(time, 16);
                 }break;
             }
 
@@ -119,7 +121,7 @@ int main(){
             for(uint8_t i = 0; i <= readSize; i++)
                 string[i] = '\0';
             readSize = 0;
-
+            time = 0;
         }
         _delay_ms(10);
     }

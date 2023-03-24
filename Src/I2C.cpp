@@ -1,12 +1,10 @@
 #include "I2C.hpp"
 
-uint8_t _address;
 
 
-void I2C_Init(uint8_t address){
+void I2C_Init(){
     DDRC  &= ~(1 << PC5 | 1 <<PC4);
     PORTC &= ~(1 << PC5 | 1 <<PC4);
-    _address = address << 1;
 
     TWBR = 0;
     TWSR |= (0 << TWPS1) | (0 << TWPS0);
@@ -14,11 +12,11 @@ void I2C_Init(uint8_t address){
 }
 
 
-void I2C_beginTransition(bool readWrite){
+void I2C_beginTransition(uint8_t address){
     TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
     while(!(TWCR & (1 << TWINT)));
 
-    I2C_write(_address + readWrite);
+    I2C_write(address);
 }
 
 void I2C_endTransition(){
