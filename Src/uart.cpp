@@ -1,11 +1,14 @@
 #include "uart.hpp"
 
 char string[16];
+char temp_str[8];
 uint8_t readSize = 0;
 
 ISR(USART_RXC_vect){
+    cli();
     readSize = UART_read(string, 16);
     // UART_print("read\n");
+    sei();
 }
 
 void UART_Init(uint16_t baud, bool enableEchoInterrupt){
@@ -42,13 +45,18 @@ void UART_println(const char *str){
 }
 
 void UART_print(uint16_t value, uint8_t base){
-    itoa(value, string, 10);
-    UART_print(value);
+    itoa(value, temp_str, base);
+    if(base == 16){
+        UART_print("0x");
+        if(value < 16)
+            UART_print_char('0');
+    }
+    UART_print(temp_str);
 }
 
 void UART_println(uint16_t value, uint8_t base){
-    itoa(value, string, base);
-    UART_println(string);
+    UART_print(value, base);
+    UART_print_char('\n');
 }
 
 
@@ -66,6 +74,15 @@ uint8_t UART_read(char *buf, uint8_t buf_size, char terminator){
     
     do{
         c = UART_read_char();
+
+        // if(c == ' '){
+        //     continue;
+        // }
+        if(c >= 'A' && c <= 'Z'){
+            c += 32;
+        }
+
+
         *(buf+count) = c;
         ++count;
     }while(c != terminator && count < buf_size);

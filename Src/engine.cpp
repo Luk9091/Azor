@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "util/delay.h"
+#include "accelerometer.hpp"
 
 #define LEFT_UP_PIN     1
 #define LEFT_DOWN_PIN   0
@@ -12,6 +13,7 @@
 
 uint16_t calculate_distance(){
     _delay_ms(10);
+    // MOTION_DETECT_INT_ON();
     return 1;
 }
 

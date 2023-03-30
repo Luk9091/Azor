@@ -34,7 +34,31 @@
 #include "sonic.hpp"
 #include "engine.hpp"
 #include "timer.hpp"
-#include "I2C.hpp"
+// #include "I2C.hpp"
+#include "accelerometer.hpp"
+
+
+uint8_t find_int(uint8_t count = 0){
+    char value_c[4] = {0, 0, 0, 0};
+    uint8_t numer = 0;
+
+    for(uint8_t i = 0; i < 16; i++){
+        if(string[i] >= '0' && string[i] <= '9' || string[i] == '-' || string[i] == 'x'){
+            if(count == 0){
+                value_c[numer] = string[i];
+                numer++;
+                if(!(string[i+1] >= '0' && string[i+1] <= '9' || string[i+1] == 'x'))
+                    break;
+            } else if(string[i+1] == ' '){
+                --count;
+            }
+        }
+    }
+
+    // UART_println(value_c);
+    uint8_t value = atoi(value_c);
+    return value;
+}
 
 
 int main(){
@@ -49,6 +73,7 @@ int main(){
     UART_println("Hello world!");
 
     I2C_Init();
+    ACC_Init();
 
 
     sei();
@@ -57,71 +82,122 @@ int main(){
     {
         if(readSize != 0){
             UART_print(string);
-            char time_c[3];
-            for(uint8_t i = 0; i < 16; i++){
-                if(string[i] >= '0' && string[i] <= '9'){
-                    time_c[0] = string[i];
-                    time_c[1] = string[i+1];
-                    time_c[2] = string[i+2];
-                    break;
-                }
-            }
-            int8_t time = atoi(time_c);
+            
 
-            // _delay_ms(10);
             switch(string[0]){
-                case 'l':{
-                    // UART_print("Turn on LEFT on: ");
-                    UART_println(time);
-                    LEFT_forward(time);
-                }break;;
-                case 'r':{
-                    // UART_print("Turn on RIGHT on: ");
-                    UART_println(time);
-                    RIGHT_forward(time);
-                }break;
-                case 'f':{
-                    // UART_print("Turn on FORWARD on: ");
-                    UART_println(time);
-                    move_forward(time);
-                }break;
-                case 'R':{
-                    // UART_print("Rotate in: ");
-                    UART_println(time);
-                    move_rotate(time);
-                } break;
-
-                case 'h':{
-                    UART_print("Head move: ");
-                    UART_println(time);
-                    PWM_setDuty(time);
+                case 'e':{
+                    MOTION_DETECT_INT_ON();
+                    // turnOffINT = 1;
+                    _delay_ms(5);
+                    switch (string[1]){
+                        case 'l':{
+                            LEFT_forward(find_int());
+                        }break;;
+                        case 'r':{
+                            RIGHT_forward(find_int());
+                        }break;
+                        case 'f':{
+                            move_forward(find_int());
+                        }break;
+                        case 'a':{
+                            move_rotate(find_int());
+                        } break;
+                        
+                        default:{
+                            UART_println("Invalid cmd!");
+                        }
+                    }
                 }break;
 
-                case 'd':{
-                    UART_print("Distance: ");
-                    itoa(SONIC_measure(), string, 10);
-                    UART_println(string);
-                } break;
+                case 'u':{
+                    switch(string[1]){
+                        case 'r':{
+                            UART_print("Head move: ");
+                            PWM_setDuty(find_int());
+                        }break;
+
+                        case 'm':{
+                            UART_print("Distance: ");
+                            itoa(SONIC_measure(), string, 10);
+                            UART_println(string);
+                        } break;
+                        
+
+                        default:{
+                            UART_println("Invalid cmd!");
+                        }
+                    }
+                }break;
+
 
                 case 'a':{
-                    I2C_beginTransition(0x1C, WRITE);
-                    I2C_write(time);
-                    I2C_beginTransition(0x1C, READ);
-                    time = I2C_read(i);
-                    I2C_endTransition();
+                    switch (string[1]){
+                        case 'w':{
+                            uint8_t address = find_int(0);
+                            uint8_t data = find_int(1);
+                            UART_print("Write data: ");
+                            UART_print(data, 16);
+                            UART_print(" at address: ");
+                            UART_println(address, 16);
 
-                    UART_print("0x");
-                    if(time < 16)
-                        UART_print_char('0');
-                    UART_println(time, 16);
+                            ACC_writeToRegister(address, data);
+                        } break;
+
+                        case 'r':{
+                            uint8_t address = find_int(0);
+                            UART_print("Read from address: ");
+                            UART_print(address, 16);
+                            UART_println(": ");
+                            uint8_t data = ACC_readRegister(address);
+                            UART_print(data, 10);
+                            UART_print("\t");
+                            UART_println(data, 16);
+                        }break;
+
+                        case 'x':{
+                            UART_print("Axis x acc: ");
+                            int16_t data = ACC_readAxis(X_AXIS_REG);
+                            UART_print(data, 10);
+                            UART_print(",\t");
+                            UART_println(data, 16);
+                        }break;
+                        case 'y':{
+                            UART_print("Axis y acc: ");
+                            int16_t data = ACC_readAxis(X_AXIS_REG);
+                            UART_print(data, 10);
+                            UART_print(",\t");
+                            UART_println(data, 16);
+                        }break;
+                        case 'z':{
+                            UART_print("Axis z acc: ");
+                            int16_t data = ACC_readAxis(X_AXIS_REG);
+                            UART_print(data, 10);
+                            UART_print(",\t");
+                            UART_println(data, 16);
+                        }break;
+
+                        case 'm':{
+                            if(string[2] == '1'){
+                                // turnOffINT = 1;
+                                MOTION_DETECT_INT_ON();
+                            }else if( string[2] == '0'){
+                                MOTION_DETECT_INT_OFF();
+                            }
+                        }break;
+                        default:{
+                            UART_println("Invalid cmd!");
+                        }
+                    }
                 }break;
+
+                default:
+                    UART_println("Invalid function");
             }
 
             _delay_ms(100);
             for(uint8_t i = 0; i <= readSize; i++)
                 string[i] = '\0';
             readSize = 0;
-            time = 0;
         }
         _delay_ms(10);
     }
