@@ -5,11 +5,13 @@
 
 
 ## Sposób wysyłania komend:
-Komenda wysłana do uP nie może przekraczać 16 znaków!
+Komenda wysłana do uP nie może przekraczać 16 znaków ASCI!
+### Ramka:
+```
+   [   1 znak     ] [ 1 znak ] [ max 13 znaków ] [ 1 znak ]
+   [Device address] [ command] [      args     ] [  '\n'  ]
+```
 
-```
-[Device address] [command] [arg]
-```
 * [Device address]:
     * E - silniki
     * U - ultra sonic
