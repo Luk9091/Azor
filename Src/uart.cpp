@@ -74,15 +74,10 @@ uint8_t UART_read(char *buf, uint8_t buf_size, char terminator){
     
     do{
         c = UART_read_char();
-
-        // if(c == ' '){
-        //     continue;
-        // }
+        UART_print_char(c); // XDDDD przeniesienie z lini 81 tu zaoszczędza 6 bajtów!
         if(c >= 'A' && c <= 'Z'){
             c += 32;
         }
-
-
         *(buf+count) = c;
         ++count;
     }while(c != terminator && count < buf_size);

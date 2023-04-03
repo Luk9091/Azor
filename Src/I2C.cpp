@@ -33,13 +33,14 @@ void I2C_write(uint8_t data){
 
 
 #if MULTI_READ
-uint8_t I2C_read(uint8_t count){
-    if(count)
-        return I2C_read_AK();
-    else
-        return I2C_read_NAK();
+// void I2C_read(uint8_t *buffer, uint8_t bufferSize){
+//     for(uint8_t i = 0; i < bufferSize-1; i++){
+//         *buffer = I2C_read_AK();
+//         buffer++;
+//     }
+//     *buffer = I2C_read_NAK();
+// }
 
-}
 
 uint8_t I2C_read_AK(){
     TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWEA);

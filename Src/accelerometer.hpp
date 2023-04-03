@@ -66,7 +66,8 @@
 #define ACC_ADR_RANGE_REG 0x0E
 #define ACC_ADR_FILTER_REG 0x0F
 
-#define ACC_RESET() ACC_writeToRegister(ACC_ADR_CONTROL_REG2, (1 << 6))
+#define ACC_RESET() ACC_writeToRegister(ACC_ADR_CONTROL_REG2, 0x04)
+#define ACC_WAIT_FOR_RESET() while(ACC_readRegister(ACC_ADR_CONTROL_REG2) & 0x40)
 #define ACC_STOP_AND_CLEAR() ACC_writeToRegister(ACC_ADR_CONTROL_REG1, 0)
 
 #define MOTION_DETECT_INT_ON()   GICR  |= (1 << INT0)
@@ -83,7 +84,7 @@ void ACC_Init();
 
 uint8_t ACC_readRegister(uint8_t address);
 
-int16_t ACC_readAxis(uint8_t axis);
+uint16_t ACC_readAxis(uint8_t axis);
 int16_t ACC_calculateToACC(int16_t readValue);
 
 

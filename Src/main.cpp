@@ -37,27 +37,48 @@
 // #include "I2C.hpp"
 #include "accelerometer.hpp"
 
+enum DataFormat{
+    DEC = 10,
+    BIN = 2,
+    HEX = 16,
+};
 
 uint8_t find_int(uint8_t count = 0){
-    char value_c[4] = {0, 0, 0, 0};
-    uint8_t numer = 0;
+    // char value_c[4] = {0, 0, 0, 0};
+    int8_t data = 0;
+    DataFormat dataFormat = DEC;
+    int8_t negative = 1;
 
     for(uint8_t i = 0; i < 16; i++){
-        if(string[i] >= '0' && string[i] <= '9' || string[i] == '-' || string[i] == 'x'){
-            if(count == 0){
-                value_c[numer] = string[i];
-                numer++;
-                if(!(string[i+1] >= '0' && string[i+1] <= '9' || string[i+1] == 'x'))
+        if(string[i] >= '0' && string[i] <= '9'){
+            data *= dataFormat;
+            data += string[i] - '0';
+            if(string[i+1] == ' '){
+                if(count == 0)
                     break;
-            } else if(string[i+1] == ' '){
                 --count;
+                data = 0;
             }
+        } else if(dataFormat == HEX && (string[i] >= 'a' && string[i] <= 'f')) {
+            data *= dataFormat;
+            data += 10 + string[i] - 'a';
+            if(string[i+1] == ' '){
+                if(count == 0)
+                    break;
+                --count;
+                data = 0;
+            }
+        } else if(string[i] == 'x' && string[i-1] == '0'){
+            dataFormat = HEX;
+        } else if(string[i] == 'b' && string[i-1] == '0'){
+            dataFormat = BIN;
+        } else if(string[i] == '-'){
+            negative == -1;
         }
     }
-
-    // UART_println(value_c);
-    uint8_t value = atoi(value_c);
-    return value;
+    data *= negative;
+    // UART_println(data);
+    return data;
 }
 
 
@@ -81,7 +102,7 @@ int main(){
     while (1)
     {
         if(readSize != 0){
-            UART_print(string);
+            // UART_print(string);
             
 
             switch(string[0]){
@@ -112,8 +133,10 @@ int main(){
                 case 'u':{
                     switch(string[1]){
                         case 'r':{
+                            uint8_t duty = find_int();
                             UART_print("Head move: ");
-                            PWM_setDuty(find_int());
+                            UART_println(duty);
+                            PWM_setDuty(duty);
                         }break;
 
                         case 'm':{
