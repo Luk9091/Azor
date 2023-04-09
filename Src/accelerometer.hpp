@@ -6,25 +6,25 @@
 #define I2C_ACCELEROMETER_WRITE (I2C_ADR_ACCELEROMETER << 1) + WRITE
 #define I2C_ACCELEROMETER_READ  (I2C_ADR_ACCELEROMETER << 1) + READ
 
-#define X_AXIS_REG 0 // Nazwy na podstawie LSB reg
-#define Y_AXIS_REG 1
-#define Z_AXIS_REG 2
+#define X_AXIS_REG 1 // Nazwy na podstawie LSB reg
+#define Y_AXIS_REG 3
+#define Z_AXIS_REG 5
 
-#define STD_G 9.80665
+#define STD_G 9.80665F
+#define STD_DEVIDER_ACC 8192.0F
 
 // Resolution value:
 //      0 == ±2g
 //      1 == ±4g
 //      2 == ±8g
 #define RESOLUTION 1
+#define ACC_ADR_RANGE_REG 0x0E
 
-#if RESOLUTION == 0
-    #define BIT_RESOLUTION 0.0003
-#elif RESOLUTION == 1
-    #define BIT_RESOLUTION 0.0006
-#elif RESOLUTION == 2
-    #define BIT_RESOLUTION 0.0012
-#endif
+// Offset reg:
+#define ACC_ADR_X_OFFSET_REG 0x2F
+#define ACC_ADR_Y_OFFSET_REG 0x30
+#define ACC_ADR_Z_OFFSET_REG 0x31
+
 
 #define ACC_ADR_CONTROL_REG1 0x2A
 #define ACC_ADR_CONTROL_REG2 0x2B
@@ -63,7 +63,6 @@
 //  5:0b -- FIFO pointer -- start 0x01 end 0x20
 #define ACC_ADR_FIFO_STATUS_REG 0x00
 
-#define ACC_ADR_RANGE_REG 0x0E
 #define ACC_ADR_FILTER_REG 0x0F
 
 #define ACC_RESET() ACC_writeToRegister(ACC_ADR_CONTROL_REG2, 0x04)
@@ -84,7 +83,7 @@ void ACC_Init();
 
 uint8_t ACC_readRegister(uint8_t address);
 
-uint16_t ACC_readAxis(uint8_t axis);
+int16_t ACC_readAxis(uint8_t axis);
 int16_t ACC_calculateToACC(int16_t readValue);
 
 

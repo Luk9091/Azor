@@ -58,6 +58,7 @@ uint8_t find_int(uint8_t count = 0){
                     break;
                 --count;
                 data = 0;
+                dataFormat = DEC;
             }
         } else if(dataFormat == HEX && (string[i] >= 'a' && string[i] <= 'f')) {
             data *= dataFormat;
@@ -67,16 +68,17 @@ uint8_t find_int(uint8_t count = 0){
                     break;
                 --count;
                 data = 0;
+                dataFormat = DEC;
             }
         } else if(string[i] == 'x' && string[i-1] == '0'){
             dataFormat = HEX;
         } else if(string[i] == 'b' && string[i-1] == '0'){
             dataFormat = BIN;
         } else if(string[i] == '-'){
-            negative == -1;
+            negative = -1;
         }
     }
-    data *= negative;
+    data = data * negative;
     // UART_println(data);
     return data;
 }
@@ -180,23 +182,23 @@ int main(){
                         case 'x':{
                             UART_print("Axis x acc: ");
                             int16_t data = ACC_readAxis(X_AXIS_REG);
-                            UART_print(data, 10);
-                            UART_print(",\t");
-                            UART_println(data, 16);
+                            UART_println(data, 10);
+                            // UART_print(",\t");
+                            // UART_println(data, 16);
                         }break;
                         case 'y':{
                             UART_print("Axis y acc: ");
-                            int16_t data = ACC_readAxis(X_AXIS_REG);
-                            UART_print(data, 10);
-                            UART_print(",\t");
-                            UART_println(data, 16);
+                            int16_t data = ACC_readAxis(Y_AXIS_REG);
+                            UART_println(data, 10);
+                            // UART_print(",\t");
+                            // UART_println(data, 16);
                         }break;
                         case 'z':{
                             UART_print("Axis z acc: ");
-                            int16_t data = ACC_readAxis(X_AXIS_REG);
-                            UART_print(data, 10);
-                            UART_print(",\t");
-                            UART_println(data, 16);
+                            int16_t data = ACC_readAxis(Z_AXIS_REG);
+                            UART_println(data, 10);
+                            // UART_print(",\t");
+                            // UART_println(data, 16);
                         }break;
 
                         case 'm':{
