@@ -1,0 +1,66 @@
+000. 		NOP
+001. 		END
+002. 		SLEEP
+
+EEPROM
+003.		INNER_PROG -- write only UART
+004 - 007. 	I2C_WRITE
+008 - 011. 	I2C_READ
+012 - 015. 	INNER_READ
+
+Operacje na rejestrach:
+016 - 019.	LDR - load data to reg
+020 - 023.	IF value in reg is not 0
+024 - 027.	JUMP to address from reg and reg+1
+028 - 031.	NOT value in reg
+
+ALU:
+032 - 047.	ADD Rd + Rr = Rd
+048 - 063.	SUB Rd - Rr = Rd
+
+064 - 079.	OR  Rd || Rr = Rd
+080 - 095.	AND Rd && Rr = Rd
+096 - 111.	XOR Rd ^  Rr = Rd
+
+Stack:
+112 - 115.	PUSH reg
+116 - 119.	POP to reg
+120 - 123.	PUSH 2 reg: reg and reg+1
+124 - 127.	POP 2 reg: reg+1 and reg
+
+Acc:
+128 - 131.	READ from 2 register and save it in reg and reg + 1
+132 - 135.	WRITE to register from address in reg data from reg +1 
+144.		CAL transition on axis in reg and return value in reg and reg + 1
+
+Engine:
+192 - 195.	FORWARD MSB - signed dir, and distance on 6-0b
+196 - 199.	LEFT	MSB - signed dir, and time on 6-0b
+200 - 203.	RIGHT 	MSB - signed dir, and time on 6-0b
+204 - 207.	ROTATE	MSB - signed dir, and angle on 6-0b
+
+TIMER:
+208 - 211.	START in reg max value of interrupt
+212 - 215.	STOP and return number of interrupt
+216 - 219.	READ return counter value
+220 - 223.	WAIT delay reg ms
+
+ULTRASONIC:
+228 - 231.	MEASURE return in (low in) reg and (high) reg + 1
+232 - 235.	ROTATE angle from reg
+236 - 239.	BACK SENSOR READ to reg
+
+
+UART & BT
+240 - 243.	BT enable
+244 - 247.	UART SEND from reg
+248 - 252.	UART READ to reg
+
+
+Wolne adresu:
+136 - 143 -- 2 ins
+148 - 191 -- 11 ins
+224 - 227 -- 1 ins
+252 - 255 -- 1 ins
+
+Empty INST: 15
