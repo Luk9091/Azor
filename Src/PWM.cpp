@@ -29,9 +29,10 @@ void PWM_Init(bool run, uint8_t startDuty){
 // }
 
 
-void PWM_setPulse(uint8_t duty){
-    OCR2 = duty;
-    PWM_start();
-    _delay_ms(10);
-    PWM_stop();
-}
+// void PWM_setPulse(uint8_t duty){
+//     // OCR2 = duty;
+//     PWM_setDuty(duty);
+//     PWM_start();
+//     _delay_ms(35);
+//     PWM_stop();
+// }

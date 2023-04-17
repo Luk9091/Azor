@@ -11,8 +11,12 @@
 #define TIMER_start()   TCCR1B |= (PRESCALER << CS10)
 #define TIMER_stop()    TCCR1B &= ~(7 <<CS10)
 
+extern bool TIMER_overflow;
+
 void TIMER_Init();
-void TIMER_set(uint8_t limit, uint8_t *overflow);
+void TIMER_set(uint8_t limit, bool *overflow = &TIMER_overflow);
+
+bool TIMER_wait_ms(uint8_t delay);
 
 uint32_t TIMER_getValue();
 // #define TIMER_getValue() _TIMER_counter * 65535 + TCNT1

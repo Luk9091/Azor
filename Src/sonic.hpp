@@ -7,13 +7,14 @@
 
 #include "timer.hpp"
 
-#define SOUND_V 1715/(F_CPU/1000) //34300/2
+#define SOUND_V 1715*1000/(F_CPU) //34300/2
 
 #define TRIG_PIN PD4
 #define ECHO_PIN PD3
 
+extern bool SONIC_run;
 
-void SONIC_Init();
+void SONIC_Init(bool run = true);
 uint16_t SONIC_measure();
 
 

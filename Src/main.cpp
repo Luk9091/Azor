@@ -29,6 +29,8 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 
+#include "coding.hpp"
+
 #include "uart.hpp"
 #include "PWM.hpp"
 #include "sonic.hpp"
@@ -37,54 +39,27 @@
 // #include "I2C.hpp"
 #include "accelerometer.hpp"
 
-enum DataFormat{
-    DEC = 10,
-    BIN = 2,
-    HEX = 16,
-};
 
-uint8_t find_int(uint8_t count = 0){
-    // char value_c[4] = {0, 0, 0, 0};
-    int8_t data = 0;
-    DataFormat dataFormat = DEC;
-    int8_t negative = 1;
 
-    for(uint8_t i = 0; i < 16; i++){
-        if(string[i] >= '0' && string[i] <= '9'){
-            data *= dataFormat;
-            data += string[i] - '0';
-            if(string[i+1] == ' '){
-                if(count == 0)
-                    break;
-                --count;
-                data = 0;
-                dataFormat = DEC;
-            }
-        } else if(dataFormat == HEX && (string[i] >= 'a' && string[i] <= 'f')) {
-            data *= dataFormat;
-            data += 10 + string[i] - 'a';
-            if(string[i+1] == ' '){
-                if(count == 0)
-                    break;
-                --count;
-                data = 0;
-                dataFormat = DEC;
-            }
-        } else if(string[i] == 'x' && string[i-1] == '0'){
-            dataFormat = HEX;
-        } else if(string[i] == 'b' && string[i-1] == '0'){
-            dataFormat = BIN;
-        } else if(string[i] == '-'){
-            negative = -1;
-        }
+void readFifo(){
+    UART_println("Read FIFO:");
+
+    for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
+        UART_print(innerCounter);
+        UART_print(".\t");
+        UART_println(FIFO[innerCounter]);
     }
-    data = data * negative;
-    // UART_println(data);
-    return data;
+    
+    UART_println("END reading");
+    FIFO_counter = 0;
 }
 
 
+
+
 int main(){
+    LED_DDR |= LED_PIN_num;
+
     TIMER_Init();
 
     UART_Init(9600, true);
@@ -105,13 +80,8 @@ int main(){
     {
         if(readSize != 0){
             // UART_print(string);
-            
-
             switch(string[0]){
                 case 'e':{
-                    MOTION_DETECT_INT_ON();
-                    // turnOffINT = 1;
-                    _delay_ms(5);
                     switch (string[1]){
                         case 'l':{
                             LEFT_forward(find_int());
@@ -125,6 +95,9 @@ int main(){
                         case 'a':{
                             move_rotate(find_int());
                         } break;
+                        case 'e':{
+                            ENGINE_enable(find_int());
+                        }break;
                         
                         default:{
                             UART_println("Invalid cmd!");
@@ -139,6 +112,8 @@ int main(){
                             UART_print("Head move: ");
                             UART_println(duty);
                             PWM_setDuty(duty);
+                            // _delay_ms(20);
+                            // PWM_setDuty(0);
                         }break;
 
                         case 'm':{
@@ -183,43 +158,71 @@ int main(){
                             UART_print("Axis x acc: ");
                             int16_t data = ACC_readAxis(X_AXIS_REG);
                             UART_println(data, 10);
-                            // UART_print(",\t");
-                            // UART_println(data, 16);
                         }break;
                         case 'y':{
                             UART_print("Axis y acc: ");
                             int16_t data = ACC_readAxis(Y_AXIS_REG);
                             UART_println(data, 10);
-                            // UART_print(",\t");
-                            // UART_println(data, 16);
                         }break;
                         case 'z':{
                             UART_print("Axis z acc: ");
                             int16_t data = ACC_readAxis(Z_AXIS_REG);
                             UART_println(data, 10);
-                            // UART_print(",\t");
-                            // UART_println(data, 16);
                         }break;
-
-                        case 'm':{
-                            if(string[2] == '1'){
-                                // turnOffINT = 1;
-                                MOTION_DETECT_INT_ON();
-                            }else if( string[2] == '0'){
-                                MOTION_DETECT_INT_OFF();
-                            }
-                        }break;
+                        
                         default:{
                             UART_println("Invalid cmd!");
                         }
                     }
                 }break;
 
+                case 'r':
+                    // readFifo();
+                    UART_println("General purpose register:");
+                    UART_print("0.\t");
+                    UART_println(reg[0]);
+                    UART_print("1.\t");
+                    UART_println(reg[1]);
+                    UART_print("2.\t");
+                    UART_println(reg[2]);
+                    UART_print("3.\t");
+                    UART_println(reg[3]);
+                break;
+
+                case 'p':{
+                    readSize = 0;
+                    uint16_t eepromAddress = 0;
+                    while(1){
+                        UART_print(eepromAddress);
+                        UART_print(". ");
+                        while(readSize == 0) _delay_ms(10);
+                        // UART_println(string);
+                        if(string[0] == 'e')
+                            break;
+                        program(eepromAddress, find_int());
+                        ++eepromAddress;
+                        readSize = 0;
+                    }
+                    instructionRegister = 0;
+                }break;
+                case 'x':{
+                    execute(RUN_END);
+                    while(program_run){
+                        execute(fetch());
+                    }
+                    instructionRegister = 0;
+                }break;
+                case 'w':{
+                    execute(find_int());
+                } break;
+
+
                 default:
                     UART_println("Invalid function");
             }
+            UART_println("OK");
 
-            _delay_ms(100);
+            // _delay_ms(100);
             for(uint8_t i = 0; i <= readSize; i++)
                 string[i] = '\0';
             readSize = 0;

@@ -4,6 +4,12 @@ char string[16];
 char temp_str[8];
 uint8_t readSize = 0;
 
+enum DataFormat{
+    DEC = 10,
+    BIN = 2,
+    HEX = 16,
+};
+
 ISR(USART_RXC_vect){
     cli();
     readSize = UART_read(string, 16);
@@ -11,7 +17,51 @@ ISR(USART_RXC_vect){
     sei();
 }
 
-void UART_Init(uint16_t baud, bool enableEchoInterrupt){
+uint8_t find_int(uint8_t count){
+    int8_t data = 0;
+    DataFormat dataFormat = DEC;
+    int8_t negative = 1;
+
+    for(uint8_t i = 0; i < 16; i++){
+        if(string[i] >= '0' && string[i] <= '9'){
+            data *= dataFormat;
+            data += string[i] - '0';
+            if(string[i+1] == ' '){
+                if(count == 0)
+                    break;
+                --count;
+                data = 0;
+                dataFormat = DEC;
+            }
+        } else if(dataFormat == HEX && (string[i] >= 'a' && string[i] <= 'f')) {
+            data *= dataFormat;
+            data += 10 + string[i] - 'a';
+            if(string[i+1] == ' '){
+                if(count == 0)
+                    break;
+                --count;
+                data = 0;
+                dataFormat = DEC;
+            }
+        } else if(string[i] == 'x' && string[i-1] == '0'){
+            dataFormat = HEX;
+        } else if(string[i] == 'b' && string[i-1] == '0'){
+            dataFormat = BIN;
+        } else if(string[i] == '-'){
+            negative = -1;
+        }
+    }
+    data = data * negative;
+    return data;
+}
+
+
+void UART_Init(uint16_t baud, bool enableEchoInterrupt, bool run){
+    BT_DDR |= 1 << BT_PIN_num;
+    if(run)
+        BT_PORT |= 1 << BT_PIN_num;
+
+
     baud = F_CPU/8/baud-1;
     UCSRA |= (1 << U2X);
 
@@ -24,6 +74,16 @@ void UART_Init(uint16_t baud, bool enableEchoInterrupt){
         UART_ENABLE_INTERRUPT_RX;
 
     // Frame: 8bin 0parity 1stop
+}
+
+void BT_enable(bool run){
+    if(run){
+        BT_PORT |= 1 << BT_PIN_num;
+        UCSRB   |= (1<<RXEN) | (1<<TXEN);
+    }else{
+        BT_PORT &= ~(1 << BT_PIN_num);
+        UCSRB   &= ~((1<<RXEN) | (1<<TXEN));
+    }
 }
 
 
@@ -46,6 +106,8 @@ void UART_println(const char *str){
 
 void UART_print(uint16_t value, uint8_t base){
     itoa(value, temp_str, base);
+    uint8_t i = 7;
+
     if(base == 16){
         UART_print("0x");
         if(value < 16)

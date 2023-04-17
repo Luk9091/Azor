@@ -38,12 +38,14 @@ void ENGINE_enable(bool enable){
 
 void move_forward(int8_t distance){
     uint8_t measure = 0;
+    ENGINE_enable(0);
     if(distance >= 0){
         PORTB |= 1 << LEFT_UP_PIN | 1 << RIGHT_UP_PIN;
     }else{
         PORTB |= 1 << LEFT_DOWN_PIN | 1 <<RIGHT_DOWN_PIN;
         distance = ~distance+1;
     }
+    ENGINE_enable(1);
     UART_println(distance);
 
     while(distance){

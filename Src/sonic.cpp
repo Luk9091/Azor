@@ -1,49 +1,47 @@
 #include "sonic.hpp"
 #include "uart.hpp"
 
-volatile uint8_t run = 0;
-uint8_t done = 0;
+bool SONIC_run = false;
+bool SONIC_done = false;
 
 
 ISR(INT1_vect){
     cli();
-    if(run && !done)
+    if(SONIC_run && !SONIC_done)
         if(PIND & (1 << ECHO_PIN)){
             TIMER_start();
         } else {
             TIMER_stop();
-            done = 1;
+            SONIC_done = true;
         }
     sei();
 }
 
 
 
-void SONIC_Init(){
+void SONIC_Init(bool run){
     DDRD  |= (1 << TRIG_PIN);
     DDRD  &= ~(1<< ECHO_PIN);
 
     MCUCR |= (1 << ISC10); // wyzwolenie zmianą stanu logicznego
     GICR  |= (1 << INT1);
     
-    run = 1;
+    SONIC_run = run;
 }
 
 
 uint16_t SONIC_measure(){
-    if(run == 0){
-        UART_println("Sonic is dis");
+    if(SONIC_run == 0){
+        // UART_println("Sonic is dis");
         return 0;
     }
 
-    done = 0;
-    
-    TIMER_set(0, &done);
+    TIMER_set(0, &SONIC_done);
     PORTD |= (1 << TRIG_PIN);
     _delay_us(15);
     PORTD &= ~(1<< TRIG_PIN);
 
-    while(!done){
+    while(!SONIC_done){
         _delay_ms(10);
     }
 

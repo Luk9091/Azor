@@ -1,20 +1,25 @@
 #include "accelerometer.hpp"
 
-uint8_t turnOffINT = 0;
+int16_t FIFO[50];
+uint8_t FIFO_counter = 0;
+
+
 
 ISR(INT0_vect){
-    // UART_println("Motion detect!");
+    FIFO[FIFO_counter] = ACC_readAxis(X_AXIS_REG);
+    ++FIFO_counter;
 
-    uint8_t read = ACC_readRegister(0x16);
+
+    // uint8_t read = ACC_readRegister(0x16);
     // if(read & (1 << 1)){
     //     UART_println("Motion detect");
     // }
-    if(read & (1 << 0)){
-        UART_print_char('N');
-    } else {
-        UART_print_char('P');
-    }
-    UART_print_char('\n');
+    // if(read & (1 << 0)){
+    //     UART_print_char('N');
+    // } else {
+    //     UART_print_char('P');
+    // }
+    // UART_print_char('\n');
 
 }
 
@@ -27,7 +32,6 @@ void ACC_Init(){
     ACC_WAIT_FOR_RESET();
 
     ACC_writeToRegister(ACC_ADR_RANGE_REG, RESOLUTION);
-
     ACC_writeToRegister(ACC_ADR_CONTROL_REG1, 0x0);
 
     // ACC_writeToRegister(ACC_ADR_X_OFFSET_REG, 100);
@@ -68,13 +72,6 @@ int16_t ACC_readAxis(uint8_t axis){
     data = I2C_read_AK() << 8;
     data |= I2C_read_NAK();
 
-#if RESOLUTION == 0
-    data >>= 2;
-#elif RESOLUTION == 1
-    // NOTHING
-#elif RESOLUTION == 2
-    data <<= 2;
-#endif
 
     return float(data)/STD_DEVIDER_ACC*STD_G*1000;
     // return data;
@@ -85,8 +82,6 @@ void ACC_writeToRegister(uint8_t address, uint8_t data){
     I2C_write(address);
     I2C_write(data);
     I2C_endTransition();
-
-    // _delay_ms(10);
 }
 
 

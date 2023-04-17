@@ -11,7 +11,7 @@
 #define Z_AXIS_REG 5
 
 #define STD_G 9.80665F
-#define STD_DEVIDER_ACC 8192.0F
+
 
 // Resolution value:
 //      0 == ±2g
@@ -19,6 +19,15 @@
 //      2 == ±8g
 #define RESOLUTION 1
 #define ACC_ADR_RANGE_REG 0x0E
+
+// Resolution devider:
+#if   RESOLUTION == 0
+    #define STD_DEVIDER_ACC 32768.0F
+#elif RESOLUTION == 1
+    #define STD_DEVIDER_ACC 8192.0F
+#elif RESOLUTION == 2
+    #define STD_DEVIDER_ACC 2048.0F
+#endif
 
 // Offset reg:
 #define ACC_ADR_X_OFFSET_REG 0x2F
@@ -77,7 +86,8 @@
 #include "uart.hpp"
 #include "timer.hpp"
 
-extern uint8_t turnOffINT;
+extern int16_t FIFO[50];
+extern uint8_t FIFO_counter;
 
 void ACC_Init();
 
