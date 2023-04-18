@@ -21,7 +21,7 @@
 extern char string[16];
 extern uint8_t readSize;
 
-uint8_t find_int(uint8_t count = 0);
+uint16_t find_int(uint8_t count = 0);
 
 void UART_Init(uint16_t baud, bool enableEchoInterrupt = false, bool run = true);
 void BT_enable(bool run);

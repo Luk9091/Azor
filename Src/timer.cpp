@@ -26,6 +26,7 @@ void TIMER_Init(){
 
 void TIMER_set(uint8_t limit, bool *overflow){
     _TIMER_overflow = overflow;
+    *_TIMER_overflow = false;
     _TIMER_limit = limit;
     _TIMER_counter = 0;
     TCNT1 = 0;

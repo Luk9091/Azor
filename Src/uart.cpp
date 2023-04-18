@@ -17,8 +17,8 @@ ISR(USART_RXC_vect){
     sei();
 }
 
-uint8_t find_int(uint8_t count){
-    int8_t data = 0;
+uint16_t find_int(uint8_t count){
+    int16_t data = 0;
     DataFormat dataFormat = DEC;
     int8_t negative = 1;
 

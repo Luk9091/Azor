@@ -31,11 +31,12 @@ void SONIC_Init(bool run){
 
 
 uint16_t SONIC_measure(){
-    if(SONIC_run == 0){
-        // UART_println("Sonic is dis");
+    if(!SONIC_run){
+        UART_println("Sonic is dis");
         return 0;
     }
 
+    SONIC_done = false;
     TIMER_set(0, &SONIC_done);
     PORTD |= (1 << TRIG_PIN);
     _delay_us(15);

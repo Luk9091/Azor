@@ -178,6 +178,8 @@ int main(){
 
                 case 'r':
                     // readFifo();
+                    UART_print("EEPROM address: ");
+                    UART_println(eeprom_address);
                     UART_println("General purpose register:");
                     UART_print("0.\t");
                     UART_println(reg[0]);
