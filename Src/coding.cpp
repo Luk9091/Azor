@@ -1,6 +1,7 @@
 #include "coding.hpp"
 
 bool program_run = false;
+uint16_t eeprom_address = 0;
 uint16_t instructionRegister = 0;
 uint8_t reg[4] = {0, 0, 0, 0};
 
@@ -68,8 +69,6 @@ uint8_t fetch(){
         data = EEPROM_read(instructionRegister);
         ++instructionRegister;
     }else{
-        // data = UART_read_char();
-        // data = string[1];
         data = find_int(1);
     }
     return data;
@@ -79,6 +78,9 @@ uint8_t fetch(){
 
 void execute(uint8_t instruction){
     uint8_t regAdr = instruction & 0x03;
+
+    UART_print("Instruction register adr: ");
+    UART_println(instructionRegister, 10);
 
     UART_print("Instruction: ");
     UART_println(instruction);
@@ -99,18 +101,30 @@ void execute(uint8_t instruction){
         } return;
 
         case PROG_INNER_EEPROM:{
-            uint16_t address = UART_read_char();
-            address <<= 8;
-            address |= UART_read_char();
-            uint8_t data = UART_read_char();
+            uint16_t address = find_int(1);
+            uint8_t data = find_int(2);
 
             program(address, data);
         } return;
 
         case INNER_EEPROM_READ...(INNER_EEPROM_READ+3):{
-            uint16_t address = reg[regAdr+1] << 8 + reg[regAdr];
-            reg[regAdr] = EEPROM_read(address);
+            reg[regAdr] = EEPROM_read(eeprom_address);
+            --eeprom_address;
         }  return;
+
+        case I2C_EEPROM_WRITE...(I2C_EEPROM_WRITE+3):{
+            EEPROM_I2C_write(eeprom_address, reg[regAdr]);
+            ++eeprom_address;
+        }return;
+        case I2C_EEPROM_READ...(I2C_EEPROM_READ+3):{
+            reg[regAdr] = EEPROM_I2C_read(eeprom_address);
+            --eeprom_address;
+        }return;
+        case SET_EEPROM_ADR...(SET_EEPROM_ADR+3):{
+            eeprom_address = (reg[regAdr+1] << 8) | reg[regAdr];
+        };
+
+
 
         case LDR...(LDR+3):{
             reg[regAdr] = fetch();
@@ -156,13 +170,19 @@ void execute(uint8_t instruction){
             reg[regAdr] = stack.POP();
         } return;
 
-        case PUSH2...(PUSH2+3):{
-            stack.PUSH(reg[regAdr]);
-            stack.PUSH(reg[regAdr+1]);
+        case JUMP_TO_ADR:{
+            instructionRegister = (fetch() << 8);
+            instructionRegister |= fetch();
         } return;
-        case POP2...(POP2+3):{
-            reg[regAdr+1] = stack.POP();
-            reg[regAdr] = stack.POP();
+        case CALL:{
+            stack.PUSH(instructionRegister);
+            stack.PUSH(instructionRegister >> 8);
+            instructionRegister = (fetch() << 8);
+            instructionRegister |= fetch();
+        } return;
+        case RET:{
+            instructionRegister = (stack.POP() << 8);
+            instructionRegister |= stack.POP();
         } return;
 
         case ACC_READ...(ACC_READ+3):{
@@ -226,8 +246,8 @@ void execute(uint8_t instruction){
             UART_print_char(reg[regAdr]);
         } return;
         case UART_SEND_INT...(UART_SEND_INT+3):{
-            uint16_t data = reg[regAdr+1] << 8 + reg[regAdr];
-            UART_print(data, 10);
+            uint16_t data = (reg[regAdr+1] << 8) | reg[regAdr];
+            UART_println(data, 10);
         }return;
 
         case DEVICE_ENABLE...(DEVICE_ENABLE+3):{

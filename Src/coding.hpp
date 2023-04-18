@@ -10,6 +10,7 @@
 #include "PWM.hpp"
 #include "engine.hpp"
 #include "accelerometer.hpp"
+#include "eeprom.hpp"
 
 #define LED_PIN_num 1<<6
 #define LED_DDR     DDRD
@@ -69,8 +70,13 @@ enum INS{
     // MOV             = 0b0111 <<4,//|RdRr
     PUSH            = 0b0111 <<4 | 0b0000,
     POP             = 0b0111 <<4 | 0b0100,
-    PUSH2           = 0b0111 <<4 | 0b1000,
-    POP2            = 0b0111 <<4 | 0b1100,
+
+    JUMP_TO_ADR     = 0b0111 <<4 | 0b1000,
+    CALL            = 0b0111 <<4 | 0b1001,
+    RET             = 0b0111 <<4 | 0b1010,
+
+    // POP2            = 0b0111 <<4 | 0b1100,
+    SET_EEPROM_ADR  = 0b0111 <<4 | 0b1100,
 
 
 
@@ -121,6 +127,7 @@ enum DEVICE_ADR{
 extern bool program_run;
 extern uint16_t instructionRegister;
 extern uint8_t reg[4];
+extern uint16_t eeprom_address;
 
 
 
