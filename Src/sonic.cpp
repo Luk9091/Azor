@@ -32,7 +32,6 @@ void SONIC_Init(bool run){
 
 uint16_t SONIC_measure(){
     if(!SONIC_run){
-        UART_println("Sonic is dis");
         return 0;
     }
 

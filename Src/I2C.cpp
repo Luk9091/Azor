@@ -3,8 +3,8 @@
 
 
 void I2C_Init(){
-    DDRC  &= ~(1 << PC5 | 1 <<PC4);
-    PORTC &= ~(1 << PC5 | 1 <<PC4);
+    // DDRC  &= ~(1 << PC5 | 1 <<PC4);
+    // PORTC &= ~(1 << PC5 | 1 <<PC4);
 
     TWBR = 0;
     TWSR |= (0 << TWPS1) | (0 << TWPS0);

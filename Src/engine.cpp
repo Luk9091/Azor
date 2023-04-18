@@ -26,6 +26,8 @@ void ENGINE_Init(){
     DDRB |= 1 << LEFT_DOWN_PIN | 1 << LEFT_UP_PIN 
          | 1 << RIGHT_DOWN_PIN | 1 << RIGHT_UP_PIN;
     DDRD |= 1 << ENABLE_PIN;
+
+    ENGINE_enable(true);
 }
 
 void ENGINE_enable(bool enable){

@@ -5,19 +5,6 @@ uint16_t eeprom_address = 0;
 uint16_t instructionRegister = 0;
 uint8_t reg[4] = {0, 0, 0, 0};
 
-
-// int main(){
-//     uint8_t instruction;
-
-//     while(1){
-//         instruction = fetch();
-
-//         execute(instruction);
-//     }
-//     return 0;
-// }
-
-
 struct Stack{
     #define STACK_SIZE 16
     uint8_t pointer;

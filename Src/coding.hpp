@@ -133,8 +133,9 @@ extern uint16_t eeprom_address;
 
 
 void program(uint8_t data);
-uint8_t EEPROM_read(uint16_t address);
 void program(uint16_t address, uint8_t data);
+
+uint8_t EEPROM_read(uint16_t address);
 uint8_t fetch();
 
 void execute(uint8_t instruction);

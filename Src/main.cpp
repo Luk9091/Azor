@@ -36,7 +36,6 @@
 #include "sonic.hpp"
 #include "engine.hpp"
 #include "timer.hpp"
-// #include "I2C.hpp"
 #include "accelerometer.hpp"
 
 
@@ -64,10 +63,9 @@ int main(){
 
     UART_Init(9600, true);
     PWM_Init(true, 42);
-    SONIC_Init();
-
+    SONIC_Init(true);
     ENGINE_Init();
-    ENGINE_enable(true);
+    
     UART_println("Hello world!");
 
     I2C_Init();

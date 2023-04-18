@@ -10,8 +10,7 @@ void PWM_Init(bool run, uint8_t startDuty){
         | (PWM_prescaler * run << CS20)      // Prescaler 32
     ;
     
-    OCR2 = startDuty;
-    // UART_println("PWM run");
+    PWM_setDuty(startDuty);
 }
 
 // void PWM_start(){

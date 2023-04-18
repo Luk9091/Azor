@@ -1,7 +1,5 @@
 #include "timer.hpp"
 
-// NIE DZIAŁA PRZEPISAĆ DO STAREJ WERSJI I NAPRAWIĆ PRZEKROCZENIE LIMITU!
-
 uint8_t _TIMER_counter = 0;
 uint8_t _TIMER_limit = 1;
 bool *_TIMER_overflow;
@@ -32,12 +30,10 @@ void TIMER_set(uint8_t limit, bool *overflow){
     TCNT1 = 0;
 }
 
-bool TIMER_wait_ms(uint8_t delay){
-
+void TIMER_wait_ms(uint8_t delay){
     for(delay; delay > 0; delay--){
         _delay_ms(1);
     }
-    return true;
 }
 
 uint32_t TIMER_getValue(){
