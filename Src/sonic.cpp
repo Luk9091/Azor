@@ -6,7 +6,6 @@ bool SONIC_done = false;
 
 
 ISR(INT1_vect){
-    cli();
     if(SONIC_run && !SONIC_done)
         if(PIND & (1 << ECHO_PIN)){
             TIMER_start();
@@ -14,7 +13,6 @@ ISR(INT1_vect){
             TIMER_stop();
             SONIC_done = true;
         }
-    sei();
 }
 
 

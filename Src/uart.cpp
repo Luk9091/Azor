@@ -4,20 +4,13 @@ char string[16];
 char temp_str[8];
 uint8_t readSize = 0;
 
-// enum DataFormat{
-//     DEC = 10,
-//     BIN = 2,
-//     HEX = 16,
-// };
 #define DEC 10
 #define BIN 2
 #define HEX 16
 
 ISR(USART_RXC_vect){
-    cli();
     readSize = UART_read(string, 16);
     // UART_print("read\n");
-    sei();
 }
 
 uint16_t find_int(uint8_t count){

@@ -3,12 +3,12 @@
 bool program_run = false;
 uint16_t eeprom_address = 0;
 uint16_t instructionRegister = 0;
-uint8_t reg[4] = {0, 0, 0, 0};
+int16_t reg[4] = {0, 0, 0, 0};
 
 struct Stack{
     #define STACK_SIZE 16
     uint8_t pointer;
-    uint8_t stack[STACK_SIZE];
+    uint16_t stack[STACK_SIZE];
 
     void PUSH(uint8_t data){
         if(pointer != STACK_SIZE)
@@ -108,13 +108,14 @@ void execute(uint8_t instruction){
             --eeprom_address;
         }return;
         case SET_EEPROM_ADR...(SET_EEPROM_ADR+3):{
-            eeprom_address = (reg[regAdr+1] << 8) | reg[regAdr];
+            eeprom_address = reg[regAdr];
         };
 
 
 
         case LDR...(LDR+3):{
-            reg[regAdr] = fetch();
+            reg[regAdr] = fetch() << 8;
+            reg[regAdr] |= fetch();
         } return;
 
         case SKIP_IF...(SKIP_IF+3):{
@@ -123,7 +124,7 @@ void execute(uint8_t instruction){
         } return;
 
         case JUMP...(JUMP+3):{
-            instructionRegister = reg[regAdr+1] << 8 + reg[regAdr];
+            instructionRegister = reg[regAdr];
         } return;
 
         case NOT...(NOT+3):{
@@ -131,24 +132,39 @@ void execute(uint8_t instruction){
         } return;
 
         case ADD...(ADD+15):{
-            reg[regAdr] = reg[regAdr] + reg[regAdr+1];
+            reg[regAdr] = reg[instruction & (0x0C) >> 2] + reg[regAdr];
         } return;
 
         case SUB...(SUB+15):{
-            reg[regAdr] = reg[regAdr] - reg[regAdr+1];
+            reg[regAdr] = reg[instruction & (0x0C) >> 2] - reg[regAdr];
         } return;
 
         case OR...(OR+3):{
-            reg[regAdr] = reg[regAdr] | reg[regAdr+1];
+            reg[regAdr] = reg[instruction & (0x0C) >> 2] | reg[regAdr];
         } return;
 
         case AND...(AND+3):{
-            reg[regAdr] = reg[regAdr] & reg[regAdr+1];
+            reg[regAdr] = reg[instruction & (0x0C) >> 2] & reg[regAdr];
         } return;
 
         case XOR...(XOR+3):{
-            reg[regAdr] = reg[regAdr] ^ reg[regAdr+1];
+            reg[regAdr] = reg[instruction & (0x0C) >> 2] ^ reg[regAdr];
         } return;
+
+        case SHIFT_LEFT:{
+            reg[regAdr] <<= 1;
+        } return;
+        case SHIFT_RIGHT:{
+            reg[regAdr] >>= 1;
+        } return;
+
+        case SHIFT_8LEFT:{
+            reg[regAdr] <<= 8;
+        } return;
+        case SHIFT_8RIGHT:{
+            reg[regAdr] >>= 8;
+        } return;
+
 
         case PUSH...(PUSH+3):{
             stack.PUSH(reg[regAdr]);
@@ -163,22 +179,18 @@ void execute(uint8_t instruction){
         } return;
         case CALL:{
             stack.PUSH(instructionRegister);
-            stack.PUSH(instructionRegister >> 8);
             instructionRegister = (fetch() << 8);
             instructionRegister |= fetch();
         } return;
         case RET:{
-            instructionRegister = (stack.POP() << 8);
-            instructionRegister |= stack.POP();
+            instructionRegister = stack.POP();
         } return;
 
         case ACC_READ...(ACC_READ+3):{
             reg[regAdr] = ACC_readRegister(reg[regAdr]);
         }return;
         case ACC_READ_AXIS...(ACC_READ_AXIS+3):{
-            uint16_t measure = ACC_readAxis(reg[regAdr]);
-            reg[regAdr]   = measure;
-            reg[regAdr+1] = measure >> 8;
+            reg[regAdr] = ACC_readAxis(reg[regAdr]);
         }return;
         case ACC_WRITE...(ACC_WRITE+3):{
             ACC_writeToRegister(reg[regAdr], reg[regAdr+1]);
@@ -199,14 +211,13 @@ void execute(uint8_t instruction){
         }return;
 
         case WAIT...(WAIT+3):{
-            // Napisać aby timer był w stanie odmierzać mały czas in ms... ehhh sadge
             TIMER_wait_ms(reg[regAdr]);
         }return;
 
         case LED...(LED+3):{
-            if(reg[regAdr] & (0xF0)){
+            if(reg[regAdr] & (0xFF00)){
                 reg[regAdr] = (LED_PIN & LED_PIN_num);
-            } else if(reg[regAdr] & 0x0F){
+            } else if(reg[regAdr] & 0x00FF){
                 LED_PORT |= LED_PIN_num;
             } else {
                 LED_PORT &= ~(LED_PIN_num);
@@ -215,12 +226,10 @@ void execute(uint8_t instruction){
 
 
         case ULTRASONIC_MEASURE...(ULTRASONIC_MEASURE+3):{
-            uint16_t measure = SONIC_measure();
-            reg[regAdr]   = measure;
-            reg[regAdr+1] = measure >> 8;
+            reg[regAdr] = SONIC_measure();
         }return;
         case ULTRASONIC_ROTATE...(ULTRASONIC_ROTATE+3):{
-            PWM_setDuty((reg[regAdr] * 0.3333F) + 12);
+            PWM_setDuty(((uint8_t)reg[regAdr] * 0.3333F) + 12);
         }return;
 
 
@@ -233,23 +242,22 @@ void execute(uint8_t instruction){
             UART_print_char(reg[regAdr]);
         } return;
         case UART_SEND_INT...(UART_SEND_INT+3):{
-            uint16_t data = (reg[regAdr+1] << 8) | reg[regAdr];
-            UART_println(data, 10);
+            UART_println(reg[regAdr], 10);
         }return;
 
         case DEVICE_ENABLE...(DEVICE_ENABLE+3):{
-            ENGINE_enable(reg[regAdr] & ENGINE);
+            ENGINE_enable((uint8_t)reg[regAdr] & ENGINE);
 
-            if(reg[regAdr] & ACC){
+            if((uint8_t)reg[regAdr] & ACC){
                 ACC_Init();
             }else{
                 ACC_RESET();
             }
 
-            SONIC_run = reg[regAdr] & ULTRASONIC;
-            BT_enable(reg[regAdr] & BLUETOOTH);
+            SONIC_run = (uint8_t)reg[regAdr] & ULTRASONIC;
+            BT_enable((uint8_t)reg[regAdr] & BLUETOOTH);
 
-            if(reg[regAdr] & PWM){
+            if((uint8_t)reg[regAdr] & PWM){
                 PWM_start();
             }else{
                 PWM_stop();

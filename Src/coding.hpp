@@ -43,21 +43,6 @@ enum INS{
     SKIP_IF          = 0b0001 <<4 | 0b0100,
     JUMP             = 0b0001 <<4 | 0b1000,
     NOT              = 0b0001 <<4 | 0b1100, 
-    
-    // LDR_R1          = 0b0001 <<4 | 0b0001,
-    // IF_R1           = 0b0001 <<4 | 0b0101,
-    // WHILE_R1        = 0b0001 <<4 | 0b1001,
-    // NOT_R1          = 0b0001 <<4 | 0b1101, 
-
-    // LDR_R2          = 0b0001 <<4 | 0b0010,
-    // IF_R2           = 0b0001 <<4 | 0b0110,
-    // WHILE_R2        = 0b0001 <<4 | 0b1010,
-    // NOT_R2          = 0b0001 <<4 | 0b1110, 
-
-    // LDR_R3          = 0b0001 <<4 | 0b0011,
-    // IF_R3           = 0b0001 <<4 | 0b0111,
-    // WHILE_R3        = 0b0001 <<4 | 0b1011,
-    // NOT_R3          = 0b0001 <<4 | 0b1111, 
 
 
     ADD             = 0b0010 <<4,//|RdRr
@@ -79,12 +64,18 @@ enum INS{
     SET_EEPROM_ADR  = 0b0111 <<4 | 0b1100,
 
 
+    SHIFT_LEFT      = 0b1000 <<4 | 0b0000,
+    SHIFT_RIGHT     = 0b1000 <<4 | 0b0100,
+    SHIFT_8LEFT     = 0b1000 <<4 | 0b1000,
+    SHIFT_8RIGHT    = 0b1000 <<4 | 0b1100,
+
+
 
     // Operacje na dwóch rejestrach, odpowiednio R0 i R1 lub R2 i R3
-    ACC_READ        = 0b1000 <<4 | 0b0000,
-    ACC_READ_AXIS   = 0b1000 <<4 | 0b0100,
-    ACC_WRITE       = 0b1000 <<4 | 0b1000,
-    ACC_CAL         = 0b1001 <<4 | 0b0000,
+    ACC_READ        = 0b1001 <<4 | 0b0000,
+    ACC_READ_AXIS   = 0b1001 <<4 | 0b0100,
+    ACC_WRITE       = 0b1001 <<4 | 0b1000,
+    ACC_CAL         = 0b1001 <<4 | 0b1100,
 
     // ACC_START       = 0b1000 <<4 | 0b1000,
     // ACC_STOP        = 0b1000 <<4 | 0b1100,
@@ -126,7 +117,7 @@ enum DEVICE_ADR{
 // uint8_t reg[4];
 extern bool program_run;
 extern uint16_t instructionRegister;
-extern uint8_t reg[4];
+extern int16_t reg[4];
 extern uint16_t eeprom_address;
 
 
