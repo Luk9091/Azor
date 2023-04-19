@@ -114,8 +114,11 @@ void execute(uint8_t instruction){
 
 
         case LDR...(LDR+3):{
-            reg[regAdr] = fetch() << 8;
-            reg[regAdr] |= fetch();
+            reg[regAdr] = fetch();
+            if(program_run){
+                reg[regAdr] <<= 8;
+                reg[regAdr] |= fetch();
+            }
         } return;
 
         case SKIP_IF...(SKIP_IF+3):{
