@@ -22,6 +22,10 @@
 //(INT0)PD2 -- int
 //      PC5 -- SCL
 //      PC4 -- SDA
+//  EEPROM
+//      PC5 -- SCL
+//      PC4 -- SDA
+
 
 
 #include <avr/io.h>
@@ -40,18 +44,29 @@
 
 
 
-void readFifo(){
-    UART_println("Read FIFO:");
+// void readFifo(){
+//     UART_println("Read FIFO:");
 
-    for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
-        UART_print(innerCounter);
-        UART_print(".\t");
-        UART_println(FIFO[innerCounter]);
-    }
+//     for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
+//         UART_print(innerCounter);
+//         UART_print(".\t");
+//         UART_println(FIFO[innerCounter]);
+//     }
     
-    UART_println("END reading");
-    FIFO_counter = 0;
-}
+//     UART_println("END reading");
+//     FIFO_counter = 0;
+// }
+//     UART_println("Read FIFO:");
+
+//     for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
+//         UART_print(innerCounter);
+//         UART_print(".\t");
+//         UART_println(FIFO[innerCounter]);
+//     }
+    
+//     UART_println("END reading");
+//     FIFO_counter = 0;
+// }
 
 
 
@@ -60,119 +75,114 @@ int main(){
     LED_DDR |= LED_PIN_num;
 
     TIMER_Init();
-
     UART_Init(9600, true);
     PWM_Init(true, 42);
     SONIC_Init(true);
     ENGINE_Init();
-    
-    UART_println("Hello world!");
-
     I2C_Init();
     ACC_Init();
 
-
+    UART_println("Hello world!");
     sei();
 
     while (1)
     {
         if(readSize != 0){
-            // UART_print(string);
             switch(string[0]){
-                case 'e':{
-                    switch (string[1]){
-                        case 'l':{
-                            LEFT_forward(find_int());
-                        }break;;
-                        case 'r':{
-                            RIGHT_forward(find_int());
-                        }break;
-                        case 'f':{
-                            move_forward(find_int());
-                        }break;
-                        case 'a':{
-                            move_rotate(find_int());
-                        } break;
-                        case 'e':{
-                            ENGINE_enable(find_int());
-                        }break;
+            //     case 'e':{
+            //         switch (string[1]){
+            //             case 'l':{
+            //                 LEFT_forward(find_int());
+            //             }break;;
+            //             case 'r':{
+            //                 RIGHT_forward(find_int());
+            //             }break;
+            //             case 'f':{
+            //                 move_forward(find_int());
+            //             }break;
+            //             case 'a':{
+            //                 move_rotate(find_int());
+            //             } break;
+            //             case 'e':{
+            //                 ENGINE_enable(find_int());
+            //             }break;
                         
-                        default:{
-                            UART_println("Invalid cmd!");
-                        }
-                    }
-                }break;
+            //             default:{
+            //                 UART_println("Invalid cmd!");
+            //             }
+            //         }
+            //     }break;
 
-                case 'u':{
-                    switch(string[1]){
-                        case 'r':{
-                            uint8_t duty = find_int();
-                            UART_print("Head move: ");
-                            UART_println(duty);
-                            PWM_setDuty(duty);
-                            // _delay_ms(20);
-                            // PWM_setDuty(0);
-                        }break;
+            //     case 'u':{
+            //         switch(string[1]){
+            //             case 'r':{
+            //                 uint8_t duty = find_int();
+            //                 UART_print("Head move: ");
+            //                 UART_println(duty);
+            //                 PWM_setDuty(duty);
+            //                 // _delay_ms(20);
+            //                 // PWM_setDuty(0);
+            //             }break;
 
-                        case 'm':{
-                            UART_print("Distance: ");
-                            itoa(SONIC_measure(), string, 10);
-                            UART_println(string);
-                        } break;
+            //             case 'm':{
+            //                 UART_print("Distance: ");
+            //                 itoa(SONIC_measure(), string, 10);
+            //                 UART_println(string);
+            //             } break;
                         
 
-                        default:{
-                            UART_println("Invalid cmd!");
-                        }
-                    }
-                }break;
+            //             default:{
+            //                 UART_println("Invalid cmd!");
+            //             }
+            //         }
+            //     }break;
 
 
-                case 'a':{
-                    switch (string[1]){
-                        case 'w':{
-                            uint8_t address = find_int(0);
-                            uint8_t data = find_int(1);
-                            UART_print("Write data: ");
-                            UART_print(data, 16);
-                            UART_print(" at address: ");
-                            UART_println(address, 16);
+            //     case 'a':{
+            //         switch (string[1]){
+            //             case 'w':{
+            //                 uint8_t address = find_int(0);
+            //                 uint8_t data = find_int(1);
+            //                 UART_print("Write data: ");
+            //                 UART_print(data, 16);
+            //                 UART_print(" at address: ");
+            //                 UART_println(address, 16);
 
-                            ACC_writeToRegister(address, data);
-                        } break;
+            //                 ACC_writeToRegister(address, data);
+            //             } break;
 
-                        case 'r':{
-                            uint8_t address = find_int(0);
-                            UART_print("Read from address: ");
-                            UART_print(address, 16);
-                            UART_println(": ");
-                            uint8_t data = ACC_readRegister(address);
-                            UART_print(data, 10);
-                            UART_print("\t");
-                            UART_println(data, 16);
-                        }break;
+            //             case 'r':{
+            //                 uint8_t address = find_int(0);
+            //                 UART_print("Read from address: ");
+            //                 UART_print(address, 16);
+            //                 UART_println(": ");
+            //                 uint8_t data = ACC_readRegister(address);
+            //                 UART_print(data, 10);
+            //                 UART_print("\t");
+            //                 UART_println(data, 16);
+            //             }break;
 
-                        case 'x':{
-                            UART_print("Axis x acc: ");
-                            int16_t data = ACC_readAxis(X_AXIS_REG);
-                            UART_println(data, 10);
-                        }break;
-                        case 'y':{
-                            UART_print("Axis y acc: ");
-                            int16_t data = ACC_readAxis(Y_AXIS_REG);
-                            UART_println(data, 10);
-                        }break;
-                        case 'z':{
-                            UART_print("Axis z acc: ");
-                            int16_t data = ACC_readAxis(Z_AXIS_REG);
-                            UART_println(data, 10);
-                        }break;
+            //             case 'x':{
+            //                 UART_print("Axis x acc: ");
+            //                 int16_t data = ACC_readAxis(X_AXIS_REG);
+            //                 UART_println(data, 10);
+            //             }break;
+            //             case 'y':{
+            //                 UART_print("Axis y acc: ");
+            //                 int16_t data = ACC_readAxis(Y_AXIS_REG);
+            //                 UART_println(data, 10);
+            //             }break;
+            //             case 'z':{
+            //                 UART_print("Axis z acc: ");
+            //                 int16_t data = ACC_readAxis(Z_AXIS_REG);
+            //                 UART_println(data, 10);
+            //             }break;
                         
-                        default:{
-                            UART_println("Invalid cmd!");
-                        }
-                    }
-                }break;
+            //             default:{
+            //                 UART_println("Invalid cmd!");
+            //             }
+            //         }
+            //     }break;
 
                 case 'r':
                     // readFifo();
@@ -196,7 +206,6 @@ int main(){
                         UART_print(eepromAddress);
                         UART_print(". ");
                         while(readSize == 0) _delay_ms(10);
-                        // UART_println(string);
                         if(string[0] == 'e')
                             break;
                         program(eepromAddress, find_int());
@@ -206,7 +215,7 @@ int main(){
                     instructionRegister = 0;
                 }break;
                 case 'x':{
-                    execute(RUN_END);
+                    execute(RUN);
                     while(program_run){
                         execute(fetch());
                     }
@@ -218,11 +227,10 @@ int main(){
 
 
                 default:
-                    UART_println("Invalid function");
+                    UART_print_char('!');
             }
             UART_println("OK");
 
-            // _delay_ms(100);
             for(uint8_t i = 0; i <= readSize; i++)
                 string[i] = '\0';
             readSize = 0;

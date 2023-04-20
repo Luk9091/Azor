@@ -25,7 +25,8 @@
 enum INS{
     // instrukcje specjalne
     NOP             = 0b0000 <<4 | 0b0000,
-    RUN_END         = 0b0000 <<4 | 0b0001,
+    END             = 0b0000 <<4 | 0b0001,
+    RUN             = 0b0111 <<4 | 0b1011,
     SLEEP           = 0b0000 <<4 | 0b0010,
     PROG_INNER_EEPROM=0b0000 <<4 | 0b0011, //Programowanie odbywa się po UART
 

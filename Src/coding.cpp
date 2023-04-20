@@ -22,7 +22,7 @@ struct Stack{
 
         return stack[pointer];
     }
-}stack;
+} stack;
 
 void program(uint16_t address, uint8_t data){
     // eeprom_write((uint8_t*)address, data);
@@ -52,12 +52,8 @@ void program(uint8_t data){
 
 uint8_t fetch(){
     uint8_t data;
-    if(program_run){
-        data = EEPROM_read(instructionRegister);
-        ++instructionRegister;
-    }else{
-        data = find_int(1);
-    }
+    data = EEPROM_read(instructionRegister);
+    ++instructionRegister;
     return data;
 }
 
@@ -80,18 +76,23 @@ void execute(uint8_t instruction){
     UART_println("");
     
     switch(instruction){
-        case NOP: return;
-        case RUN_END:{ program_run = !program_run;} return;
+        case NOP:  return;
+        case END:{ program_run = false; } return;
+        case RUN:{ program_run = true;  }return;
 
         case SLEEP:{
             // Sleep function
         } return;
 
         case PROG_INNER_EEPROM:{
-            uint16_t address = find_int(1);
-            uint8_t data = find_int(2);
-
-            program(address, data);
+            while(true){
+                uint8_t data = find_int();
+                if(data == PROG_INNER_EEPROM){
+                    break;
+                }
+                program(data);
+            }
+            instructionRegister = 0;
         } return;
 
         case INNER_EEPROM_READ...(INNER_EEPROM_READ+3):{
@@ -101,10 +102,14 @@ void execute(uint8_t instruction){
 
         case I2C_EEPROM_WRITE...(I2C_EEPROM_WRITE+3):{
             EEPROM_I2C_write(eeprom_address, reg[regAdr]);
+            EEPROM_I2C_write(eeprom_address, reg[regAdr]>>8);
             ++eeprom_address;
         }return;
         case I2C_EEPROM_READ...(I2C_EEPROM_READ+3):{
             reg[regAdr] = EEPROM_I2C_read(eeprom_address);
+            reg[regAdr] <<= 8;
+            --eeprom_address;
+            reg[regAdr] |= EEPROM_I2C_read(eeprom_address); 
             --eeprom_address;
         }return;
         case SET_EEPROM_ADR...(SET_EEPROM_ADR+3):{
@@ -114,10 +119,12 @@ void execute(uint8_t instruction){
 
 
         case LDR...(LDR+3):{
-            reg[regAdr] = fetch();
             if(program_run){
+                reg[regAdr] = fetch();
                 reg[regAdr] <<= 8;
                 reg[regAdr] |= fetch();
+            } else {
+                reg[regAdr] = find_int(1);
             }
         } return;
 
@@ -187,6 +194,7 @@ void execute(uint8_t instruction){
         } return;
         case RET:{
             instructionRegister = stack.POP();
+            ++instructionRegister;
         } return;
 
         case ACC_READ...(ACC_READ+3):{
