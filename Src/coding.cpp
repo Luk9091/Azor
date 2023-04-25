@@ -78,7 +78,6 @@ void execute(uint8_t instruction){
     switch(instruction){
         case NOP:  return;
         case END:{ program_run = false; } return;
-        case RUN:{ program_run = true;  }return;
 
         case SLEEP:{
             // Sleep function
@@ -175,6 +174,9 @@ void execute(uint8_t instruction){
             reg[regAdr] >>= 8;
         } return;
 
+        case INC:{
+            ++reg[regAdr];
+        } return;
 
         case PUSH...(PUSH+3):{
             stack.PUSH(reg[regAdr]);
@@ -183,9 +185,8 @@ void execute(uint8_t instruction){
             reg[regAdr] = stack.POP();
         } return;
 
-        case JUMP_TO_ADR:{
-            instructionRegister = (fetch() << 8);
-            instructionRegister |= fetch();
+        case JUMP_WITH_ADD:{
+            instructionRegister += fetch();
         } return;
         case CALL:{
             stack.PUSH(instructionRegister);
@@ -208,15 +209,29 @@ void execute(uint8_t instruction){
         }
 
 
-        case ENGINE_FORWARD...(ENGINE_FORWARD+3):{
-            move_forward(reg[regAdr]);
+        case ENGINE_FORWARD:{
+            move_forward(true);
         }return;
-        case ENGINE_LEFT...(ENGINE_LEFT+3):{
-            LEFT_forward(reg[regAdr]);
+        case ENGINE_BACKWARD:{
+            move_forward(false);
         }return;
-        case ENGINE_RIGHT...(ENGINE_RIGHT+3):{
-            RIGHT_forward(reg[regAdr]);
+        case ENGINE_STOP:{
+            move_stop();
         }return;
+
+        case ENGINE_LEFT_FORWARD:{
+            LEFT_forward(true);
+        }return;
+        case ENGINE_RIGHT_FORWARD:{
+            RIGHT_forward(true);
+        }return;
+        case ENGINE_LEFT_BACKWARD:{
+            LEFT_forward(false);
+        }return;
+        case ENGINE_RIGHT_BACKWARD:{
+            RIGHT_forward(false);
+        }return;
+        
         case ENGINE_ROTATE...(ENGINE_ROTATE+3):{
             move_rotate(reg[regAdr]);
         }return;

@@ -7,8 +7,9 @@ uint8_t FIFO_counter = 0;
 
 ISR(INT0_vect){
     FIFO[FIFO_counter] = ACC_readAxis(X_AXIS_REG);
-    ++FIFO_counter;
-
+    if(FIFO_counter < 50)
+        ++FIFO_counter;
+    // if ()
 
     // uint8_t read = ACC_readRegister(0x16);
     // if(read & (1 << 1)){

@@ -44,29 +44,18 @@
 
 
 
-// void readFifo(){
-//     UART_println("Read FIFO:");
+void readFifo(){
+    UART_println("Read FIFO:");
 
-//     for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
-//         UART_print(innerCounter);
-//         UART_print(".\t");
-//         UART_println(FIFO[innerCounter]);
-//     }
+    for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
+        UART_print(innerCounter);
+        UART_print(".\t");
+        UART_println(FIFO[innerCounter]);
+    }
     
-//     UART_println("END reading");
-//     FIFO_counter = 0;
-// }
-//     UART_println("Read FIFO:");
-
-//     for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
-//         UART_print(innerCounter);
-//         UART_print(".\t");
-//         UART_println(FIFO[innerCounter]);
-//     }
-    
-//     UART_println("END reading");
-//     FIFO_counter = 0;
-// }
+    UART_println("END reading");
+    FIFO_counter = 0;
+}
 
 
 
@@ -185,7 +174,8 @@ int main(){
             //     }break;
 
                 case 'r':
-                    // readFifo();
+                    readFifo();
+                    UART_println("\n\n");
                     UART_print("EEPROM address: ");
                     UART_println(eeprom_address);
                     UART_println("General purpose register:");
@@ -215,7 +205,8 @@ int main(){
                     instructionRegister = 0;
                 }break;
                 case 'x':{
-                    execute(RUN);
+                    // execute(RUN);
+                    program_run = true;
                     while(program_run){
                         execute(fetch());
                     }

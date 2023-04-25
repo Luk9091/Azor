@@ -34,39 +34,30 @@ void ENGINE_enable(bool enable){
     if(enable){
         PORTD |=  1 << ENABLE_PIN;
     }else{
-        PORTD &= ~1 << ENABLE_PIN;
+        PORTD &= ~(1 << ENABLE_PIN);
     }
 }
 
-void move_forward(int8_t distance){
-    uint8_t measure = 0;
+void move_forward(bool direction){
     ENGINE_enable(0);
-    if(distance >= 0){
+    if(direction){
         PORTB |= 1 << LEFT_UP_PIN | 1 << RIGHT_UP_PIN;
     }else{
         PORTB |= 1 << LEFT_DOWN_PIN | 1 <<RIGHT_DOWN_PIN;
-        distance = ~distance+1;
     }
     ENGINE_enable(1);
-    UART_println(distance);
-
-    while(distance){
-        measure += calculate_distance();
-        if(distance == measure){
-            move_stop();
-            break;
-        }
-    }
 }
 
 void move_rotate(int8_t angle){
     uint8_t measure = 0;
+    ENGINE_enable(false);
     if(angle >= 0){
         PORTB |= 1 << LEFT_DOWN_PIN | 1 << RIGHT_UP_PIN;
     }else{
         PORTB |= 1 << LEFT_UP_PIN | 1 << RIGHT_DOWN_PIN;
         angle = ~angle + 1;
     }
+    ENGINE_enable();
 
     while(angle){
         measure += calculate_distance();
@@ -79,45 +70,24 @@ void move_rotate(int8_t angle){
 
 
 void move_stop(){
+    ENGINE_enable(0);
     PORTB &= ~(1 << LEFT_UP_PIN | 1 << LEFT_DOWN_PIN
             | 1 << RIGHT_UP_PIN | 1 << RIGHT_DOWN_PIN);
 }
 
 
-void LEFT_forward(int8_t distance){
-    uint8_t measure = 0;
-    if(distance >= 0){
+void LEFT_forward(bool direction){
+    if(direction){
         PORTB |= 1 << LEFT_UP_PIN;
     }else{
         PORTB |= 1 << LEFT_DOWN_PIN;
-        distance = ~distance+1;
     }
-
-    while (distance)
-    {
-        measure += calculate_distance();
-        if(distance == measure){
-            move_stop();
-            break;
-        }
-    }   
 }
 
-void RIGHT_forward(int8_t distance){
-    uint8_t measure = 0;
-    if(distance >= 0){
+void RIGHT_forward(bool direction){
+    if(direction){
         PORTB |= 1 << RIGHT_UP_PIN;
     }else{
         PORTB |= 1 << RIGHT_DOWN_PIN;
-        distance = ~distance+1;
     }
-
-    while (distance)
-    {
-        measure += calculate_distance();
-        if(distance == measure){
-            move_stop();
-            break;
-        }
-    }   
 }
