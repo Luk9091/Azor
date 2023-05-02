@@ -10,33 +10,58 @@ EEPROM
 
 Operacje na rejestrach:
 016 - 019.	LDR - load data to reg
-020 - 023.	IF value in reg is not 0
-024 - 027.	JUMP to address from reg and reg+1
-028 - 031.	NOT value in reg
+
+IF:
+020 - 023.	JUMP IF value in reg is not 0
+024 - 027.	JUMP IF value in reg is 0
+160 - 163.  JUMP IF LOW than reg
+164 - 167.  JUMP IF GREAT then reg
+168 - 171.  JUMP IF EQUAL OR LOW
+172 - 175.  JUMP IF EQUAL OR GREAT
 
 ALU:
-032 - 047.	ADD Rd + Rr = Rd
-048 - 063.	SUB Rd - Rr = Rd
+028 - 031.	NOT value in reg
 
-064 - 079.	OR  Rd || Rr = Rd
-080 - 095.	AND Rd && Rr = Rd
-096 - 111.	XOR Rd ^  Rr = Rd
+032 - 047.	ADD Rd + Rr : Rd
+048 - 063.	SUB Rd - Rr : Rd
+
+064 - 079.	OR  Rd | Rr : Rd
+080 - 095.	AND Rd & Rr : Rd
+096 - 111.	XOR Rd ^ Rr : Rd
 
 Stack:
 112 - 115.	PUSH reg
 116 - 119.	POP to reg
-120 - 123.	PUSH 2 reg: reg and reg+1
-124 - 127.	POP 2 reg: reg+1 and reg
+120.	    JUMP WITH ADD from mem, first high, next low
+121.        CALL to address from memory
+122.        RET from subroutine
+124 - 127.  SET EEPROM ADDRESS (high) reg + 1 (low) reg 
+
+128 - 131.  SHIFT LEFT    reg
+132 - 135.  SHIFT RIGHT   reg
+136 - 139.  SHIFT 8 LEFT  reg
+140 - 143.  SHIFT 8 RIGHT reg
 
 Acc:
-128 - 131.	READ from 2 register and save it in reg and reg + 1
-132 - 135.	WRITE to register from address in reg data from reg +1 
-144.		CAL transition on axis in reg and return value in reg and reg + 1
+144 - 147.	READ from register and save it in reg. As address take value from reg
+148 - 151.  READ AXIS to read AXIS or read from FIFO, save data (low) in reg and (high) in reg + 1. First register read send via reg
+152 - 155.	WRITE to register from address in reg data from reg +1 
+156 - 159.	CAL transition on axis in reg and return value in reg and reg + 1
+
 
 Engine:
-192 - 195.	FORWARD MSB - signed dir, and distance on 6-0b
-196 - 199.	LEFT	MSB - signed dir, and time on 6-0b
-200 - 203.	RIGHT 	MSB - signed dir, and time on 6-0b
+192.	    FORWARD
+193.	    BACKWARD
+195.        STOP
+
+196.    	LEFT FORWARD
+197.        LEFT BACKWARD
+198.        RIGHT FORWARD
+199.        RIGHT BACKWARD
+
+
+200 - 203.  INC reg
+
 204 - 207.	ROTATE	MSB - signed dir, and angle on 6-0b
 
 TIMER:
@@ -45,22 +70,28 @@ TIMER:
 216 - 219.	READ return counter value
 220 - 223.	WAIT delay reg ms
 
+224 - 227.  LED in out reg
+
 ULTRASONIC:
-228 - 231.	MEASURE return in (low in) reg and (high) reg + 1
+228 - 231.	MEASURE return (low) in reg and (high) reg + 1
 232 - 235.	ROTATE angle from reg
 236 - 239.	BACK SENSOR READ to reg
 
 
 UART & BT
-240 - 243.	BT enable
-244 - 247.	UART SEND from reg
-248 - 252.	UART READ to reg
+240 - 243.	UART READ to reg
+244 - 248.	UART SEND from reg
+248 - 251.  UART SEND INT from (low) reg and (high) reg + 1
+
+
+
+252 - 255.	DEVICE ENABLE reg
+
 
 
 Wolne adresu:
-136 - 143 -- 2 ins
-148 - 191 -- 11 ins
-224 - 227 -- 1 ins
-252 - 255 -- 1 ins
+194 
+123
+176 - 192
 
-Empty INST: 15
+Empty INST: 
