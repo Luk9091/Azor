@@ -1,9 +1,10 @@
 #include "coding.hpp"
 
 bool program_run = false;
-uint16_t eeprom_address = 0;
-uint16_t instructionRegister = 0;
-int16_t reg[4] = {0, 0, 0, 0};
+// uint16_t eeprom_address = 0;
+// uint16_t instructionRegister = 0;
+// int16_t reg[4] = {0, 0, 0, 0};
+// REGISTER reg.U[4] = {0, 0, 0, 0};
 
 struct Stack{
     #define STACK_SIZE 16
@@ -60,20 +61,20 @@ uint8_t fetch(){
 
 
 void execute(uint8_t instruction){
-    uint8_t regAdr = instruction & 0x03;
+    register uint8_t regAdr = instruction & 0x03;
 
-    UART_print("Instruction register adr: ");
-    UART_println(instructionRegister, 10);
+    // UART_print("Instruction register adr: ");
+    // UART_println(instructionRegister, 10);
 
-    UART_print("Instruction: ");
-    UART_println(instruction);
+    // UART_print("Instruction: ");
+    // UART_println(instruction);
 
-    UART_print("Register: ");
-    UART_println(regAdr);
+    // UART_print("Register: ");
+    // UART_println(regAdr);
 
-    UART_print("Data in reg: ");
-    UART_println(reg[regAdr]);
-    UART_println("");
+    // UART_print("Data in reg: ");
+    // UART_println(reg[regAdr]);
+    // UART_println("");
     
     switch(instruction){
         case NOP:  return;
@@ -95,7 +96,16 @@ void execute(uint8_t instruction){
         } return;
 
         case INNER_EEPROM_READ...(INNER_EEPROM_READ+3):{
-            reg[regAdr] = EEPROM_read(eeprom_address);
+            if(program_run){
+                reg[regAdr] = EEPROM_read(eeprom_address);
+            }else{
+                UART_print("Address: ");
+                UART_print(eeprom_address);
+                UART_print("\tdata: ");
+                uint8_t data = EEPROM_read(eeprom_address);
+                UART_println(data, 10);
+            }
+
             --eeprom_address;
         }  return;
 
@@ -127,50 +137,66 @@ void execute(uint8_t instruction){
             }
         } return;
 
-        case SKIP_IF...(SKIP_IF+3):{
-            if(reg[regAdr])
-                ++instructionRegister;
+        case JUMP_IF...(JUMP_IF+3):{
+            if(reg[regAdr]){
+                instructionRegister = (fetch() << 8);
+                instructionRegister |= fetch()
+            }
+        } return;
+        
+        case JUMP_IF_NOT...(JUMP_IF_NOT+3):{
+            if(!reg[regAdr]){
+                instructionRegister = (fetch() << 8);
+                instructionRegister |= fetch()
+            }
         } return;
 
-        case JUMP...(JUMP+3):{
-            instructionRegister = reg[regAdr];
-        } return;
+        case JUMP_IF_LOW...(JUMP_IF_LOW+3):{
+            uint16_t data = fetch() << 8;
+            data |= fetch();
+            if(reg[regAdr] < data){
+                instructionRegister = (fetch() << 8);
+                instructionRegister |= fetch()
+            }
+        }
+
+
 
         case NOT...(NOT+3):{
             reg[regAdr] = !reg[regAdr];
         } return;
 
         case ADD...(ADD+15):{
-            reg[regAdr] = reg[instruction & (0x0C) >> 2] + reg[regAdr];
+            reg[(instruction & (0x0C)) >> 2] = reg[(instruction & (0x0C)) >> 2] + reg[regAdr];
         } return;
 
         case SUB...(SUB+15):{
-            reg[regAdr] = reg[instruction & (0x0C) >> 2] - reg[regAdr];
+            reg[(instruction & (0x0C)) >> 2] = reg[(instruction & (0x0C)) >> 2] - reg[regAdr];
         } return;
 
-        case OR...(OR+3):{
-            reg[regAdr] = reg[instruction & (0x0C) >> 2] | reg[regAdr];
+        case OR...(OR+15):{
+            reg[(instruction & (0x0C)) >> 2] = reg[(instruction & (0x0C)) >> 2] | reg[regAdr];
         } return;
 
-        case AND...(AND+3):{
-            reg[regAdr] = reg[instruction & (0x0C) >> 2] & reg[regAdr];
+        case AND...(AND+15):{
+            reg[(instruction & (0x0C)) >> 2] = reg[(instruction & (0x0C)) >> 2] & reg[regAdr];
         } return;
 
-        case XOR...(XOR+3):{
-            reg[regAdr] = reg[instruction & (0x0C) >> 2] ^ reg[regAdr];
+        case XOR...(XOR+15):{
+            reg[(instruction & (0x0C)) >> 2] = reg[(instruction & (0x0C)) >> 2] ^ reg[regAdr];
         } return;
 
-        case SHIFT_LEFT:{
+        case SHIFT_LEFT...(SHIFT_LEFT+3):{
             reg[regAdr] <<= 1;
         } return;
-        case SHIFT_RIGHT:{
+        case SHIFT_RIGHT...(SHIFT_RIGHT+3):{
             reg[regAdr] >>= 1;
         } return;
 
-        case SHIFT_8LEFT:{
+        case SHIFT_8LEFT...(SHIFT_8LEFT+3):{
             reg[regAdr] <<= 8;
         } return;
-        case SHIFT_8RIGHT:{
+        case SHIFT_8RIGHT...(SHIFT_8RIGHT+3):{
             reg[regAdr] >>= 8;
         } return;
 
@@ -185,7 +211,7 @@ void execute(uint8_t instruction){
             reg[regAdr] = stack.POP();
         } return;
 
-        case JUMP_WITH_ADD:{
+        case JUMP_TO_ADD:{
             instructionRegister += fetch();
         } return;
         case CALL:{
@@ -241,7 +267,9 @@ void execute(uint8_t instruction){
         }return;
 
         case LED...(LED+3):{
-            if(reg[regAdr] & (0xFF00)){
+            if(reg[regAdr] == 0xFFFF){
+                LED_PORT ^= LED_PIN_num;
+            } else if(reg[regAdr] & (0xFF00)){
                 reg[regAdr] = (LED_PIN & LED_PIN_num);
             } else if(reg[regAdr] & 0x00FF){
                 LED_PORT |= LED_PIN_num;
@@ -255,7 +283,7 @@ void execute(uint8_t instruction){
             reg[regAdr] = SONIC_measure();
         }return;
         case ULTRASONIC_ROTATE...(ULTRASONIC_ROTATE+3):{
-            PWM_setDuty(((uint8_t)reg[regAdr] * 0.3333F) + 12);
+            PWM_setDuty(((uint8_t)reg[regAdr] * 0.3333F) + 13);
         }return;
 
 
@@ -265,7 +293,7 @@ void execute(uint8_t instruction){
         }return;
         
         case UART_SEND...(UART_SEND+3):{
-            UART_print_char(reg[regAdr]);
+            UART_print_char(fetch());
         } return;
         case UART_SEND_INT...(UART_SEND_INT+3):{
             UART_println(reg[regAdr], 10);

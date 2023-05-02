@@ -17,6 +17,18 @@
 #define LED_PORT    PORTD
 #define LED_PIN     PIND
 
+
+#define LOW 0
+#define HIGH 1
+
+// union REGISTER{
+//     uint16_t U;
+//     int16_t  S;
+//     uint8_t  Byte[2];
+// };
+
+
+
 // Instrukcje interpretowane przez uP:
 // 0b xxxx yyaa <- 8bitowa liczba
 //      xxxx yy -- adres urządzenia
@@ -30,14 +42,21 @@ enum INS{
 
     PROG_INNER_EEPROM=0b0000 <<4 | 0b0011, //Programowanie odbywa się po UART
     // Operacje na dwóch rejestrach, odpowiednio R0 i R1 lub R2 i R3
-    INNER_EEPROM_READ     = 0b0000 <<4 | 0b1100,
+    INNER_EEPROM_READ= 0b0000 <<4 | 0b1100,
     
-    I2C_EEPROM_WRITE      = 0b0000 <<4 | 0b0100,
-    I2C_EEPROM_READ       = 0b0000 <<4 | 0b1000,
+    I2C_EEPROM_WRITE = 0b0000 <<4 | 0b0100,
+    I2C_EEPROM_READ  = 0b0000 <<4 | 0b1000,
 
     LDR              = 0b0001 <<4 | 0b0000,
-    SKIP_IF          = 0b0001 <<4 | 0b0100,
-    JUMP             = 0b0001 <<4 | 0b1000,
+
+    JUMP_IF          = 0b0001 <<4 | 0b0100,
+    JUMP_IF_NOT      = 0b0001 <<4 | 0b1000,
+
+    JUMP_IF_LOW     = 160,
+    JUMP_IF_GREAT   = 164,
+    JUMP_IF_LOW_E   = 168,
+    JUMP_IF_GREAT_E = 172,
+
     NOT              = 0b0001 <<4 | 0b1100, 
 
     ADD             = 0b0010 <<4,//|RdRr
@@ -53,7 +72,7 @@ enum INS{
     PUSH            = 0b0111 <<4 | 0b0000,
     POP             = 0b0111 <<4 | 0b0100,
 
-    JUMP_WITH_ADD   = 0b0111 <<4 | 0b1000,
+    JUMP_TO_ADD   = 0b0111 <<4 | 0b1000,
     CALL            = 0b0111 <<4 | 0b1001,
     RET             = 0b0111 <<4 | 0b1010,
 

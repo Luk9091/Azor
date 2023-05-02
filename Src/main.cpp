@@ -196,10 +196,16 @@ int main(){
                         UART_print(eepromAddress);
                         UART_print(". ");
                         while(readSize == 0) _delay_ms(10);
-                        if(string[0] == 'e')
+                        
+
+                        if(string[0] == 'e'){
                             break;
-                        program(eepromAddress, find_int());
-                        ++eepromAddress;
+                        }else if(string[0] == '.'){
+                            eepromAddress = find_int();
+                        }else{
+                            program(eepromAddress, find_int());
+                            ++eepromAddress;
+                        }
                         readSize = 0;
                     }
                     instructionRegister = 0;
