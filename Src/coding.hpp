@@ -29,7 +29,7 @@ enum INS{
     // instrukcje specjalne
     NOP             = 0b0000 <<4 | 0b0000,
     END             = 0b0000 <<4 | 0b0001,
-    SLEEP           = 0b0000 <<4 | 0b0010,
+    GO_SLEEP        = 0b0000 <<4 | 0b0010,
 
     PROG_INNER_EEPROM=0b0000 <<4 | 0b0011, //Programowanie odbywa się po UART
     // Operacje na dwóch rejestrach, odpowiednio R0 i R1 lub R2 i R3
@@ -63,7 +63,7 @@ enum INS{
     PUSH            = 0b0111 <<4 | 0b0000,
     POP             = 0b0111 <<4 | 0b0100,
 
-    JUMP_TO_ADD   = 0b0111 <<4 | 0b1000,
+    JUMP            = 0b0111 <<4 | 0b1000,
     CALL            = 0b0111 <<4 | 0b1001,
     RET             = 0b0111 <<4 | 0b1010,
 

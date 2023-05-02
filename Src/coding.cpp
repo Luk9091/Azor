@@ -79,7 +79,7 @@ void execute(uint8_t instruction){
         case NOP:  return;
         case END:{ program_run = false; } return;
 
-        case SLEEP:{
+        case GO_SLEEP:{
             // Sleep function
         } return;
 
@@ -157,7 +157,32 @@ void execute(uint8_t instruction){
                 instructionRegister = (fetch() << 8);
                 instructionRegister |= fetch();
             }
-        }
+        } return;
+        case JUMP_IF_GREAT...(JUMP_IF_GREAT+3):{
+            uint16_t data = fetch() << 8;
+            data |= fetch();
+            if(reg[regAdr] > data){
+                instructionRegister = (fetch() << 8);
+                instructionRegister |= fetch();
+            }
+        } return;
+
+        case JUMP_IF_LOW_E...(JUMP_IF_LOW_E+3):{
+            uint16_t data = fetch() << 8;
+            data |= fetch();
+            if(reg[regAdr] <= data){
+                instructionRegister = (fetch() << 8);
+                instructionRegister |= fetch();
+            }
+        } return;
+        case JUMP_IF_GREAT_E...(JUMP_IF_GREAT_E+3):{
+            uint16_t data = fetch() << 8;
+            data |= fetch();
+            if(reg[regAdr] >= data){
+                instructionRegister = (fetch() << 8);
+                instructionRegister |= fetch();
+            }
+        } return;
 
 
 
@@ -210,8 +235,9 @@ void execute(uint8_t instruction){
             reg[regAdr] = stack.POP();
         } return;
 
-        case JUMP_TO_ADD:{
-            instructionRegister += fetch();
+        case JUMP:{
+            instructionRegister = fetch() << 8;
+            instructionRegister |= fetch();
         } return;
         case CALL:{
             stack.PUSH(instructionRegister);
