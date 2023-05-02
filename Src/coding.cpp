@@ -1,10 +1,9 @@
 #include "coding.hpp"
 
 bool program_run = false;
-// uint16_t eeprom_address = 0;
-// uint16_t instructionRegister = 0;
-// int16_t reg[4] = {0, 0, 0, 0};
-// REGISTER reg.U[4] = {0, 0, 0, 0};
+uint16_t eeprom_address = 0;
+uint16_t instructionRegister = 0;
+int16_t reg[4] = {0, 0, 0, 0};
 
 struct Stack{
     #define STACK_SIZE 16
@@ -140,14 +139,14 @@ void execute(uint8_t instruction){
         case JUMP_IF...(JUMP_IF+3):{
             if(reg[regAdr]){
                 instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch()
+                instructionRegister |= fetch();
             }
         } return;
         
         case JUMP_IF_NOT...(JUMP_IF_NOT+3):{
             if(!reg[regAdr]){
                 instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch()
+                instructionRegister |= fetch();
             }
         } return;
 
@@ -156,7 +155,7 @@ void execute(uint8_t instruction){
             data |= fetch();
             if(reg[regAdr] < data){
                 instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch()
+                instructionRegister |= fetch();
             }
         }
 

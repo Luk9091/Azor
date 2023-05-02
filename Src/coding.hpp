@@ -18,15 +18,6 @@
 #define LED_PIN     PIND
 
 
-#define LOW 0
-#define HIGH 1
-
-// union REGISTER{
-//     uint16_t U;
-//     int16_t  S;
-//     uint8_t  Byte[2];
-// };
-
 
 
 // Instrukcje interpretowane przez uP:
