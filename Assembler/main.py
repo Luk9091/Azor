@@ -1,4 +1,4 @@
-import serial
+import sys
 
 MAX_EEPROM_SPACE = 512
 
@@ -20,8 +20,8 @@ INSTRUCTION = {
 
 
     "LDR"                   : [0b0001 <<4 | 0b0000, 1, 1],
-    "SKIP_IF"               : [0b0001 <<4 | 0b0100, 1, 0],
-    "JUMP"                  : [0b0001 <<4 | 0b1000, 0, 1],
+    "JUMP_IF_EQ"            : [0b0001 <<4 | 0b0100, 1, 1],
+    "JUMP_IF_LOW"           : [0b0001 <<4 | 0b1000, 1, 1],
     "NOT"                   : [0b0001 <<4 | 0b1100, 1, 0],
 
 
@@ -86,7 +86,7 @@ INSTRUCTION = {
     "BACK_SENSOR_READ"      : [0b1110 <<4 | 0b1100, 1, 0],
 
     "UART_READ"             : [0b1111 <<4 | 0b0000, 1, 0],
-    "UART_SEND"             : [0b1111 <<4 | 0b0100, 1, 0],
+    "UART_SEND"             : [0b1111 <<4 | 0b0100, 0, 1],
     "UART_SEND_INT"         : [0b1111 <<4 | 0b1000, 1, 0],
     
     "DEVICE_ENABLE"         : [0b1111 <<4 | 0b1100, 1, 0],
@@ -104,13 +104,11 @@ REGISTER = {
 FUNCTION_POINTER = {}
 memoryAddress = 0
 
+path = ""
 
 
-
-
-def writeToEEPROM(number):
-    # print(number)
-    pass
+def writeToFile(number):
+    file.write(str(number)+"\n")
 
 def addFunction(line = 0, cmd = ""):
     cmd = cmd [:-1]
@@ -121,8 +119,8 @@ def addFunction(line = 0, cmd = ""):
     FUNCTION_POINTER[cmd] = memoryAddress
     return 0
 
-
-
+def changeAddress(newAddress):
+    file.write(str(newAddress)+'\n')
 
 def cal(line = 0, cmd = ""):
     if len(cmd) <= 0:
@@ -130,9 +128,11 @@ def cal(line = 0, cmd = ""):
         return -1
     cmd = cmd.split(' ')
 
-    ins = cmd[0]
+    ins = cmd[0].upper()
+    if ins == "STOP":
+        return -2
+
     reg = ["R0", "R0"]
-    expectReg = 0
     data = list()
 
     if not ins in INSTRUCTION:
@@ -142,10 +142,10 @@ def cal(line = 0, cmd = ""):
     asm = INSTRUCTION[ins][0]
 
     for i in range(1, INSTRUCTION[ins][1]+1):
-        expectReg = expectReg + 1
         if len(cmd) <= i:
-            print(f"Invalid number of args in line: {line}.\nExpect {INSTRUCTION[ins][1]} registers not {i-1}.")
+            print(f"Invalid number of args in line: {line}.\nExpect {INSTRUCTION[ins][1]+INSTRUCTION[ins][2]} registers not {i-1}.")
             return -1
+        cmd[i] = cmd[i].upper()
         if not cmd[i][0] == 'R':
             print(f"Invalid argument in line: {line}.\nExpect REGISTER")
             return -1
@@ -154,39 +154,49 @@ def cal(line = 0, cmd = ""):
                 print(f"Invalid number of register in line: {line}.\nExpect REGISTER from 0 to 3")
                 return -1
         reg[i-1] = cmd[i]
+        asm = asm + (REGISTER[cmd[i]] << (2*(INSTRUCTION[ins][1] - i)))
     
-    asm = asm + (REGISTER[reg[0]]) + (REGISTER[reg[1]] << 2)
+    # asm = asm + (REGISTER[reg[0]]) + (REGISTER[reg[1]] * 4)
 
-    for i in range(1+expectReg, INSTRUCTION[ins][2]+1+expectReg):
+    for i in range(1+INSTRUCTION[ins][1], INSTRUCTION[ins][2]+1+INSTRUCTION[ins][1]):
         if len(cmd) <= i:
-            print(f"Invalid number of args in line: {line}.\nExpect {INSTRUCTION[ins][1]} not {i-1}.")
+            print(f"Invalid number of args in line: {line}.\nExpect {INSTRUCTION[ins][1]+INSTRUCTION[ins][2]} not {i-1}.")
             return -1
         
         if cmd[i] in REGISTER:
             print(f"Invalid argument in line: {line}.\nExpect VALUE")
             return -1
+
         if not cmd[i].isdigit():
-            if cmd[i] in FUNCTION_POINTER:
+            if cmd[i][0] == """'""":
+                data.append(ord(cmd[i][1]))
+                continue
+            elif cmd[i] in FUNCTION_POINTER:
                 cmd[i] = FUNCTION_POINTER[cmd[i]]
             else:
                 print(f"Invalid name function.\nIn line: {line}")
                 return -1
+        else:
+            base = 10
+            if cmd[i][0:2] == "0B":
+                base = 2
+                cmd[i] = cmd[i][2:]
+            elif cmd[i][0:2] == "0X":
+                base = 16
+                cmd[i] = cmd[i][2:]
+            cmd[i] = int(cmd[i], base)
         
-        base = 10
-        if cmd[i][0:2] == "0B":
-            base = 2
-        elif cmd[i][0:2] == "0X":
-            base = 16
+        # if INSTRUCTION[ins][2] == 2:
+        data.append((cmd[i] & 0xFF00) >> 8)
 
-    
-    data.append((int(cmd[i], base) & 0xFF00) >> 8)
-    data.append((int(cmd[i], base) & 0x00FF))
+        data.append((cmd[i] & 0x00FF))
 
-    writeToEEPROM(asm)
+    writeToFile(asm)
     for i in range(0, len(data)):
-        writeToEEPROM(data[i])
+        writeToFile(data[i])
 
-    return 1+len(data)
+    else:
+        return 1+len(data)
 
 
 
@@ -194,20 +204,72 @@ def cal(line = 0, cmd = ""):
     # if cmd.split(' ').len
 
 
+# def main():
+args = sys.argv
 
+print(args)
+args = args[1:]
 
-while True:
-    data = input(f"{memoryAddress}: ")
-    if data[-1] == ':':
-        data = addFunction(memoryAddress, data)
+while len(args) > 0:
+    if args[0] == '-o':
+        path = args[1]
+        args = args[2:]
     else:
-        data = cal(memoryAddress, data)
+        inputPath = args[0]
+        args = args[1:]
+
+# inputPath = "/home/lukasz/Dokumenty/GitHub/Projekt_mikroprocki/Assembler/main.asm"
+
+if path == "":
+    path = inputPath[0:-4] + ".dec"
+
+
+
+inputFile = open(inputPath, "r")
+file = open(path, 'w')
+file.write("")
+file.close()
+
+
+file = open(path, "+a")
+line = 0
+while file.readable():
+    # data = input(f"{memoryAddress}: ")
+    data = inputFile.readline()
+    if(data == "\n"):
+        continue
+    if(data == ""):
+        break
+    if(data[0] == ";"):
+        continue
+
+    if data[-1] == '\n':
+        data = data[:-1]
+    # if data[0] == '\t':
+    #     data == data [1:]
+
+    if data[-1] == ':':
+        data = addFunction(line, data)
+    elif data[0] == '.':
+        changeAddress(data)
+        continue
+    else:
+        data = cal(line, data)
     
     if data == -1:
         break
+    elif data == 0:
+        # memoryAddress = memoryAddress + 1
+        continue
+    elif data == -2:
+        memoryAddress = memoryAddress + 1
+        break
 
     memoryAddress = memoryAddress + data
+    line = line + 1
     # print(data)
+file.close()
+inputFile.close()
 
 if data != -1:
-    print(f"Memory use: {memoryAddress}/{MAX_EEPROM_SPACE}: {round(memoryAddress/MAX_EEPROM_SPACE*100)}")
+    print(f"Memory use: {memoryAddress}/{MAX_EEPROM_SPACE}: {round(memoryAddress/MAX_EEPROM_SPACE*100)}%")

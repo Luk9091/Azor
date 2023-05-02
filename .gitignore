@@ -9,5 +9,5 @@ main.pdf
 *.out
 *.gz
 *.toc
-*cache*/*
-*/.vscode/*
+*.asm
+*.dec
