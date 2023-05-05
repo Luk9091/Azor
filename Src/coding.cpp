@@ -63,7 +63,7 @@ void execute(uint8_t instruction){
     register uint8_t regAdr = instruction & 0x03;
 
     // UART_print("Instruction register adr: ");
-    // UART_println(instructionRegister, 10);
+    // UART_println(instructionRegister-1);
 
     // UART_print("Instruction: ");
     // UART_println(instruction);
@@ -138,15 +138,21 @@ void execute(uint8_t instruction){
 
         case JUMP_IF...(JUMP_IF+3):{
             if(reg[regAdr]){
-                instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch();
+                register uint16_t temp = fetch() << 8;
+                temp |= fetch();
+                instructionRegister = temp;
+            } else {
+                instructionRegister += 2;
             }
         } return;
         
         case JUMP_IF_NOT...(JUMP_IF_NOT+3):{
             if(!reg[regAdr]){
-                instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch();
+                register uint16_t temp = fetch() << 8;
+                temp |= fetch();
+                instructionRegister = temp;
+            } else {
+                instructionRegister += 2;
             }
         } return;
 
@@ -154,16 +160,22 @@ void execute(uint8_t instruction){
             uint16_t data = fetch() << 8;
             data |= fetch();
             if(reg[regAdr] < data){
-                instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch();
+                register uint16_t temp = fetch() << 8;
+                temp |= fetch();
+                instructionRegister = temp;
+            } else {
+                instructionRegister += 2;
             }
         } return;
         case JUMP_IF_GREAT...(JUMP_IF_GREAT+3):{
             uint16_t data = fetch() << 8;
             data |= fetch();
             if(reg[regAdr] > data){
-                instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch();
+                register uint16_t temp = fetch() << 8;
+                temp |= fetch();
+                instructionRegister = temp;
+            } else {
+                instructionRegister += 2;
             }
         } return;
 
@@ -171,16 +183,22 @@ void execute(uint8_t instruction){
             uint16_t data = fetch() << 8;
             data |= fetch();
             if(reg[regAdr] <= data){
-                instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch();
+                register uint16_t temp = fetch() << 8;
+                temp |= fetch();
+                instructionRegister = temp;
+            } else {
+                instructionRegister += 2;
             }
         } return;
         case JUMP_IF_GREAT_E...(JUMP_IF_GREAT_E+3):{
             uint16_t data = fetch() << 8;
             data |= fetch();
             if(reg[regAdr] >= data){
-                instructionRegister = (fetch() << 8);
-                instructionRegister |= fetch();
+                register uint16_t temp = fetch() << 8;
+                temp |= fetch();
+                instructionRegister = temp;
+            } else {
+                instructionRegister += 2;
             }
         } return;
 
@@ -236,13 +254,15 @@ void execute(uint8_t instruction){
         } return;
 
         case JUMP:{
-            instructionRegister = fetch() << 8;
-            instructionRegister |= fetch();
+            register uint16_t temp= fetch() << 8;
+            temp |= fetch();
+            instructionRegister = temp;
         } return;
         case CALL:{
             stack.PUSH(instructionRegister);
-            instructionRegister = (fetch() << 8);
-            instructionRegister |= fetch();
+            register uint16_t temp = (fetch() << 8);
+            temp |= fetch();
+            instructionRegister = temp;
         } return;
         case RET:{
             instructionRegister = stack.POP();
@@ -308,7 +328,7 @@ void execute(uint8_t instruction){
             reg[regAdr] = SONIC_measure();
         }return;
         case ULTRASONIC_ROTATE...(ULTRASONIC_ROTATE+3):{
-            PWM_setDuty(((uint8_t)reg[regAdr] * 0.3333F) + 13);
+            PWM_setDuty(((uint8_t)reg[regAdr] * 0.3333F) + 19);
         }return;
 
 
