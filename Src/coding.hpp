@@ -18,6 +18,19 @@
 #define LED_PIN     PIND
 
 
+#define HIGH 1
+#define LOW  0
+union REGISTER{
+    uint16_t U;
+    int16_t S;
+    uint8_t Byte[2];
+};
+
+extern bool program_run;
+extern uint16_t instructionRegister;
+extern REGISTER reg[4];
+extern uint16_t eeprom_address;
+
 
 
 // Instrukcje interpretowane przez uP:
@@ -128,10 +141,6 @@ enum DEVICE_ADR{
 };
 
 // uint8_t reg[4];
-extern bool program_run;
-extern uint16_t instructionRegister;
-extern int16_t reg[4];
-extern uint16_t eeprom_address;
 
 
 

@@ -180,13 +180,13 @@ int main(){
                     UART_println(eeprom_address);
                     UART_println("General purpose register:");
                     UART_print("0.\t");
-                    UART_println(reg[0]);
+                    UART_println(reg[0].S);
                     UART_print("1.\t");
-                    UART_println(reg[1]);
+                    UART_println(reg[1].S);
                     UART_print("2.\t");
-                    UART_println(reg[2]);
+                    UART_println(reg[2].S);
                     UART_print("3.\t");
-                    UART_println(reg[3]);
+                    UART_println(reg[3].S);
                 break;
 
                 case 'p':{
