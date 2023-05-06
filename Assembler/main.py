@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys
 
 MAX_EEPROM_SPACE = 512
@@ -20,8 +21,15 @@ INSTRUCTION = {
 
 
     "LDR"                   : [0b0001 <<4 | 0b0000, 1, 1],
-    "JUMP_IF_EQ"            : [0b0001 <<4 | 0b0100, 1, 1],
-    "JUMP_IF_LOW"           : [0b0001 <<4 | 0b1000, 1, 1],
+    "JUMP_IF"               : [0b0001 <<4 | 0b0100, 1, 1],
+    "JUMP_IF_NOT"           : [0b0001 <<4 | 0b1000, 1, 1],
+
+    "JUMP_IF_LOW"           : [16, 1, 2],
+    "JUMP_IF_GREAT"         : [16, 1, 2],
+    "JUMP_IF_LOW_E"         : [16, 1, 2],
+    "JUMP_IF_GREAT_E"       : [16, 1, 2],
+
+
     "NOT"                   : [0b0001 <<4 | 0b1100, 1, 0],
 
 
@@ -38,7 +46,7 @@ INSTRUCTION = {
     "PUSH"                  : [0b0111 <<4 | 0b0000, 1, 0],
     "POP"                   : [0b0111 <<4 | 0b0100, 1, 0],
 
-    "JUMP_TO_ADD"           : [0b0111 <<4 | 0b1000, 0, 1],
+    "JUMP"                  : [0b0111 <<4 | 0b1000, 0, 1],
     "CALL"                  : [0b0111 <<4 | 0b1001, 0, 1],
     "RET"                   : [0b0111 <<4 | 0b1010, 0, 0],
 
@@ -166,6 +174,10 @@ def cal(line = 0, cmd = ""):
         if cmd[i] in REGISTER:
             print(f"Invalid argument in line: {line}.\nExpect VALUE")
             return -1
+        mux = 1
+        if cmd[i][0] == '-':
+            mux = -1
+            cmd[i] = cmd[i][1:]
 
         if not cmd[i].isdigit():
             if cmd[i][0] == """'""":
@@ -184,7 +196,7 @@ def cal(line = 0, cmd = ""):
             elif cmd[i][0:2] == "0X":
                 base = 16
                 cmd[i] = cmd[i][2:]
-            cmd[i] = int(cmd[i], base)
+            cmd[i] = int(int(cmd[i], base)*mux)
         
         # if INSTRUCTION[ins][2] == 2:
         data.append((cmd[i] & 0xFF00) >> 8)
@@ -218,7 +230,7 @@ while len(args) > 0:
         inputPath = args[0]
         args = args[1:]
 
-# inputPath = "/home/lukasz/Dokumenty/GitHub/Projekt_mikroprocki/Assembler/main.asm"
+inputPath = "/home/lukasz/Dokumenty/GitHub/Projekt_mikroprocki/Assembler/main.asm"
 
 if path == "":
     path = inputPath[0:-4] + ".dec"
@@ -240,6 +252,10 @@ while file.readable():
         continue
     if(data == ""):
         break
+    
+    while (data[0] == ' '):
+        data = data[1:]
+
     if(data[0] == ";"):
         continue
 
