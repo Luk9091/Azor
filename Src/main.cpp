@@ -254,7 +254,7 @@ int main(){
                         stopMsg = 0;
                     }
                     instructionRegister = 0;
-                    UART_DISABLE_INTERRUPT_RX;
+                    UART_ENABLE_INTERRUPT_TX;
 
 
                 }break;
