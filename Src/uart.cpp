@@ -145,6 +145,9 @@ uint8_t UART_read(char *buf, uint8_t buf_size, char terminator){
             ++count;
         }
     }while(c != terminator && count < buf_size);
+    for(int8_t i = count; i < sizeof(string); i++){
+        string[i] = 0;
+    }
 
     return count;
 }
