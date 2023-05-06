@@ -174,8 +174,8 @@ int main(){
             //     }break;
 
                 case 'r':
-                    readFifo();
-                    UART_println("\n\n");
+                    // readFifo();
+                    // UART_println("\n\n");
                     UART_print("EEPROM address: ");
                     UART_println(eeprom_address);
                     UART_println("General purpose register:");
@@ -212,11 +212,51 @@ int main(){
                 }break;
                 case 'x':{
                     // execute(RUN);
+                    UART_DISABLE_INTERRUPT_RX;
                     program_run = true;
                     while(program_run){
                         execute(fetch());
                     }
                     instructionRegister = 0;
+                    UART_ENABLE_INTERRUPT_RX;
+                }break;
+                case 's':{
+                    UART_DISABLE_INTERRUPT_RX;
+                    program_run = true;
+                    
+                    uint8_t ins = 0;
+                    char stopMsg;
+                    while(program_run){
+                        UART_print("Line: ");
+                        UART_print(instructionRegister);
+                        UART_print("\tIns: ");
+                        ins = fetch();
+                        UART_println(ins);
+                        execute(ins);
+
+                        UART_print("EEPROM address: ");
+                        UART_println(eeprom_address);
+                        UART_println("General purpose register:");
+                        UART_print("0.\t");
+                        UART_println(reg[0].S);
+                        UART_print("1.\t");
+                        UART_println(reg[1].S);
+                        UART_print("2.\t");
+                        UART_println(reg[2].S);
+                        UART_print("3.\t");
+                        UART_println(reg[3].S);
+
+                        UART_println("\n");
+
+                        do{
+                            stopMsg = UART_read_char();    
+                        }while(stopMsg != '\n');
+                        stopMsg = 0;
+                    }
+                    instructionRegister = 0;
+                    UART_DISABLE_INTERRUPT_RX;
+
+
                 }break;
                 case 'w':{
                     execute(find_int());
