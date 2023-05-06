@@ -342,7 +342,7 @@ void execute(uint8_t instruction){
             UART_print_char(fetch());
         } return;
         case UART_SEND_INT...(UART_SEND_INT+3):{
-            UART_println(reg[regAdr].Byte[LOW], 10);
+            UART_println(reg[regAdr].S, 10);
         }return;
 
         case DEVICE_ENABLE...(DEVICE_ENABLE+3):{
