@@ -243,7 +243,7 @@ void execute(uint8_t instruction){
             reg[regAdr].U >>= 8;
         } return;
 
-        case INC:{
+        case INC...(INC+3):{
             ++reg[regAdr].U;
         } return;
 
@@ -255,13 +255,13 @@ void execute(uint8_t instruction){
         } return;
 
         case JUMP:{
-            register uint16_t temp = fetch();
+            register uint16_t temp = fetch() << 8;
             temp |= fetch();
             instructionRegister = temp;
         } return;
         case CALL:{
             stack.PUSH(instructionRegister);
-            register uint16_t temp = fetch();
+            register uint16_t temp = fetch() << 8;
             temp |= fetch();
             instructionRegister = temp;
         } return;
