@@ -44,18 +44,18 @@
 
 
 
-void readFifo(){
-    UART_println("Read FIFO:");
+// void readFifo(){
+//     UART_println("Read FIFO:");
 
-    for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
-        UART_print(innerCounter);
-        UART_print(".\t");
-        UART_println(FIFO[innerCounter]);
-    }
+//     for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
+//         UART_print(innerCounter);
+//         UART_print(".\t");
+//         UART_println(FIFO[innerCounter]);
+//     }
     
-    UART_println("END reading");
-    FIFO_counter = 0;
-}
+//     UART_println("END reading");
+//     FIFO_counter = 0;
+// }
 
 
 
@@ -127,55 +127,58 @@ int main(){
             //     }break;
 
 
-            //     case 'a':{
-            //         switch (string[1]){
-            //             case 'w':{
-            //                 uint8_t address = find_int(0);
-            //                 uint8_t data = find_int(1);
-            //                 UART_print("Write data: ");
-            //                 UART_print(data, 16);
-            //                 UART_print(" at address: ");
-            //                 UART_println(address, 16);
+                case 'a':{
+                    switch (string[1]){
+                        case 'w':{
+                            uint8_t address = find_int(0);
+                            uint8_t data = find_int(1);
+                            UART_print("Write data: ");
+                            UART_print(data, 16);
+                            UART_print(" at address: ");
+                            UART_println(address, 16);
 
-            //                 ACC_writeToRegister(address, data);
-            //             } break;
+                            ACC_writeToRegister(address, data);
+                        } break;
 
-            //             case 'r':{
-            //                 uint8_t address = find_int(0);
-            //                 UART_print("Read from address: ");
-            //                 UART_print(address, 16);
-            //                 UART_println(": ");
-            //                 uint8_t data = ACC_readRegister(address);
-            //                 UART_print(data, 10);
-            //                 UART_print("\t");
-            //                 UART_println(data, 16);
-            //             }break;
+                        case 'r':{
+                            uint8_t address = find_int(0);
+                            UART_print("Read from address: ");
+                            UART_print(address, 16);
+                            UART_println(": ");
+                            uint8_t data = ACC_readRegister(address);
+                            UART_print(data, 10);
+                            UART_print("\t");
+                            UART_println(data, 16);
+                        }break;
 
-            //             case 'x':{
-            //                 UART_print("Axis x acc: ");
-            //                 int16_t data = ACC_readAxis(X_AXIS_REG);
-            //                 UART_println(data, 10);
-            //             }break;
-            //             case 'y':{
-            //                 UART_print("Axis y acc: ");
-            //                 int16_t data = ACC_readAxis(Y_AXIS_REG);
-            //                 UART_println(data, 10);
-            //             }break;
-            //             case 'z':{
-            //                 UART_print("Axis z acc: ");
-            //                 int16_t data = ACC_readAxis(Z_AXIS_REG);
-            //                 UART_println(data, 10);
-            //             }break;
+                        case 'x':{
+                            UART_print("Axis x acc: ");
+                            int16_t data = ACC_readAxis(X_AXIS_REG);
+                            UART_println(data, 10);
+                        }break;
+                        // case 'y':{
+                        //     UART_print("Axis y acc: ");
+                        //     int16_t data = ACC_readAxis(Y_AXIS_REG);
+                        //     UART_println(data, 10);
+                        // }break;
+                        // case 'z':{
+                        //     UART_print("Axis z acc: ");
+                        //     int16_t data = ACC_readAxis(Z_AXIS_REG);
+                        //     UART_println(data, 10);
+                        // }break;
                         
-            //             default:{
-            //                 UART_println("Invalid cmd!");
-            //             }
-            //         }
-            //     }break;
+                        default:{
+                            UART_println("Invalid cmd!");
+                        }
+                    }
+                }break;
 
                 case 'r':
                     // readFifo();
                     // UART_println("\n\n");
+                    #if ACC_FIFO_ENABLE
+                        ACC_FIFORead();
+                    #endif
                     UART_print("EEPROM address: ");
                     UART_println(eeprom_address);
                     UART_println("General purpose register:");
@@ -254,7 +257,7 @@ int main(){
                         stopMsg = 0;
                     }
                     instructionRegister = 0;
-                    UART_ENABLE_INTERRUPT_TX;
+                    UART_ENABLE_INTERRUPT_RX;
 
 
                 }break;

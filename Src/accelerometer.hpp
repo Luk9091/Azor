@@ -1,6 +1,11 @@
 #ifndef __ACCELEROMETER__HPP
 #define __ACCELEROMETER__HPP
 
+#define ACC_INTERRUPT_ENABLE true
+#define ACC_FIFO_ENABLE false
+
+
+
 
 #define I2C_ADR_ACCELEROMETER 0x1C
 #define I2C_ACCELEROMETER_WRITE (I2C_ADR_ACCELEROMETER << 1) + WRITE
@@ -86,9 +91,6 @@
 #include "uart.hpp"
 #include "timer.hpp"
 
-extern int16_t FIFO[50];
-extern uint8_t FIFO_counter;
-
 void ACC_Init();
 
 uint8_t ACC_readRegister(uint8_t address);
@@ -98,6 +100,9 @@ int16_t ACC_calculateToACC(int16_t readValue);
 
 
 void ACC_writeToRegister(uint8_t address, uint8_t data);
+#if ACC_FIFO_ENABLE
+    void ACC_FIFORead();
+#endif
 
 
 
