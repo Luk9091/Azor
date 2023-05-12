@@ -5,7 +5,8 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#define PWM_prescaler 3
+#define PWM_prescaler 0b110
+#define PWM_ANGLE_OFFSET 15
 
 void PWM_Init(bool run = true, uint8_t startDuty = 40);
 
@@ -16,6 +17,8 @@ void PWM_Init(bool run = true, uint8_t startDuty = 40);
 // void PWM_setDuty(uint8_t duty);
 #define PWM_setDuty(duty) OCR2 = duty
 // void PWM_setPulse(uint8_t duty);
+
+void PWM_setAngle(uint8_t angle);
 
 
 #endif

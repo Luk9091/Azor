@@ -41,6 +41,7 @@
 #include "engine.hpp"
 #include "timer.hpp"
 #include "accelerometer.hpp"
+#include "mapping.hpp"
 
 
 
@@ -65,14 +66,21 @@ int main(){
 
     TIMER_Init();
     UART_Init(9600, true);
-    PWM_Init(true, 42);
+    PWM_Init(true, 45);
     SONIC_Init(true);
     ENGINE_Init();
     I2C_Init();
     ACC_Init();
 
     UART_println("Hello world!");
+    UART_print("F cpu: ");
+    UART_print(F_CPU/1000000);
+    UART_println("MHz");
     sei();
+
+    // map(0);
+    // while(1);
+    // return 0;
 
     while (1)
     {
@@ -102,30 +110,38 @@ int main(){
             //         }
             //     }break;
 
-            //     case 'u':{
-            //         switch(string[1]){
-            //             case 'r':{
-            //                 uint8_t duty = find_int();
-            //                 UART_print("Head move: ");
-            //                 UART_println(duty);
-            //                 PWM_setDuty(duty);
-            //                 // _delay_ms(20);
-            //                 // PWM_setDuty(0);
-            //             }break;
+                case 'u':{
+                    switch(string[1]){
+                        case 'r':{
+                            uint8_t duty = find_int();
+                            UART_print("Head move: ");
+                            UART_println(duty);
+                            PWM_setDuty(duty);
+                            // _delay_ms(20);
+                            // PWM_setDuty(0);
+                        }break;
 
-            //             case 'm':{
-            //                 UART_print("Distance: ");
-            //                 itoa(SONIC_measure(), string, 10);
-            //                 UART_println(string);
-            //             } break;
+                        case 'm':{
+                            UART_print("Distance: ");
+                            itoa(SONIC_measure(), string, 10);
+                            UART_println(string);
+                        } break;
                         
 
-            //             default:{
-            //                 UART_println("Invalid cmd!");
-            //             }
-            //         }
-            //     }break;
+                        default:{
+                            UART_println("Invalid cmd!");
+                        }
+                    }
+                }break;
 
+                case 'm':{
+                    UART_DISABLE_INTERRUPT_RX;
+                    
+                    runAndMeasure(find_int());
+                    // map(0);
+
+                    UART_ENABLE_INTERRUPT_RX;
+                }break;
 
                 case 'a':{
                     switch (string[1]){
@@ -156,16 +172,16 @@ int main(){
                             int16_t data = ACC_readAxis(X_AXIS_REG);
                             UART_println(data, 10);
                         }break;
-                        // case 'y':{
-                        //     UART_print("Axis y acc: ");
-                        //     int16_t data = ACC_readAxis(Y_AXIS_REG);
-                        //     UART_println(data, 10);
-                        // }break;
-                        // case 'z':{
-                        //     UART_print("Axis z acc: ");
-                        //     int16_t data = ACC_readAxis(Z_AXIS_REG);
-                        //     UART_println(data, 10);
-                        // }break;
+                        case 'y':{
+                            UART_print("Axis y acc: ");
+                            int16_t data = ACC_readAxis(Y_AXIS_REG);
+                            UART_println(data, 10);
+                        }break;
+                        case 'z':{
+                            UART_print("Axis z acc: ");
+                            int16_t data = ACC_readAxis(Z_AXIS_REG);
+                            UART_println(data, 10);
+                        }break;
                         
                         default:{
                             UART_println("Invalid cmd!");

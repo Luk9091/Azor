@@ -104,6 +104,8 @@ void ACC_writeToRegister(uint8_t address, uint8_t data);
     void ACC_FIFORead();
 #endif
 
+int16_t getVelocity();
+
 
 
 #endif

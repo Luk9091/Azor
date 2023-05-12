@@ -32,9 +32,8 @@ uint16_t SONIC_measure(){
     if(!SONIC_run){
         return 0;
     }
-
     SONIC_done = false;
-    TIMER_set(0, &SONIC_done);
+    TIMER_set(8, &SONIC_done);
     PORTD |= (1 << TRIG_PIN);
     _delay_us(15);
     PORTD &= ~(1<< TRIG_PIN);
@@ -44,12 +43,12 @@ uint16_t SONIC_measure(){
     }
 
     // return TIMER_getValue()*SOUND_V*100/F_CPU;
-    uint32_t value = TIMER_getValue();
+    uint32_t value = (TIMER_getValue() >> 3);
 
     if(value >= 2449)
         value = 4200;
     else
-        value = value*SOUND_V;
+        value = value * SOUND_V;
 
     return value;
 

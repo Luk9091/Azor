@@ -1,7 +1,7 @@
 #include "timer.hpp"
 
 uint8_t _TIMER_counter = 0;
-uint8_t _TIMER_limit = 1;
+uint8_t _TIMER_limit;
 bool *_TIMER_overflow;
 bool TIMER_overflow = false;
 
@@ -37,6 +37,10 @@ void TIMER_wait_ms(uint8_t delay){
 }
 
 uint32_t TIMER_getValue(){
-    uint32_t value = (_TIMER_counter *65536) | TCNT1;
-    return value;
+    uint32_t data =  (_TIMER_counter * 65536) | TCNT1;
+    return data;
+}
+
+uint16_t TIMER_get_us(){
+    return TIMER_getValue() >> 3;
 }

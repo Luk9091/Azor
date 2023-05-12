@@ -100,10 +100,8 @@ void UART_println(const char *str){
     UART_print_char('\n');
 }
 
-void UART_print(uint16_t value, uint8_t base){
+void UART_print(int32_t value, uint8_t base){
     itoa(value, temp_str, base);
-    uint8_t i = 7;
-
     if(base == 16){
         UART_print("0x");
         if(value < 16)
@@ -112,7 +110,7 @@ void UART_print(uint16_t value, uint8_t base){
     UART_print(temp_str);
 }
 
-void UART_println(uint16_t value, uint8_t base){
+void UART_println(int32_t value, uint8_t base){
     UART_print(value, base);
     UART_print_char('\n');
 }

@@ -2,13 +2,6 @@
 #include "util/delay.h"
 #include "accelerometer.hpp"
 
-#define LEFT_UP_PIN     1
-#define LEFT_DOWN_PIN   0
-
-#define RIGHT_UP_PIN    2
-#define RIGHT_DOWN_PIN  4
-
-#define ENABLE_PIN 7
 
 
 uint16_t calculate_distance(){
@@ -23,41 +16,42 @@ uint16_t calculate_rotation(){
 }
 
 void ENGINE_Init(){
-    DDRB |= 1 << LEFT_DOWN_PIN | 1 << LEFT_UP_PIN 
-         | 1 << RIGHT_DOWN_PIN | 1 << RIGHT_UP_PIN;
-    DDRD |= 1 << ENABLE_PIN;
+    DDRB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 << ENGINE_LEFT_UP_PIN 
+         | 1 << ENGINE_RIGHT_DOWN_PIN | 1 << ENGINE_RIGHT_UP_PIN;
+    DDRD |= 1 << ENGINE_ENABLE_PIN;
 
-    ENGINE_enable(true);
+    ENGINE_DISABLE();
 }
 
 void ENGINE_enable(bool enable){
     if(enable){
-        PORTD |=  1 << ENABLE_PIN;
+        PORTD |=  1 << ENGINE_ENABLE_PIN;
     }else{
-        PORTD &= ~(1 << ENABLE_PIN);
+        PORTD &= ~(1 << ENGINE_ENABLE_PIN);
     }
 }
 
-void move_forward(bool direction){
-    ENGINE_enable(0);
+void move_forward(bool direction, bool enable){
+    ENGINE_DISABLE();
     if(direction){
-        PORTB |= 1 << LEFT_UP_PIN | 1 << RIGHT_UP_PIN;
+        PORTB |= 1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_RIGHT_UP_PIN;
     }else{
-        PORTB |= 1 << LEFT_DOWN_PIN | 1 <<RIGHT_DOWN_PIN;
+        PORTB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 <<ENGINE_RIGHT_DOWN_PIN;
     }
-    ENGINE_enable(1);
+    if(enable)
+    ENGINE_ENABLE();
 }
 
 void move_rotate(int8_t angle){
     uint8_t measure = 0;
-    ENGINE_enable(false);
+    ENGINE_DISABLE();
     if(angle >= 0){
-        PORTB |= 1 << LEFT_DOWN_PIN | 1 << RIGHT_UP_PIN;
+        PORTB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 << ENGINE_RIGHT_UP_PIN;
     }else{
-        PORTB |= 1 << LEFT_UP_PIN | 1 << RIGHT_DOWN_PIN;
+        PORTB |= 1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_RIGHT_DOWN_PIN;
         angle = ~angle + 1;
     }
-    ENGINE_enable();
+    ENGINE_ENABLE();
 
     while(angle){
         measure += calculate_distance();
@@ -70,24 +64,24 @@ void move_rotate(int8_t angle){
 
 
 void move_stop(){
-    ENGINE_enable(0);
-    PORTB &= ~(1 << LEFT_UP_PIN | 1 << LEFT_DOWN_PIN
-            | 1 << RIGHT_UP_PIN | 1 << RIGHT_DOWN_PIN);
+    ENGINE_DISABLE();
+    PORTB &= ~(1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_LEFT_DOWN_PIN
+            | 1 << ENGINE_RIGHT_UP_PIN | 1 << ENGINE_RIGHT_DOWN_PIN);
 }
 
 
 void LEFT_forward(bool direction){
     if(direction){
-        PORTB |= 1 << LEFT_UP_PIN;
+        PORTB |= 1 << ENGINE_LEFT_UP_PIN;
     }else{
-        PORTB |= 1 << LEFT_DOWN_PIN;
+        PORTB |= 1 << ENGINE_LEFT_DOWN_PIN;
     }
 }
 
 void RIGHT_forward(bool direction){
     if(direction){
-        PORTB |= 1 << RIGHT_UP_PIN;
+        PORTB |= 1 << ENGINE_RIGHT_UP_PIN;
     }else{
-        PORTB |= 1 << RIGHT_DOWN_PIN;
+        PORTB |= 1 << ENGINE_RIGHT_DOWN_PIN;
     }
 }

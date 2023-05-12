@@ -329,7 +329,7 @@ void execute(uint8_t instruction){
             reg[regAdr].U = SONIC_measure();
         }return;
         case ULTRASONIC_ROTATE...(ULTRASONIC_ROTATE+3):{
-            PWM_setDuty((reg[regAdr].Byte[LOW] * 0.3333F) + 19);
+            PWM_setDuty((reg[regAdr].Byte[LOW] * 0.3333F) + PWM_ANGLE_OFFSET);
         }return;
 
 
@@ -346,7 +346,11 @@ void execute(uint8_t instruction){
         }return;
 
         case DEVICE_ENABLE...(DEVICE_ENABLE+3):{
-            ENGINE_enable(reg[regAdr].U & ENGINE);
+            if(reg[regAdr].U & ENGINE){
+                ENGINE_ENABLE();
+            }else{
+                ENGINE_DISABLE();
+            }
 
             if(reg[regAdr].U & ACC){
                 ACC_Init();
