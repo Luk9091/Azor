@@ -6,10 +6,12 @@
 // #include <stddef.h>
 #include <stdlib.h>
 
-#define BT_PIN_num 1
-#define BT_DDR  DDRD
-#define BT_PORT PORTD
-#define BT_PIN  PIND
+#define BAUDRATE 9600
+
+// #define BT_PIN_num 1
+// #define BT_DDR  DDRD
+// #define BT_PORT PORTD
+// #define BT_PIN  PIND
 
 #define UART_ENABLE_INTERRUPT_RX UCSRB |= (1 << RXCIE)
 #define UART_DISABLE_INTERRUPT_RX UCSRB &= ~(1 << RXCIE)
@@ -23,8 +25,8 @@ extern uint8_t readSize;
 
 uint16_t find_int(uint8_t count = 0);
 
-void UART_Init(uint16_t baud, bool enableEchoInterrupt = false, bool run = true);
-void BT_enable(bool run);
+void UART_Init(bool enableEchoInterrupt = false, bool run = true);
+// void BT_enable(bool run);
 
 void UART_print_char(uint8_t c);
 void UART_print(const char *str);

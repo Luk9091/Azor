@@ -359,7 +359,7 @@ void execute(uint8_t instruction){
             }
 
             SONIC_run = reg[regAdr].U & ULTRASONIC;
-            BT_enable(reg[regAdr].U & BLUETOOTH);
+            // BT_enable(reg[regAdr].U & BLUETOOTH);
 
             if(reg[regAdr].U & PWM){
                 PWM_start();

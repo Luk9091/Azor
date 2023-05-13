@@ -52,35 +52,31 @@ uint16_t find_int(uint8_t count){
 }
 
 
-void UART_Init(uint16_t baud, bool enableEchoInterrupt, bool run){
-    BT_DDR |= 1 << BT_PIN_num;
-    if(run)
-        BT_PORT |= 1 << BT_PIN_num;
+void UART_Init(bool enableEchoInterrupt, bool run){
+    // BT_DDR |= 1 << BT_PIN_num;
+    // if(run)
+    //     BT_PORT |= 1 << BT_PIN_num;
 
-
-    baud = F_CPU/8/baud-1;
     UCSRA |= (1 << U2X);
 
-    UBRRH = baud >> 8;
-    UBRRL = baud;
+    UBRRH = (F_CPU/8/BAUDRATE-1) >> 8;
+    UBRRL = (F_CPU/8/BAUDRATE-1);
 
     UCSRB |= (1<<RXEN) | (1<<TXEN);
 
     if(enableEchoInterrupt)
         UART_ENABLE_INTERRUPT_RX;
-
-    // Frame: 8bin 0parity 1stop
 }
 
-void BT_enable(bool run){
-    if(run){
-        BT_PORT |= 1 << BT_PIN_num;
-        UCSRB   |= (1<<RXEN) | (1<<TXEN);
-    }else{
-        BT_PORT &= ~(1 << BT_PIN_num);
-        UCSRB   &= ~((1<<RXEN) | (1<<TXEN));
-    }
-}
+// void BT_enable(bool run){
+//     if(run){
+//         BT_PORT |= 1 << BT_PIN_num;
+//         UCSRB   |= (1<<RXEN) | (1<<TXEN);
+//     }else{
+//         BT_PORT &= ~(1 << BT_PIN_num);
+//         UCSRB   &= ~((1<<RXEN) | (1<<TXEN));
+//     }
+// }
 
 
 void UART_print_char(uint8_t c){

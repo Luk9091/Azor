@@ -41,6 +41,17 @@ uint32_t TIMER_getValue(){
     return data;
 }
 
-uint16_t TIMER_get_us(){
+uint32_t TIMER_get_us(){
     return TIMER_getValue() >> 3;
+}
+
+
+
+void COUNTER_Init(){
+    COUNTER_DDR &= ~(1 << COUNTER_PIN);
+    COUNTER_PORT |= (1 << COUNTER_PIN);
+
+    TCCR0 |= (6 << CS00); // count falling edge
+    COUNTER_clear();
+
 }

@@ -65,21 +65,34 @@ int main(){
     LED_DDR |= LED_PIN_num;
 
     TIMER_Init();
-    UART_Init(9600, true);
+    UART_Init(true);
     PWM_Init(true, 45);
     SONIC_Init(true);
     ENGINE_Init();
     I2C_Init();
     ACC_Init();
+    COUNTER_Init();
 
     UART_println("Hello world!");
     UART_print("F cpu: ");
     UART_print(F_CPU/1000000);
     UART_println("MHz");
-    sei();
+    // sei();
 
-    // map(0);
-    // while(1);
+    // while (1){
+    //     UART_println("RUN");
+    //     TIMER_set(0);
+    //     COUNTER_clear();
+    //     TIMER_start();
+    //     _delay_ms(50);
+    //     TIMER_stop();
+
+    //     UART_print("Count: ");
+    //     UART_println(COUNTER_read());
+    //     UART_print("Time: ");
+    //     UART_println(TIMER_getValue());
+    // }
+    
     // return 0;
 
     while (1)
@@ -110,29 +123,29 @@ int main(){
             //         }
             //     }break;
 
-                case 'u':{
-                    switch(string[1]){
-                        case 'r':{
-                            uint8_t duty = find_int();
-                            UART_print("Head move: ");
-                            UART_println(duty);
-                            PWM_setDuty(duty);
-                            // _delay_ms(20);
-                            // PWM_setDuty(0);
-                        }break;
+                // case 'u':{
+                //     switch(string[1]){
+                //         case 'r':{
+                //             uint8_t duty = find_int();
+                //             UART_print("Head move: ");
+                //             UART_println(duty);
+                //             PWM_setDuty(duty);
+                //             // _delay_ms(20);
+                //             // PWM_setDuty(0);
+                //         }break;
 
-                        case 'm':{
-                            UART_print("Distance: ");
-                            itoa(SONIC_measure(), string, 10);
-                            UART_println(string);
-                        } break;
+                //         case 'm':{
+                //             UART_print("Distance: ");
+                //             itoa(SONIC_measure(), string, 10);
+                //             UART_println(string);
+                //         } break;
                         
 
-                        default:{
-                            UART_println("Invalid cmd!");
-                        }
-                    }
-                }break;
+                //         default:{
+                //             UART_println("Invalid cmd!");
+                //         }
+                //     }
+                // }break;
 
                 case 'm':{
                     UART_DISABLE_INTERRUPT_RX;
