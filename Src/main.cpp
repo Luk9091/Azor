@@ -41,6 +41,7 @@
 #include "engine.hpp"
 #include "timer.hpp"
 #include "accelerometer.hpp"
+#include "compass.hpp"
 #include "mapping.hpp"
 
 
@@ -64,7 +65,6 @@
 int main(){
     LED_DDR |= LED_PIN_num;
 
-    TIMER_Init();
     UART_Init(true);
     PWM_Init(true, 45);
     SONIC_Init(true);
@@ -72,25 +72,23 @@ int main(){
     I2C_Init();
     ACC_Init();
     COUNTER_Init();
+    // COMPASS_Init();
 
     UART_println("Hello world!");
     UART_print("F cpu: ");
     UART_print(F_CPU/1000000);
     UART_println("MHz");
-    // sei();
+    sei();
 
     // while (1){
-    //     UART_println("RUN");
-    //     TIMER_set(0);
-    //     COUNTER_clear();
-    //     TIMER_start();
-    //     _delay_ms(50);
-    //     TIMER_stop();
-
-    //     UART_print("Count: ");
-    //     UART_println(COUNTER_read());
-    //     UART_print("Time: ");
-    //     UART_println(TIMER_getValue());
+    //     UART_println("Compass measure:");
+    //     UART_print("x: ");
+    //     UART_println(COMPASS_measureAxis(COMPASS_X));
+    //     UART_print("\ty: ");
+    //     UART_println(COMPASS_measureAxis(COMPASS_Y));
+    //     UART_print("\tz: ");
+    //     UART_println(COMPASS_measureAxis(COMPASS_Z));
+    //     _delay_ms(500);
     // }
     
     // return 0;
@@ -200,6 +198,52 @@ int main(){
                             UART_println("Invalid cmd!");
                         }
                     }
+                }break;
+                case 'c':{
+                    switch (string[1]){
+                        case 'w':{
+                            uint8_t address = find_int(0);
+                            uint8_t data = find_int(1);
+                            UART_print("Write data: ");
+                            UART_print(data, 16);
+                            UART_print(" at address: ");
+                            UART_println(address, 16);
+
+                            COMPASS_writeToRegister(address, data);
+                        } break;
+
+                        case 'r':{
+                            uint8_t address = find_int(0);
+                            UART_print("Read from address: ");
+                            UART_print(address, 16);
+                            UART_println(": ");
+                            uint8_t data = COMPASS_read(address);
+                            UART_print(data, 10);
+                            UART_print("\t");
+                            UART_println(data, 16);
+                        }break;
+
+                        case 'x':{
+                            UART_print("Compass x: ");
+                            int16_t data = COMPASS_measureAxis(COMPASS_X);
+                            UART_println(data, 10);
+                        }break;
+                        case 'y':{
+                            UART_print("Compass y: ");
+                            int16_t data = COMPASS_measureAxis(COMPASS_Y);
+                            UART_println(data, 10);
+                        }break;
+                        case 'z':{
+                            UART_print("Compass z: ");
+                            int16_t data = COMPASS_measureAxis(COMPASS_Z);
+                            UART_println(data, 10);
+                        }break;
+                        
+                        default:{
+                            UART_println("Invalid cmd!");
+                        }
+                    }
+                    
                 }break;
 
                 case 'r':

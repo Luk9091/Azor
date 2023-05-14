@@ -17,7 +17,9 @@ uint8_t FIFO_address = 0;
             // UART_print(FIFO_address);
             // UART_print(" touch: ");
             // UART_println(ACC_FIFO[FIFO_address]);
+            // uint8_t tmp = SREG;
             ++FIFO_address;
+            // SREG = tmp;
         } 
         if (FIFO_address == (uint8_t)sizeof(ACC_FIFO)/2) {
             MOTION_DETECT_INT_OFF();
@@ -65,26 +67,26 @@ void ACC_Init(){
 }
 
 
-uint8_t ACC_readRegister(uint8_t address){
-    uint8_t data;
-    I2C_beginTransition(I2C_ACCELEROMETER_WRITE);
-    I2C_write(address);
-    I2C_beginTransition(I2C_ACCELEROMETER_READ);
-    data = I2C_read_NAK();
-    I2C_endTransition();
+// uint8_t ACC_readRegister(uint8_t address){
+//     uint8_t data;
+//     I2C_beginTransition(I2C_ACCELEROMETER_WRITE);
+//     I2C_write(address);
+//     I2C_beginTransition(I2C_ACCELEROMETER_READ);
+//     data = I2C_read_NAK();
+//     I2C_endTransition();
 
-    return data;
-}
+//     return data;
+// }
 
 int16_t ACC_readAxis(uint8_t axis){
-    int16_t data = 0;
-
+    int16_t data = I2C_read2Byte(I2C_ADR_ACCELEROMETER << 1, axis);
+    // int16_t data;
     // ACC_writeToRegister(ACC_ADR_CONTROL_REG1, 0x01);
-    I2C_beginTransition(I2C_ACCELEROMETER_WRITE);
-    I2C_write(axis);
-    I2C_beginTransition(I2C_ACCELEROMETER_READ);
-    data = I2C_read_AK() << 8;
-    data |= I2C_read_NAK();
+    // I2C_beginTransition(I2C_ACCELEROMETER_WRITE);
+    // I2C_write(axis);
+    // I2C_beginTransition(I2C_ACCELEROMETER_READ);
+    // data = I2C_read_AK() << 8;
+    // data |= I2C_read_NAK();
 
 
     return float(data)/STD_DEVIDER_ACC*STD_G*1000;
@@ -112,17 +114,17 @@ int16_t ACC_readAxis(uint8_t axis){
             // if(i % 3 == 0){
             data = float(data)/STD_DEVIDER_ACC*STD_G*1000;
             UART_println(data);
-            }
+            // }
         }
     }
 #endif
 
-void ACC_writeToRegister(uint8_t address, uint8_t data){
-    I2C_beginTransition(I2C_ACCELEROMETER_WRITE);
-    I2C_write(address);
-    I2C_write(data);
-    I2C_endTransition();
-}
+// void ACC_writeToRegister(uint8_t address, uint8_t data){
+//     I2C_beginTransition(I2C_ACCELEROMETER_WRITE);
+//     I2C_write(address);
+//     I2C_write(data);
+//     I2C_endTransition();
+// }
 
 
 

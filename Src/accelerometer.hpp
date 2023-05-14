@@ -93,13 +93,17 @@
 
 void ACC_Init();
 
-uint8_t ACC_readRegister(uint8_t address);
+#define ACC_readRegister(address) I2C_readByte(I2C_ADR_ACCELEROMETER << 1, address)
+// uint8_t ACC_readRegister(uint8_t address);
+
 
 int16_t ACC_readAxis(uint8_t axis);
 int16_t ACC_calculateToACC(int16_t readValue);
 
 
-void ACC_writeToRegister(uint8_t address, uint8_t data);
+// void ACC_writeToRegister(uint8_t address, uint8_t data);
+#define ACC_writeToRegister(address, data) I2C_writeToRegister(I2C_ADR_ACCELEROMETER << 1, address, data)
+
 #if ACC_FIFO_ENABLE
     void ACC_FIFORead();
 #endif

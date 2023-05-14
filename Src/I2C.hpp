@@ -12,6 +12,11 @@
 
 void I2C_Init();
 
+void I2C_writeToRegister(uint8_t deviceAddress, uint8_t registerAddress, uint8_t data);
+int8_t I2C_readByte(uint8_t deviceAddress, uint8_t registerAddress);
+int16_t I2C_read2Byte(uint8_t deviceAddress, uint8_t registerAddress);
+
+
 void I2C_beginTransition(uint8_t address);
 void I2C_endTransition();
 
