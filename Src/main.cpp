@@ -80,15 +80,31 @@ int main(){
     UART_println("MHz");
     sei();
 
+    // move_forward();
     // while (1){
-    //     UART_println("Compass measure:");
-    //     UART_print("x: ");
-    //     UART_println(COMPASS_measureAxis(COMPASS_X));
-    //     UART_print("\ty: ");
-    //     UART_println(COMPASS_measureAxis(COMPASS_Y));
-    //     UART_print("\tz: ");
-    //     UART_println(COMPASS_measureAxis(COMPASS_Z));
+    //     UART_println("Timer run");
+    //     TIMER_set(255);
+        
+    //     TIMER_start();
+    //     ENGINE_ENABLE();
     //     _delay_ms(500);
+        
+    //     TIMER_stop();
+    //     ENGINE_DISABLE();
+    //     UART_print("Count: ");
+    //     UART_println(COUNTER_read());
+    //     UART_print("T: ");
+    //     UART_println(TIMER_getValue());
+        
+    //     TIMER_clear();
+    //     COUNTER_clear();
+
+    //     UART_println("CLEAR");
+    //     UART_print("Count: ");
+    //     UART_println(COUNTER_read());
+    //     UART_print("T: ");
+    //     UART_println(TIMER_getValue());
+    //     UART_print_char('\n');
     // }
     
     // return 0;

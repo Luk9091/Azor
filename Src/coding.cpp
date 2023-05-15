@@ -309,7 +309,7 @@ void execute(uint8_t instruction){
         }return;
 
         case WAIT...(WAIT+3):{
-            TIMER_wait_ms(reg[regAdr].Byte[LOW]);
+            TIMER_wait_ms(reg[regAdr].U);
         }return;
 
         case LED...(LED+3):{
@@ -338,7 +338,7 @@ void execute(uint8_t instruction){
             reg[regAdr].U = UART_read_char();
         }return;
         
-        case UART_SEND...(UART_SEND+3):{
+        case UART_SEND:{
             UART_print_char(fetch());
         } return;
         case UART_SEND_INT...(UART_SEND_INT+3):{

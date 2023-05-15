@@ -1,7 +1,7 @@
 #ifndef __ACCELEROMETER__HPP
 #define __ACCELEROMETER__HPP
 
-#define ACC_INTERRUPT_ENABLE true
+#define ACC_INTERRUPT_ENABLE true   
 #define ACC_FIFO_ENABLE false
 
 
@@ -108,7 +108,7 @@ int16_t ACC_calculateToACC(int16_t readValue);
     void ACC_FIFORead();
 #endif
 
-int16_t getVelocity();
+int16_t getVelocity_withACC();
 
 
 

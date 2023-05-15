@@ -4,12 +4,6 @@
 
 
 
-uint16_t calculate_distance(){
-    _delay_ms(10);
-    // MOTION_DETECT_INT_ON();
-    return 1;
-}
-
 uint16_t calculate_rotation(){
     _delay_ms(10);
     return 1;
@@ -23,16 +17,11 @@ void ENGINE_Init(){
     ENGINE_DISABLE();
 }
 
-void ENGINE_enable(bool enable){
-    if(enable){
-        PORTD |=  1 << ENGINE_ENABLE_PIN;
-    }else{
-        PORTD &= ~(1 << ENGINE_ENABLE_PIN);
-    }
-}
-
 void move_forward(bool direction, bool enable){
     ENGINE_DISABLE();
+    TIMER_set(255);
+    COUNTER_clear();
+    TIMER_start();
     if(direction){
         PORTB |= 1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_RIGHT_UP_PIN;
     }else{
@@ -54,7 +43,8 @@ void move_rotate(int8_t angle){
     ENGINE_ENABLE();
 
     while(angle){
-        measure += calculate_distance();
+        measure += 1;
+        _delay_ms(10);
         if(angle == measure){
             move_stop();
             break;
@@ -64,6 +54,7 @@ void move_rotate(int8_t angle){
 
 
 void move_stop(){
+    TIMER_stop();
     ENGINE_DISABLE();
     PORTB &= ~(1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_LEFT_DOWN_PIN
             | 1 << ENGINE_RIGHT_UP_PIN | 1 << ENGINE_RIGHT_DOWN_PIN);

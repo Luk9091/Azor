@@ -17,7 +17,6 @@
 
 void ENGINE_Init();
 // void ENGINE_enable(bool enable = true);
-// uint16_t calculate_distance();
 
 void move_forward(bool direction = true, bool enable = true);
 void move_rotate(int8_t angle);
