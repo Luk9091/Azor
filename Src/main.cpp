@@ -72,7 +72,7 @@ int main(){
     I2C_Init();
     ACC_Init();
     COUNTER_Init();
-    // COMPASS_Init();
+    COMPASS_Init();
 
     UART_println("Hello world!");
     UART_print("F cpu: ");
@@ -239,20 +239,9 @@ int main(){
                             UART_println(data, 16);
                         }break;
 
-                        case 'x':{
-                            UART_print("Compass x: ");
-                            int16_t data = COMPASS_measureAxis(COMPASS_X);
-                            UART_println(data, 10);
-                        }break;
-                        case 'y':{
-                            UART_print("Compass y: ");
-                            int16_t data = COMPASS_measureAxis(COMPASS_Y);
-                            UART_println(data, 10);
-                        }break;
-                        case 'z':{
-                            UART_print("Compass z: ");
-                            int16_t data = COMPASS_measureAxis(COMPASS_Z);
-                            UART_println(data, 10);
+                        case 'a':{
+                            UART_print("Azimuth: ");
+                            UART_println(COMPASS_getAzimuth());
                         }break;
                         
                         default:{

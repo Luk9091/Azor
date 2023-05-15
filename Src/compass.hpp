@@ -6,6 +6,7 @@
 #include "I2C.hpp"
 #include <math.h>
 #include "uart.hpp"
+#define PI 3.1415926F
 
 #define I2C_ADR_COMPASS 0x0D
 #define COMPASS_X 0
@@ -26,7 +27,7 @@
 
 // Number of sample to average in output:
 // 0b00 - 1
-// 0b01 - 2
+// 0b01 - 2w
 // 0b10 - 4
 // 0b11 - 8
 #define COMPASS_SAMPLING 0b10 << 5
@@ -46,7 +47,7 @@
 
 
 void COMPASS_Init();
-int16_t COMPASS_measureAxis(uint8_t axis);
+int16_t COMPASS_getAzimuth();
 
 // int8_t COMPASS_getNorth();
 
