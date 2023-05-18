@@ -11,3 +11,4 @@ main.pdf
 *.toc
 *.asm
 *.dec
+*.synctex(busy)
