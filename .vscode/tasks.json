@@ -8,9 +8,9 @@
 			"args": [
 				"build",
 				"-p",
-				"atmega8535",
+				"atmega8",
 				"-f",
-				"1000000",
+				"8000000",
 				"Src/*.cpp"
 			],
 			"options": {

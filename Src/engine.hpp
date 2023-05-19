@@ -2,12 +2,13 @@
 #define __ENGINE__HPP
 
 #include <avr/io.h>
+#include "compass.hpp"
 
-#define ENGINE_LEFT_UP_PIN     1
-#define ENGINE_LEFT_DOWN_PIN   0
+#define ENGINE_LEFT_UP_PIN     0
+#define ENGINE_LEFT_DOWN_PIN   1
 
-#define ENGINE_RIGHT_UP_PIN    2
-#define ENGINE_RIGHT_DOWN_PIN  4
+#define ENGINE_RIGHT_UP_PIN    4
+#define ENGINE_RIGHT_DOWN_PIN  2
 
 #define ENGINE_ENABLE_PIN 7
 
@@ -19,7 +20,7 @@ void ENGINE_Init();
 // void ENGINE_enable(bool enable = true);
 
 void move_forward(bool direction = true, bool enable = true);
-void move_rotate(int8_t angle);
+void move_rotate(int16_t angle);
 
 void move_stop();
 

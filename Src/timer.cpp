@@ -29,7 +29,7 @@ void TIMER_Init(){
     TCCR1A = 0;
     TCCR1B = 0;
 
-    TIMSK |= (1 << TOIE1);
+    TIMSK1 |= (1 << TOIE1);
 }
 
 void TIMER_set(uint8_t limit, bool *overflow){
@@ -61,8 +61,8 @@ uint32_t TIMER_getValue(){
 void COUNTER_Init(){
     COUNTER_DDR &= ~(1 << COUNTER_PIN);
     COUNTER_PORT |= (1 << COUNTER_PIN);
-    TIFR  |= 1 << TOV0;
-    TIMSK |= 1 << TOIE0;
+    TIFR0  |= 1 << TOV0;
+    TIMSK0 |= 1 << TOIE0;
 
     COUNTER_start();
     COUNTER_clear();

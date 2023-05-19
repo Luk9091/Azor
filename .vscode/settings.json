@@ -5,6 +5,8 @@
     "C_Cpp.errorSquiggles": "disabled",
     "cSpell.ignoreWords": [
         "ADXL",
-        "rfcomm"
+        "DEVIDER",
+        "rfcomm",
+        "yyaa"
     ]
 }

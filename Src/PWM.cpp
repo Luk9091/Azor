@@ -5,11 +5,11 @@
 
 void PWM_Init(bool run, uint8_t startDuty){
     DDRB |= 1 << PB3;
-    TCCR2 |= (1 << WGM21 | 1 << WGM20) //  PWM
-        | (1 << COM21 | 0 << COM20)
+    TCCR2A |= (1 << WGM21 | 1 << WGM20) //  PWM
+        | (1 << COM2A1 | 0 << COM2A0)
     ;
     if (run)
-        TCCR2 |= (PWM_prescaler << CS20);      // Prescaler
+        TCCR2B |= (PWM_prescaler << CS20);      // Prescaler
 
     PWM_setDuty(startDuty);
 }

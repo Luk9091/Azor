@@ -22,7 +22,7 @@ uint16_t ACC_time;
 void ACC_Init(){
     #if ACC_INTERRUPT_ENABLE
         MCUCR |= (3 << ISC00);  //  zbocze narastające na INT0 wymusza przerwanie
-        GICR  |= (1 << INT0);
+        EIMSK  |= (1 << INT0);
     #endif
 
     ACC_RESET();
@@ -120,9 +120,14 @@ int16_t ACC_readAxis(uint8_t axis){
 int16_t getVelocity_withACC(){
     // Test dla próbek:    
     // 500 0 0 0 0 0 ...
-    while (GICR & (1 << INT0)); // czekaj na zebranie pomiarów
+    while (EIMSK & (1 << INT0)); // czekaj na zebranie pomiarów
     
-    int16_t velocity = ACC_FIFO*ACC_time;
+    int16_t velocity;
+    if(ACC_time){
+        velocity = ACC_FIFO*ACC_time;
+    } else {
+        velocity = ACC_FIFO;
+    }
     
     // MOTION_DETECT_INT_ON();
     return velocity;

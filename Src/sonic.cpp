@@ -18,11 +18,11 @@ ISR(INT1_vect){
 
 
 void SONIC_Init(bool run){
-    DDRD  |= (1 << TRIG_PIN);
+    TRIG_DDR  |= (1 << TRIG_PIN);
     DDRD  &= ~(1<< ECHO_PIN);
 
     MCUCR |= (1 << ISC10); // wyzwolenie zmianą stanu logicznego
-    GICR  |= (1 << INT1);
+    EIMSK |= (1 << INT1);
     
     SONIC_run = run;
 }
@@ -34,9 +34,9 @@ uint16_t SONIC_measure(){
     }
     SONIC_done = false;
     TIMER_set(8, &SONIC_done);
-    PORTD |= (1 << TRIG_PIN);
+    TRIG_PORT |= (1 << TRIG_PIN);
     _delay_us(15);
-    PORTD &= ~(1<< TRIG_PIN);
+    TRIG_PORT &= ~(1<< TRIG_PIN);
 
     while(!SONIC_done){
         _delay_ms(10);

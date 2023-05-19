@@ -42,7 +42,7 @@
 #include "timer.hpp"
 #include "accelerometer.hpp"
 #include "compass.hpp"
-#include "mapping.hpp"
+// #include "mapping.hpp"
 
 
 
@@ -163,8 +163,41 @@ int main(){
 
                 case 'm':{
                     UART_DISABLE_INTERRUPT_RX;
+
+                    int16_t distance = SONIC_measure();
+                    int16_t newDistance = distance;
+                    bool overflow = false;
+                    UART_print("Start distance: ");
+                    UART_println(distance);
+
+                    COUNTER_clear();
+                    TIMER_set(5, &overflow);
+                    move_forward(false);
+
+                    TIMER_start();
+                    ENGINE_ENABLE();
+                    while (newDistance - distance  < 2000){
+                        newDistance = SONIC_measure();
+                        if(overflow){
+                            UART_println("Timer overflow");
+                            break;
+                        }
+                    }
+                    TIMER_stop();
+                    ENGINE_DISABLE();
                     
-                    runAndMeasure(find_int());
+
+                    UART_print("Counter: ");
+                    UART_println(COUNTER_read());
+                    UART_print("Time: ");
+                    UART_print(TIMER_getValue()/8);
+                    UART_println("ms");
+                    UART_print("Velocity: ");
+                    UART_println(getVelocity_withACC());
+
+                    
+
+                    // runAndMeasure(find_int());
                     // map(0);
 
                     UART_ENABLE_INTERRUPT_RX;

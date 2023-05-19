@@ -8,7 +8,7 @@ uint8_t readSize = 0;
 #define BIN 2
 #define HEX 16
 
-ISR(USART_RXC_vect){
+ISR(USART_RX_vect){
     readSize = UART_read(string, 16);
     // UART_print("read\n");
 }
@@ -57,12 +57,12 @@ void UART_Init(bool enableEchoInterrupt, bool run){
     // if(run)
     //     BT_PORT |= 1 << BT_PIN_num;
 
-    UCSRA |= (1 << U2X);
+    UCSR0A |= (1 << U2X0);
 
-    UBRRH = (F_CPU/8/BAUDRATE-1) >> 8;
-    UBRRL = (F_CPU/8/BAUDRATE-1);
+    UBRR0H = (F_CPU/8/BAUDRATE-1) >> 8;
+    UBRR0L = (F_CPU/8/BAUDRATE-1);
 
-    UCSRB |= (1<<RXEN) | (1<<TXEN);
+    UCSR0B |= (1<<RXEN0) | (1<<TXEN0);
 
     if(enableEchoInterrupt)
         UART_ENABLE_INTERRUPT_RX;
@@ -80,8 +80,8 @@ void UART_Init(bool enableEchoInterrupt, bool run){
 
 
 void UART_print_char(uint8_t c){
-    while(!(UCSRA & (1 << UDRE)));
-    UDR = c;
+    while(!(UCSR0A & (1 << UDRE0)));
+    UDR0 = c;
 }
 
 void UART_print(const char *str){
@@ -96,7 +96,7 @@ void UART_println(const char *str){
     UART_print_char('\n');
 }
 
-void UART_print(int32_t value, uint8_t base){
+void UART_print(int16_t value, uint8_t base){
     itoa(value, temp_str, base);
     if(base == 16){
         UART_print("0x");
@@ -106,15 +106,15 @@ void UART_print(int32_t value, uint8_t base){
     UART_print(temp_str);
 }
 
-void UART_println(int32_t value, uint8_t base){
+void UART_println(int16_t value, uint8_t base){
     UART_print(value, base);
     UART_print_char('\n');
 }
 
 
 uint8_t UART_read_char(){
-    while(!(UCSRA & (1 << RXC)));
-    return UDR;
+    while(!(UCSR0A & (1 << RXC0)));
+    return UDR0;
 }
 
 uint8_t UART_read(char *buf, uint8_t buf_size, char terminator){

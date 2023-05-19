@@ -33,8 +33,8 @@ uint32_t TIMER_getValue();
 
 // Prawdopodobnie na 1 jednostkę przypada około 0.25cm
 void COUNTER_Init();
-#define COUNTER_start() TCCR0 |= (6 << CS00) // count falling edge
-#define COUNTER_stop()  TCCR0 &=~(7 << CS00)
+#define COUNTER_start() TCCR0B |= (6 << CS00) // count falling edge
+#define COUNTER_stop()  TCCR0B &=~(7 << CS00)
 // Prawdopodobnie do wymiany, ale na razie zostawmy zobaczę czy będzie się przepełniać?
 #define COUNTER_clear() TCNT0 = 0
 #define COUNTER_read() TCNT0

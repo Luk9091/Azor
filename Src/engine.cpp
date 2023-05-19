@@ -31,25 +31,22 @@ void move_forward(bool direction, bool enable){
     ENGINE_ENABLE();
 }
 
-void move_rotate(int8_t angle){
-    uint8_t measure = 0;
-    ENGINE_DISABLE();
+void move_rotate(int16_t angle){
+    int16_t measure = COMPASS_getAzimuth();
     if(angle >= 0){
-        PORTB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 << ENGINE_RIGHT_UP_PIN;
-    }else{
         PORTB |= 1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_RIGHT_DOWN_PIN;
-        angle = ~angle + 1;
+    }else{
+        PORTB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 << ENGINE_RIGHT_UP_PIN;
+        // angle = -angle;
     }
-    ENGINE_ENABLE();
+    angle = abs(angle);
 
-    while(angle){
-        measure += 1;
+    while(abs(COMPASS_getAzimuth()-measure) >= angle){
+        ENGINE_ENABLE();
         _delay_ms(10);
-        if(angle == measure){
-            move_stop();
-            break;
-        }
+        ENGINE_DISABLE();
     }
+    move_stop();
 }
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import sys
 
-MAX_EEPROM_SPACE = 512
+MAX_EEPROM_SPACE = 1024
 
 
 
@@ -230,7 +230,7 @@ while len(args) > 0:
         inputPath = args[0]
         args = args[1:]
 
-inputPath = "/home/lukasz/Dokumenty/GitHub/Projekt_mikroprocki/Assembler/main.asm"
+# inputPath = "/home/lukasz/Dokumenty/GitHub/Projekt_mikroprocki/Assembler/main.asm"
 
 if path == "":
     path = inputPath[0:-4] + ".dec"

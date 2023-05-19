@@ -27,17 +27,17 @@ struct Stack{
 
 void program(uint16_t address, uint8_t data){
     // eeprom_write((uint8_t*)address, data);
-    while(EECR & (1 << EEWE));
+    while(EECR & (1 << EEPE));
 
     EEAR = address;
     EEDR = data;
 
-    EECR |= 1 << EEMWE;
-    EECR |= 1 << EEWE;
+    EECR |= 1 << EEMPE;
+    EECR |= 1 << EEPE;
 }
 
 uint8_t EEPROM_read(uint16_t address){
-    while(EECR & (1 << EEWE));
+    while(EECR & (1 << EEPE));
 
     EEAR = address;
     EECR |= (1 << EERE);

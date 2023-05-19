@@ -83,8 +83,9 @@
 #define ACC_WAIT_FOR_RESET() while(ACC_readRegister(ACC_ADR_CONTROL_REG2) & 0x40)
 #define ACC_STOP_AND_CLEAR() ACC_writeToRegister(ACC_ADR_CONTROL_REG1, 0)
 
-#define MOTION_DETECT_INT_ON()   GICR  |= (1 << INT0)
-#define MOTION_DETECT_INT_OFF()  GICR  &=~(1 << INT0)
+// On ATmega8
+#define MOTION_DETECT_INT_ON()   EIMSK |= (1 << INT0)
+#define MOTION_DETECT_INT_OFF()  EIMSK &=~(1 << INT0)
 
 #include <avr/io.h>
 #include "I2C.hpp"
