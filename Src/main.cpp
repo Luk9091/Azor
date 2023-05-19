@@ -106,60 +106,86 @@ int main(){
     //     UART_println(TIMER_getValue());
     //     UART_print_char('\n');
     // }
-    
+
+    // while(1){
+    //     _delay_ms(100);
+    //     LED_PORT ^= LED_PIN_num;
+    // }    
     // return 0;
 
     while (1)
     {
         if(readSize != 0){
             switch(string[0]){
-            //     case 'e':{
-            //         switch (string[1]){
-            //             case 'l':{
-            //                 LEFT_forward(find_int());
-            //             }break;;
-            //             case 'r':{
-            //                 RIGHT_forward(find_int());
-            //             }break;
-            //             case 'f':{
-            //                 move_forward(find_int());
-            //             }break;
-            //             case 'a':{
-            //                 move_rotate(find_int());
-            //             } break;
-            //             case 'e':{
-            //                 ENGINE_enable(find_int());
-            //             }break;
+                case 'e':{
+                    switch (string[1]){
+                        case 'l':{
+                            LEFT_forward(find_int());
+                        }break;;
+                        case 'r':{
+                            RIGHT_forward(find_int());
+                        }break;
+                        case 'f':{
+                            move_forward(1);
+                        }break;
+                        case 'b':{
+                            move_forward(0);
+                        } break;
+                        case 's':{
+                            move_stop();
+                        };
+                        case 'a':{
+                            move_rotate(find_int());
+                        } break;
+                        case 'e':{
+                            if(find_int()){
+                                ENGINE_ENABLE();
+                            } else {
+                                ENGINE_DISABLE();
+                            }
+                        }break;
+                        case 'c':{
+                            switch(string[2]){
+                                case 'r':{
+                                    COUNTER_start();
+                                }break;
+                                default:{
+                                    UART_print("Counter: ");
+                                    UART_println(COUNTER_read());
+                                }break;
+                            }
+                        }break;
                         
-            //             default:{
-            //                 UART_println("Invalid cmd!");
-            //             }
-            //         }
-            //     }break;
+                        default:{
+                            UART_println("Invalid cmd!");
+                        }
+                    }
+                }break;
 
-                // case 'u':{
-                //     switch(string[1]){
-                //         case 'r':{
-                //             uint8_t duty = find_int();
-                //             UART_print("Head move: ");
-                //             UART_println(duty);
-                //             PWM_setDuty(duty);
-                //             // _delay_ms(20);
-                //             // PWM_setDuty(0);
-                //         }break;
+                case 'u':{
+                    switch(string[1]){
+                        case 'r':{
+                            uint8_t duty = find_int();
+                            UART_print("Head move: ");
+                            UART_println(duty);
+                            // PWM_setDuty(duty);
+                            PWM_setAngle(duty);
+                            // _delay_ms(20);
+                            // PWM_setDuty(0);
+                        }break;
 
-                //         case 'm':{
-                //             UART_print("Distance: ");
-                //             itoa(SONIC_measure(), string, 10);
-                //             UART_println(string);
-                //         } break;
+                        case 'm':{
+                            UART_print("Distance: ");
+                            itoa(SONIC_measure(), string, 10);
+                            UART_println(string);
+                        } break;
                         
 
-                //         default:{
-                //             UART_println("Invalid cmd!");
-                //         }
-                //     }
-                // }break;
+                        default:{
+                            UART_println("Invalid cmd!");
+                        }
+                    }
+                }break;
 
                 case 'm':{
                     UART_DISABLE_INTERRUPT_RX;

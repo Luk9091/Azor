@@ -64,6 +64,8 @@ void COUNTER_Init(){
     TIFR0  |= 1 << TOV0;
     TIMSK0 |= 1 << TOIE0;
 
+    // TCCR0A = 0;
+
     COUNTER_start();
     COUNTER_clear();
 

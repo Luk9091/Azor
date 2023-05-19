@@ -21,7 +21,7 @@ uint16_t ACC_time;
 
 void ACC_Init(){
     #if ACC_INTERRUPT_ENABLE
-        MCUCR |= (3 << ISC00);  //  zbocze narastające na INT0 wymusza przerwanie
+        EICRA |= (3 << ISC00);  //  zbocze narastające na INT0 wymusza przerwanie
         EIMSK  |= (1 << INT0);
     #endif
 

@@ -21,7 +21,7 @@ void SONIC_Init(bool run){
     TRIG_DDR  |= (1 << TRIG_PIN);
     DDRD  &= ~(1<< ECHO_PIN);
 
-    MCUCR |= (1 << ISC10); // wyzwolenie zmianą stanu logicznego
+    EICRA |= (1 << ISC10); // wyzwolenie zmianą stanu logicznego
     EIMSK |= (1 << INT1);
     
     SONIC_run = run;
