@@ -44,8 +44,8 @@ Stack:
 
 Acc:
 144 - 147.	READ from register and save it in reg. As address take value from reg
-148 - 151.  READ AXIS to read AXIS or read from FIFO, save data (low) in reg and (high) in reg + 1. First register read send via reg
-152 - 155.	WRITE to register from address in reg data from reg +1 
+148 - 151.  READ AXIS to read AXIS or read from FIFO, in LOW byte of reg send number of axis: 
+152 - 155.	WRITE to register from address in HIGH byte of reg data from LOW byte of reg
 156 - 159.	CAL transition on axis in reg and return value in reg and reg + 1
 
 
@@ -73,7 +73,7 @@ TIMER:
 224 - 227.  LED in out reg
 
 ULTRASONIC:
-228 - 231.	MEASURE return (low) in reg and (high) reg + 1
+228 - 231.	MEASURE return to reg
 232 - 235.	ROTATE angle from reg
 236 - 239.	BACK SENSOR READ to reg
 
@@ -81,7 +81,7 @@ ULTRASONIC:
 UART & BT
 240 - 243.	UART READ to reg
 244 - 248.	UART SEND from reg
-248 - 251.  UART SEND INT from (low) reg and (high) reg + 1
+248 - 251.  UART SEND INT from reg
 
 
 

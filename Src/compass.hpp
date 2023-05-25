@@ -47,6 +47,9 @@
 
 
 void COMPASS_Init();
+
+// int16_t COMPASS_getAxis(uint8_t axis);
+#define COMPASS_getAxis(axis) I2C_read2Byte(I2C_ADR_COMPASS << 1, axis)
 int16_t COMPASS_getAzimuth();
 
 // int8_t COMPASS_getNorth();

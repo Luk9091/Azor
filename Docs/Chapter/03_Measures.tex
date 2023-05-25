@@ -1,0 +1,46 @@
+\section{Metody pomiarowe}
+    \subsection{Odległość -- dalmierz}
+        \tab Podstawowym zadaniem „Azora” jest stworzenie mapy tereny.
+        Proces ten wykonywany jest za pomocą dalmierza HC-SR04 zamocowane na serwo mechanizmie, dzięki czemu dalmierz może obracać się w osi Z od $0^\circ$ do $180^\circ$.\\
+        Schemat połączenia:
+        \begin{figure}[!h]
+            \centering
+            \begin{circuitikz}
+                \draw
+                    (0, 0) -- (0, -5)
+                    (-2, 0) node[]{$\mu P$}
+
+                    (3, -1.75) node[draw, rectangle, minimum width = 2cm, minimum height = 1cm](HC){HC-SR04}
+                    (3, -4) node[draw, rectangle, minimum width = 2cm, minimum height = 1cm](SG){SG-90}
+
+                    (0, -1.5) coordinate(ECHO) node[left]{(ECHO) PD4}
+                    (0, -2.0) coordinate(TRIG) node[left]{(TRIG) PB6}
+                    (0, -4.0) coordinate(PWM)  node[left]{(PWM) PB3}
+
+                    (ECHO) -- ++ (2, 0)
+                    (TRIG) -- ++ (2, 0)
+
+                    (PWM) -- ++ (2, 0)
+
+                    (HC) ++ (0, 0.5) node[vcc]{$V_{CC}$}
+                    (SG) ++ (0, 0.5) node[vcc]{$V_{CC}$}
+
+                    (HC) ++ (1, 0) node[ground]{}
+                ;
+            \end{circuitikz}
+        \end{figure}
+
+        \subsection{Algorytm działania:}
+            \begin{figure}[!h]
+                \centering
+                \begin{circuitikz}
+                    \draw
+                        (0, 0) node [draw, circle, minimum width = 2cm, text width = 2cm, align=center]{Wysłanie sygnału TRIG}
+                        (0, -4) node[draw, diamond, minimum width= 2cm, text width = 2cm, align=center]{Czy został odebrany sygnał z ECHO}
+                    ;
+                \end{circuitikz}
+            \end{figure}
+
+    \subsection{Prędkość -- enkoder}
+    \subsection{Przyspieszenie -- akcelerometr}
+    \subsection{Magnetometr -- cyfrowy kompas}

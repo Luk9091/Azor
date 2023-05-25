@@ -6,7 +6,7 @@
 #include <util/delay.h>
 
 #define PWM_prescaler 0b110
-#define PWM_ANGLE_OFFSET 20
+#define PWM_ANGLE_OFFSET 15
 
 void PWM_Init(bool run = true, uint8_t startDuty = 40);
 

@@ -107,11 +107,18 @@ int main(){
     //     UART_print_char('\n');
     // }
 
-    // while(1){
-    //     _delay_ms(100);
-    //     LED_PORT ^= LED_PIN_num;
-    // }    
-    // return 0;
+    while(1){
+        UART_print("x: ");
+        UART_println(COMPASS_getAxis(COMPASS_X));
+        UART_print("y: ");
+        UART_println(COMPASS_getAxis(COMPASS_Y));
+        UART_print("Azimuth: ");
+        UART_println(COMPASS_getAzimuth());
+
+        LED_PORT ^= LED_PIN_num;
+        _delay_ms(200);
+    }    
+    return 0;
 
     while (1)
     {
@@ -286,6 +293,19 @@ int main(){
 
                             COMPASS_writeToRegister(address, data);
                         } break;
+
+                        case 'x':{
+                            UART_print("Compass x: ");
+                            UART_println(COMPASS_getAxis(COMPASS_X));
+                        }break;
+                        case 'y':{
+                            UART_print("Compass y: ");
+                            UART_println(COMPASS_getAxis(COMPASS_Y));
+                        }break;
+                        case 'z':{
+                            UART_print("Compass z: ");
+                            UART_println(COMPASS_getAxis(COMPASS_Z));
+                        }break;
 
                         case 'r':{
                             uint8_t address = find_int(0);

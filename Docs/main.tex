@@ -8,6 +8,7 @@
 \usepackage{amsmath}
 \usepackage{multicol}
 
+
 % Dot post number of section
 \usepackage{titlesec}
 % Underline section, dot post number and span post dot
@@ -15,7 +16,7 @@
     {\Large \bfseries}
     {\thesection.}
     {0.5 cm}
-    {}[\titlerule]
+    {}[\titlerule\vspace{0.2cm}]
 \titlelabel{\thetitle.\quad}
 
 
@@ -34,8 +35,9 @@
 % \usepackage{csvsimple}
 % \usepackage{pgfplots}
 
-\usepackage[european, american currents, americanvoltages, RPvoltages]{circuitikz}
+\usepackage[european, american currents, americanvoltages, RPvoltages, cute inductor]{circuitikz}
 \usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
 
 \title{\underline{Systemy mikroprocesorowe}\\\textbf{Dokumentacja projektu}\\Azor - The czołg}
 \author{Piotr Kowol, Łukasz Przystupa}
@@ -66,7 +68,9 @@
     
     \tableofcontents
     \newpage
-    \input{Chapter/00_Wstep.tex}
-    \input{Chapter/01_CelIZalozenia.tex}
+    \include{Chapter/00_Wstep.tex}
+    \include{Chapter/01_CelIZalozenia.tex}
+    \include{Chapter/02_InterfaceStd.tex}
+    \include{Chapter/03_Measures.tex}
 
 \end{document}
