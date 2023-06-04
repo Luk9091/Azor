@@ -6,7 +6,9 @@
 #include "I2C.hpp"
 #include <math.h>
 #include "uart.hpp"
+
 #define PI 3.1415926F
+#define COMPASS_CALIBRATION true
 
 #define I2C_ADR_COMPASS 0x0D
 #define COMPASS_X 0
@@ -45,14 +47,52 @@
 // uint8_t COMPASS_read(uint8_t address);
 
 
+struct COMPASS_AXIS{
+    int16_t x;
+    int16_t y;
+    int16_t z;
+};
+extern COMPASS_AXIS COMPASS_axis;
 
 void COMPASS_Init();
 
-// int16_t COMPASS_getAxis(uint8_t axis);
-#define COMPASS_getAxis(axis) I2C_read2Byte(I2C_ADR_COMPASS << 1, axis)
+// #if COMPASS_CALIBRATION
+int16_t COMPASS_getAxis();
+// #else
+//     #define COMPASS_getAxis(axis) I2C_read2Byte(I2C_ADR_COMPASS << 1, axis)
+// #endif
+
 int16_t COMPASS_getAzimuth();
 
-// int8_t COMPASS_getNorth();
+
+#if COMPASS_CALIBRATION
+// Calibration:
+#define _COMPASS_x_min   400
+#define _COMPASS_x_max  1300
+#define _COMPASS_y_min -4600
+#define _COMPASS_y_max -3400
+#define _COMPASS_z_min -2270
+#define _COMPASS_z_max  1200
+
+
+#define _COMPASS_x_offset (_COMPASS_x_min + _COMPASS_x_max)/2
+#define _COMPASS_y_offset (_COMPASS_y_min + _COMPASS_y_max)/2
+#define _COMPASS_z_offset (_COMPASS_z_min + _COMPASS_z_max)/2
+
+#define _COMPASS_x_ave_delta (_COMPASS_x_max - _COMPASS_x_min)/2
+#define _COMPASS_y_ave_delta (_COMPASS_y_max - _COMPASS_y_min)/2
+#define _COMPASS_z_ave_delta (_COMPASS_z_max - _COMPASS_z_min)/2
+
+#define _COMPASS_ave_delta (float)(_COMPASS_x_ave_delta + _COMPASS_y_ave_delta + _COMPASS_z_ave_delta)/3
+
+#define _COMPASS_x_scale (_COMPASS_ave_delta/_COMPASS_x_ave_delta)
+#define _COMPASS_y_scale (_COMPASS_ave_delta/_COMPASS_y_ave_delta)
+#define _COMPASS_z_scale (_COMPASS_ave_delta/_COMPASS_z_ave_delta)
+#endif
+
+
+
+
 
 
 #endif
