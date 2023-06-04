@@ -63,6 +63,7 @@ void UART_Init(bool enableEchoInterrupt, bool run){
     UBRR0L = (F_CPU/8/BAUDRATE-1);
 
     UCSR0B |= (1<<RXEN0) | (1<<TXEN0);
+    UCSR0C |= (3 << UCSZ00);
 
     if(enableEchoInterrupt)
         UART_ENABLE_INTERRUPT_RX;
@@ -126,7 +127,7 @@ uint8_t UART_read(char *buf, uint8_t buf_size, char terminator){
     
     do{
         c = UART_read_char();
-        UART_print_char(c); // XDDDD przeniesienie z lini 81 tu zaoszczędza 6 bajtów!
+        UART_print_char(c); // XD przeniesienie z lini 81 tu zaoszczędza 6 bajtów!
         if(c == 0x08){
             UART_print_char(' ');
             UART_print_char(c);

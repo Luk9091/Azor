@@ -107,21 +107,21 @@ int main(){
     //     UART_print_char('\n');
     // }
 
-    while(1){
-        int16_t a = COMPASS_getAzimuth();
-        UART_print("x: ");
-        UART_print(COMPASS_axis.x);
-        UART_print("\ty: ");
-        UART_print(COMPASS_axis.y);
-        UART_print("\tz: ");
-        UART_println(COMPASS_axis.z);
-        UART_print("Azimuth: ");
-        UART_println(a);
+    // while(1){
+    //     int16_t a = COMPASS_getAzimuth();
+    //     UART_print("x: ");
+    //     UART_print(COMPASS_axis.x);
+    //     UART_print("\ty: ");
+    //     UART_print(COMPASS_axis.y);
+    //     UART_print("\tz: ");
+    //     UART_println(COMPASS_axis.z);
+    //     UART_print("Azimuth: ");
+    //     UART_println(a);
 
-        LED_PORT ^= LED_PIN_num;
-        _delay_ms(200);
-    }    
-    return 0;
+    //     LED_PORT ^= LED_PIN_num;
+    //     _delay_ms(200);
+    // }    
+    // return 0;
 
     while (1)
     {
@@ -185,9 +185,10 @@ int main(){
                         }break;
 
                         case 'm':{
-                            UART_print("Distance: ");
-                            itoa(SONIC_measure(), string, 10);
-                            UART_println(string);
+                            UART_print("Angle: ");
+                            UART_print((OCR2A - PWM_ANGLE_OFFSET)*3);
+                            UART_print("\tDistance: ");
+                            UART_println(SONIC_measure());
                         } break;
                         
 
