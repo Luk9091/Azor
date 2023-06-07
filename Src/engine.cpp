@@ -32,21 +32,54 @@ void move_forward(bool direction, bool enable){
 }
 
 void move_rotate(int16_t angle){
-    int16_t measure = COMPASS_getAzimuth();
+    // int16_t startAzi = COMPASS_getAzimuth();
+    // startAzi += COMPASS_getAzimuth();
+    // startAzi /= 2;
     if(angle >= 0){
         PORTB |= 1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_RIGHT_DOWN_PIN;
     }else{
         PORTB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 << ENGINE_RIGHT_UP_PIN;
         // angle = -angle;
     }
-    angle = abs(angle);
 
-    while(abs(COMPASS_getAzimuth()-measure) >= angle){
-        ENGINE_ENABLE();
-        _delay_ms(10);
-        ENGINE_DISABLE();
+    int16_t azi = COMPASS_getAzimuth();
+    UART_print("Current azi: ");
+    UART_println(azi);
+
+    // int16_t overcome = 0;
+    int16_t destination = azi + angle;
+    if(destination >= 360)
+        destination -= 360;
+    else if(destination < 0)
+        destination += 360;
+    
+
+    // Teoretycznie można spróbować z takim ustawieniem
+    // int16_t padding = destination*1/100;
+    // int16_t destinationMin = destination - padding;
+    // int16_t destinationMax = destination + padding;
+
+    ENGINE_ENABLE();
+    // while(!(azi >= destinationMin && azi <= destinationMax)){
+    while (azi != destination){
+        _delay_ms(50);
+
+        azi = COMPASS_getAzimuth();
+        azi += COMPASS_getAzimuth();
+        azi /= 2;
+
+        // overcome = azi - startAzi;
+        // UART_print("Azi: ");
+        // UART_println(azi);
     }
+    ENGINE_DISABLE();
     move_stop();
+
+    UART_print("End azi: ");
+    UART_println(azi);
+
+    UART_print("Delta azi: ");
+    UART_println(destination - azi);
 }
 
 
