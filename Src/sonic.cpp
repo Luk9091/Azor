@@ -47,6 +47,8 @@ uint16_t SONIC_measure(){
 
     if(value >= 2449)
         value = 4200;
+    else if(value <= 116)
+        value = 0;
     else
         value = value * SOUND_V;
 

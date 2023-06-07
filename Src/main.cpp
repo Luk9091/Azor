@@ -143,7 +143,7 @@ int main(){
                         } break;
                         case 's':{
                             move_stop();
-                        };
+                        }break;
                         case 'a':{
                             move_rotate(find_int());
                         } break;
