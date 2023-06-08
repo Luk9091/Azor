@@ -57,7 +57,7 @@ pointer.hideturtle()
 pointer.speed(100)
 pointer.width(2)
 
-def measure(step, size = 400, position = (0, 0)):
+def measure(step = 3, size = 400, position = (0, 0)):
     measure = 400
     limit = 400
     pointer.clear()
@@ -67,13 +67,16 @@ def measure(step, size = 400, position = (0, 0)):
     pointer.pendown()
 
     measure = -10
-    for i in range(10, 71, step):
-        while measure == -10:            
-            measure = int(communication.measure(str(i))*10)
+    for i in range(0, 181, step):
+        while measure == -10:
+            measure = float(communication.measure(str(i)))/10
+            if measure > 400:
+                measure = 400
+            print(measure)
         
         pointer.color("Green")
         pointer.pendown()
-        pointer.left((i-10)/60*180)
+        pointer.left(i)
         # measure = 250
 
         pointer.forward(measure*size/limit)

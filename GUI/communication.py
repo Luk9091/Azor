@@ -3,39 +3,59 @@ from time import sleep
 
 dev = serial.Serial("/dev/rfcomm0", 9600)
 
+def readData(dataLine = 0):
+    line = 0
+    returnData = ""
+    data = ""
+    while data != "OK":
+        data = dev.readline().decode()
+        data = data[:-1]
+        # print(data)
+        if(data == "!OK"):
+            return 0
+
+        line = line + 1
+        if(line == dataLine):
+            returnData = data
+
+    sleep(0.005)
+    if dataLine == 0:
+        returnData = data
+    return returnData
+
+
 
 def measure(angle):
-    delay = 0.25
-    if angle == "10" or angle == "70":
-        delay = 1
+    if(int(angle) > 180):
+        angle = 180
+    if(int(angle) < 0):
+        angle = 0
 
-    angle = angle + "\n"
-    dev.write(angle.encode("utf-8"))
-    sleep(delay)
-    data = dev.read_all().decode("utf-8")
-    print(f"{data}Size: {len(data)}")
+    angle = str(angle)
+    msg = "ur " + angle + "\n"
 
-    time = -1
-    if(len(data) > 0 and len(data) < 26):
-        time = data.split('\n')
-        time = time[2][6:]
-        time = int(time, 10)
-        time = time * 0.017150
+    dev.write(msg.encode())
+    readData()
+    
+    dev.write("um\n".encode())
+    data = readData(2)
+    # checkAngle = data[7:10]
+    # if checkAngle[-1] == "\t":
+    #     checkAngle = checkAngle[:-1]
 
-    if(len(data) == 28):
-        time = data.split('\n')
-        time = time[2][6]
-        if time == 'E':
-            time = 40
+    # if checkAngle != angle:
+    #     return 0
+    distance = data[19:]
+
+    while(not distance[0].isdigit()):
+        distance = distance[1:]
 
 
-    return time
+    return int(distance)
+
+
 
 
 if __name__ == "__main__":
-    # data = ""
-    # while data == "":
-    #     data = dev.read_all().decode("utf-8")
-    # print(f"{data} Size: {len(data)}")
     while(1):
-        print(measure(input("?")))
+        print(measure(input("? ")))

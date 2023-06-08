@@ -62,7 +62,7 @@ if __name__=="__main__":
     radar.draw(radar_size, radar_position)
     
     run = True
-    step = 1
+    step = 3
     while run:
         # communication.measure("10")
         radar.measure(step, radar_size, radar_position)
