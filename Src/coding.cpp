@@ -282,13 +282,13 @@ void execute(uint8_t instruction){
 
 
         case ENGINE_FORWARD:{
-            move_forward(true);
+            ENGINE_forward(true);
         }return;
         case ENGINE_BACKWARD:{
-            move_forward(false);
+            ENGINE_forward(false);
         }return;
         case ENGINE_STOP:{
-            move_stop();
+            ENGINE_stop();
         }return;
 
         case ENGINE_LEFT_FORWARD:{

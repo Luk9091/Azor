@@ -4,6 +4,8 @@
 #include <avr/io.h>
 #include "compass.hpp"
 
+#define distancePerTic 63 //0.1mm
+
 #define ENGINE_LEFT_UP_PIN     1
 #define ENGINE_LEFT_DOWN_PIN   0
 
@@ -19,18 +21,19 @@
 void ENGINE_Init();
 // void ENGINE_enable(bool enable = true);
 
-void move_forward(bool enable = true);
-void move_backward(bool enable = true);
+void ENGINE_forward(bool enable = true);
+void ENGINE_backward(bool enable = true);
 void move_rotate(int16_t angle);
 
-void move_stop();
+void ENGINE_stop();
 
 void LEFT_forward (bool direction = true);
 void RIGHT_forward(bool direction = true);
 
-// void move_left(uint8_t angle : 0);
-// void move_right(uint8_t angle : 0);
 
+void move_forward(int16_t distance = 0);
+
+void move_backward(int16_t distance = 0);
 
 
 

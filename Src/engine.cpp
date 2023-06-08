@@ -17,8 +17,8 @@ void ENGINE_Init(){
     ENGINE_DISABLE();
 }
 
-void move_forward(bool enable){
-    move_stop();
+void ENGINE_forward(bool enable){
+    ENGINE_stop();
 
     PORTB |= 1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_RIGHT_UP_PIN;
 
@@ -26,8 +26,8 @@ void move_forward(bool enable){
         ENGINE_ENABLE();
 }
 
-void move_backward(bool enable){
-    move_stop();
+void ENGINE_backward(bool enable){
+    ENGINE_stop();
     
     PORTB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 <<ENGINE_RIGHT_DOWN_PIN;
 
@@ -77,7 +77,7 @@ void move_rotate(int16_t angle){
         // UART_println(azi);
     }
     ENGINE_DISABLE();
-    move_stop();
+    ENGINE_stop();
 
     UART_print("End azi: ");
     UART_println(azi);
@@ -87,7 +87,7 @@ void move_rotate(int16_t angle){
 }
 
 
-void move_stop(){
+void ENGINE_stop(){
     TIMER_stop();
     ENGINE_DISABLE();
     PORTB &= ~(1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_LEFT_DOWN_PIN
@@ -110,3 +110,30 @@ void RIGHT_forward(bool direction){
         PORTB |= 1 << ENGINE_RIGHT_DOWN_PIN;
     }
 }
+
+
+
+void move_forward(int16_t distance){
+    int16_t overcome = 0;
+    COUNTER_clear();
+
+    ENGINE_forward();
+    
+    while(distance - overcome > 0){
+        overcome = (COUNTER_read()) * distancePerTic;
+    }
+    ENGINE_stop();
+}
+
+void move_backward(int16_t distance){
+    int16_t overcome = 0;
+    COUNTER_clear();
+
+    ENGINE_backward();
+    
+    while(distance - overcome > 0){
+        overcome = (COUNTER_read()) * distancePerTic;
+    }
+    ENGINE_stop();
+}
+

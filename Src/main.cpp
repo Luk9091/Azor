@@ -44,6 +44,8 @@
 #include "compass.hpp"
 // #include "mapping.hpp"
 
+#include "test.hpp"
+
 
 
 int main(){
@@ -77,13 +79,13 @@ int main(){
                             RIGHT_forward(find_int());
                         }break;
                         case 'f':{
-                            move_forward();
+                            move_forward(find_int());
                         }break;
                         case 'b':{
-                            move_backward();
+                            move_backward(find_int());
                         } break;
                         case 's':{
-                            move_stop();
+                            ENGINE_stop();
                         }break;
                         case 'a':{
                             move_rotate(find_int());
@@ -139,70 +141,11 @@ int main(){
                     }
                 }break;
 
-                case 'm':{
-                    UART_DISABLE_INTERRUPT_RX;
-
-                    int16_t destinationDistance = -find_int();
-                    int16_t startDistance = SONIC_measure();
-                    int16_t distance = startDistance;
-                    if(startDistance + destinationDistance  > 4200 || startDistance + destinationDistance < 0 ){
-                        UART_println("Wrong destination!");
-                        UART_ENABLE_INTERRUPT_RX;
-                        UART_print_char('!');
-                        break;
-                    }
-
-                    UART_print("Start distance: ");
-                    UART_println(startDistance);
-                    UART_print("End distance: ");
-                    UART_println(startDistance + destinationDistance);
-
-                    TIMER_set(255);
-                    COUNTER_clear();
-                    if(destinationDistance > 0){
-                        move_forward();
-                        destinationDistance = startDistance + destinationDistance;
-
-                        TIMER_start();
-                        while (distance - destinationDistance <= 0){
-                            _delay_ms(5);
-                            distance = SONIC_measure();
-                        }
-                        move_stop();
-                        TIMER_stop();
-                    } else {
-                        move_backward();
-                        destinationDistance = startDistance + destinationDistance;
-
-                        TIMER_start();
-                        while (distance - destinationDistance >= 0){
-                            _delay_ms(5);
-                            distance = SONIC_measure();
-                        }
-                        move_stop();
-                        TIMER_stop();
-                    }
-
-                        
-
-                    UART_print("Current distance: ");
-                    UART_println(SONIC_measure());
-                    UART_print("Timer value ms: ");
-                    UART_print((TIMER_getValue()/8) / 1000);
-                    UART_print(".");
-                    uint16_t us = (TIMER_getValue()/8) % 1000;
-                    if(us < 100)
-                        UART_print_char('0');
-                    else if(us < 10)
-                        UART_print("00");
-                    UART_println(us);
-                    UART_print("Timer value: ");
-                    UART_println_ulong(TIMER_getValue(),  10);
-                    UART_print("Counter value: ");
-                    UART_println(COUNTER_read());
-
-                    UART_ENABLE_INTERRUPT_RX;
+                #if testing
+                case 't':{
+                        testing_fun();
                 }break;
+                #endif
 
                 case 'a':{
                     switch (string[1]){
