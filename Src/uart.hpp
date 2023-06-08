@@ -35,6 +35,10 @@ void UART_println(const char *str);
 void UART_print(int16_t value, uint8_t base = 10);
 void UART_println(int16_t value, uint8_t base = 10);
 
+
+void UART_print_ulong(uint32_t value, uint8_t base = 16);
+void UART_println_ulong(uint32_t value, uint8_t base = 16);
+
 uint8_t UART_read_char();
 uint8_t UART_read(char *buf, uint8_t buf_size = 255, char terminator = '\n');
 

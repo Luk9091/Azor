@@ -10,7 +10,7 @@ void runAndMeasure(int16_t destination){
 
     if(destination == 0)
         return;
-    move_forward(destination > 0, false);
+    // move_forward(false);
     destination = abs(destination);
     uint32_t destinationMul = destination*1000;
     // destination *= 1000;

@@ -19,7 +19,8 @@
 void ENGINE_Init();
 // void ENGINE_enable(bool enable = true);
 
-void move_forward(bool direction = true, bool enable = true);
+void move_forward(bool enable = true);
+void move_backward(bool enable = true);
 void move_rotate(int16_t angle);
 
 void move_stop();

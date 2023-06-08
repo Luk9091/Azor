@@ -17,18 +17,22 @@ void ENGINE_Init(){
     ENGINE_DISABLE();
 }
 
-void move_forward(bool direction, bool enable){
-    ENGINE_DISABLE();
-    TIMER_set(255);
-    COUNTER_clear();
-    TIMER_start();
-    if(direction){
-        PORTB |= 1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_RIGHT_UP_PIN;
-    }else{
-        PORTB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 <<ENGINE_RIGHT_DOWN_PIN;
-    }
+void move_forward(bool enable){
+    move_stop();
+
+    PORTB |= 1 << ENGINE_LEFT_UP_PIN | 1 << ENGINE_RIGHT_UP_PIN;
+
     if(enable)
-    ENGINE_ENABLE();
+        ENGINE_ENABLE();
+}
+
+void move_backward(bool enable){
+    move_stop();
+    
+    PORTB |= 1 << ENGINE_LEFT_DOWN_PIN | 1 <<ENGINE_RIGHT_DOWN_PIN;
+
+    if(enable)
+        ENGINE_ENABLE();
 }
 
 void move_rotate(int16_t angle){

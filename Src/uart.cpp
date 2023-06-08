@@ -99,16 +99,31 @@ void UART_println(const char *str){
 
 void UART_print(int16_t value, uint8_t base){
     itoa(value, temp_str, base);
-    if(base == 16){
+    if(base == 16)
         UART_print("0x");
-        if(value < 16)
-            UART_print_char('0');
-    }
+    else if(base == 2)
+        UART_print("0b");
     UART_print(temp_str);
 }
 
 void UART_println(int16_t value, uint8_t base){
     UART_print(value, base);
+    UART_print_char('\n');
+}
+
+void UART_print_ulong(uint32_t value, uint8_t base){
+    itoa(value, temp_str, base);
+
+    if(base == 16)
+        UART_print("0x");
+    else if (base == 2)
+        UART_print("0b");
+
+    UART_print(temp_str);
+}
+
+void  UART_println_ulong(uint32_t value, uint8_t base){
+    UART_print_ulong(value, base);
     UART_print_char('\n');
 }
 

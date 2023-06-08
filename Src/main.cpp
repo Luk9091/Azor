@@ -46,22 +46,6 @@
 
 
 
-// void readFifo(){
-//     UART_println("Read FIFO:");
-
-//     for(uint8_t innerCounter = 0; innerCounter < FIFO_counter; innerCounter++){
-//         UART_print(innerCounter);
-//         UART_print(".\t");
-//         UART_println(FIFO[innerCounter]);
-//     }
-    
-//     UART_println("END reading");
-//     FIFO_counter = 0;
-// }
-
-
-
-
 int main(){
     LED_DDR |= LED_PIN_num;
 
@@ -80,49 +64,6 @@ int main(){
     UART_println("MHz");
     sei();
 
-    // move_forward();
-    // while (1){
-    //     UART_println("Timer run");
-    //     TIMER_set(255);
-        
-    //     TIMER_start();
-    //     ENGINE_ENABLE();
-    //     _delay_ms(500);
-        
-    //     TIMER_stop();
-    //     ENGINE_DISABLE();
-    //     UART_print("Count: ");
-    //     UART_println(COUNTER_read());
-    //     UART_print("T: ");
-    //     UART_println(TIMER_getValue());
-        
-    //     TIMER_clear();
-    //     COUNTER_clear();
-
-    //     UART_println("CLEAR");
-    //     UART_print("Count: ");
-    //     UART_println(COUNTER_read());
-    //     UART_print("T: ");
-    //     UART_println(TIMER_getValue());
-    //     UART_print_char('\n');
-    // }
-
-    // while(1){
-    //     int16_t a = COMPASS_getAzimuth();
-    //     UART_print("x: ");
-    //     UART_print(COMPASS_axis.x);
-    //     UART_print("\ty: ");
-    //     UART_print(COMPASS_axis.y);
-    //     UART_print("\tz: ");
-    //     UART_println(COMPASS_axis.z);
-    //     UART_print("Azimuth: ");
-    //     UART_println(a);
-
-    //     LED_PORT ^= LED_PIN_num;
-    //     _delay_ms(200);
-    // }    
-    // return 0;
-
     while (1)
     {
         if(readSize != 0){
@@ -136,10 +77,10 @@ int main(){
                             RIGHT_forward(find_int());
                         }break;
                         case 'f':{
-                            move_forward(1);
+                            move_forward();
                         }break;
                         case 'b':{
-                            move_forward(0);
+                            move_backward();
                         } break;
                         case 's':{
                             move_stop();
@@ -201,41 +142,64 @@ int main(){
                 case 'm':{
                     UART_DISABLE_INTERRUPT_RX;
 
-                    int16_t distance = SONIC_measure();
-                    int16_t newDistance = distance;
-                    bool overflow = false;
-                    UART_print("Start distance: ");
-                    UART_println(distance);
-
-                    COUNTER_clear();
-                    TIMER_set(5, &overflow);
-                    move_forward(false);
-
-                    TIMER_start();
-                    ENGINE_ENABLE();
-                    while (newDistance - distance  < 2000){
-                        newDistance = SONIC_measure();
-                        if(overflow){
-                            UART_println("Timer overflow");
-                            break;
-                        }
+                    int16_t destinationDistance = -find_int();
+                    int16_t startDistance = SONIC_measure();
+                    int16_t distance = startDistance;
+                    if(startDistance + destinationDistance  > 4200 || startDistance + destinationDistance < 0 ){
+                        UART_println("Wrong destination!");
+                        UART_ENABLE_INTERRUPT_RX;
+                        UART_print_char('!');
+                        break;
                     }
-                    TIMER_stop();
-                    ENGINE_DISABLE();
-                    
 
-                    UART_print("Counter: ");
+                    UART_print("Start distance: ");
+                    UART_println(startDistance);
+                    UART_print("End distance: ");
+                    UART_println(startDistance + destinationDistance);
+
+                    TIMER_set(255);
+                    COUNTER_clear();
+                    if(destinationDistance > 0){
+                        move_forward();
+                        destinationDistance = startDistance + destinationDistance;
+
+                        TIMER_start();
+                        while (distance - destinationDistance <= 0){
+                            _delay_ms(5);
+                            distance = SONIC_measure();
+                        }
+                        move_stop();
+                        TIMER_stop();
+                    } else {
+                        move_backward();
+                        destinationDistance = startDistance + destinationDistance;
+
+                        TIMER_start();
+                        while (distance - destinationDistance >= 0){
+                            _delay_ms(5);
+                            distance = SONIC_measure();
+                        }
+                        move_stop();
+                        TIMER_stop();
+                    }
+
+                        
+
+                    UART_print("Current distance: ");
+                    UART_println(SONIC_measure());
+                    UART_print("Timer value ms: ");
+                    UART_print((TIMER_getValue()/8) / 1000);
+                    UART_print(".");
+                    uint16_t us = (TIMER_getValue()/8) % 1000;
+                    if(us < 100)
+                        UART_print_char('0');
+                    else if(us < 10)
+                        UART_print("00");
+                    UART_println(us);
+                    UART_print("Timer value: ");
+                    UART_println_ulong(TIMER_getValue(),  10);
+                    UART_print("Counter value: ");
                     UART_println(COUNTER_read());
-                    UART_print("Time: ");
-                    UART_print(TIMER_getValue()/8);
-                    UART_println("ms");
-                    UART_print("Velocity: ");
-                    UART_println(getVelocity_withACC());
-
-                    
-
-                    // runAndMeasure(find_int());
-                    // map(0);
 
                     UART_ENABLE_INTERRUPT_RX;
                 }break;
@@ -286,6 +250,7 @@ int main(){
                     }
                 }break;
                 case 'c':{
+                    COMPASS_getAxis();
                     switch (string[1]){
                         case 'w':{
                             uint8_t address = find_int(0);
@@ -298,18 +263,18 @@ int main(){
                             COMPASS_writeToRegister(address, data);
                         } break;
 
-                        // case 'x':{
-                        //     UART_print("Compass x: ");
-                        //     UART_println(COMPASS_getAxis(COMPASS_X));
-                        // }break;
-                        // case 'y':{
-                        //     UART_print("Compass y: ");
-                        //     UART_println(COMPASS_getAxis(COMPASS_Y));
-                        // }break;
-                        // case 'z':{
-                        //     UART_print("Compass z: ");
-                        //     UART_println(COMPASS_getAxis(COMPASS_Z));
-                        // }break;
+                        case 'x':{
+                            UART_print("Compass x: ");
+                            UART_println(COMPASS_axis.x);
+                        }break;
+                        case 'y':{
+                            UART_print("Compass y: ");
+                            UART_println(COMPASS_axis.y);
+                        }break;
+                        case 'z':{
+                            UART_print("Compass z: ");
+                            UART_println(COMPASS_axis.z);
+                        }break;
 
                         case 'r':{
                             uint8_t address = find_int(0);
