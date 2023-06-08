@@ -12,7 +12,7 @@
             "intelliSenseMode": "linux-gcc-x64",
             "compilerArgs": [
                 "-mmcu=atmega328",
-                "-D F_CPU=1000000UL",
+                "-D F_CPU=8000000UL",
                 "-Os"
             ]
         }
