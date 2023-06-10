@@ -16,6 +16,8 @@ void PWM_Init(bool run = true, uint8_t startDuty = 40);
 
 // void PWM_setDuty(uint8_t duty);
 #define PWM_setDuty(duty) OCR2A = duty
+#define PWM_getDuty() OCR2A
+#define PWM_getAngle() ((PWM_getDuty-PWM_ANGLE_OFFSET)*3)
 // void PWM_setPulse(uint8_t duty);
 
 void PWM_setAngle(uint8_t angle);

@@ -15,15 +15,6 @@ ISR(TIMER1_OVF_vect){
     }
 }
 
-ISR(TIMER0_OVF_vect){
-    
-    TIMER_stop();
-    // velocity = 256 * TIMER_getValue()/8;
-    UART_print("T:");
-    UART_println(TIMER_getValue()/8);
-    TIMER_clear();
-}
-
 
 void TIMER_Init(){
     TCCR1A = 0;
@@ -61,12 +52,12 @@ uint32_t TIMER_getValue(){
 void COUNTER_Init(){
     COUNTER_DDR &= ~(1 << COUNTER_PIN);
     COUNTER_PORT |= (1 << COUNTER_PIN);
-    TIFR0  |= 1 << TOV0;
-    TIMSK0 |= 1 << TOIE0;
+    TIFR0  |= 1 << OCF0A  | 1 << TOV0;
+    TIMSK0 |= 1 << OCIE0A | 1 << TOIE0;
 
     // TCCR0A = 0;
 
     COUNTER_start();
     COUNTER_clear();
-
 }
+

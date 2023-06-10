@@ -42,9 +42,6 @@
 #include "timer.hpp"
 #include "accelerometer.hpp"
 #include "compass.hpp"
-// #include "mapping.hpp"
-
-#include "test.hpp"
 
 
 
@@ -72,6 +69,21 @@ int main(){
             switch(string[0]){
                 case 'e':{
                     switch (string[1]){
+                        case 'w':{
+                            UART_print("Engine status: ");
+                            if( 
+                                // ENGINE_PIN & (
+                                // _BV(ENGINE_LEFT_UP_PIN)    |
+                                // _BV(ENGINE_LEFT_DOWN_PIN)  |
+                                // _BV(ENGINE_RIGHT_UP_PIN)   |
+                                // _BV(ENGINE_RIGHT_DOWN_PIN) )
+                                ENGINE_PIN_EN & _BV(ENGINE_ENABLE_PIN)
+                            ){
+                                UART_println("1");
+                            }else{
+                                UART_println("0");
+                            }
+                        }break;
                         case 'l':{
                             LEFT_forward(find_int());
                         }break;;
@@ -90,6 +102,9 @@ int main(){
                         case 'a':{
                             move_rotate(find_int());
                         } break;
+                        case 'q':{
+                            move_rotateTo(find_int());
+                        }
                         case 'e':{
                             if(find_int()){
                                 ENGINE_ENABLE();
@@ -100,7 +115,7 @@ int main(){
                         case 'c':{
                             switch(string[2]){
                                 case 'r':{
-                                    COUNTER_start();
+                                    COUNTER_clear();
                                 }break;
                                 default:{
                                     UART_print("Counter: ");
@@ -108,9 +123,15 @@ int main(){
                                 }break;
                             }
                         }break;
+
+                        case 't':{
+                            UART_print("Time: ");
+                            UART_println_ulong(TIMER_getValue());
+                        }break;
                         
                         default:{
                             UART_println("Invalid cmd!");
+                            UART_print_char('!');
                         }
                     }
                 }break;
@@ -137,6 +158,7 @@ int main(){
 
                         default:{
                             UART_println("Invalid cmd!");
+                            UART_print_char('!');
                         }
                     }
                 }break;
@@ -189,6 +211,7 @@ int main(){
                         
                         default:{
                             UART_println("Invalid cmd!");
+                            UART_print_char('!');
                         }
                     }
                 }break;
@@ -237,6 +260,7 @@ int main(){
                         
                         default:{
                             UART_println("Invalid cmd!");
+                            UART_print_char('!');
                         }
                     }
                     
@@ -336,8 +360,12 @@ int main(){
 
 
                 default:
+                    UART_println("Invalid command!");
                     UART_print_char('!');
             }
+
+
+
             UART_println("OK");
 
             for(uint8_t i = 0; i <= readSize; i++)

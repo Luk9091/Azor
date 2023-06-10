@@ -33,7 +33,7 @@ uint16_t SONIC_measure(){
         return 0;
     }
     SONIC_done = false;
-    TIMER_set(8, &SONIC_done);
+    TIMER_set(0, &SONIC_done);
     TRIG_PORT |= (1 << TRIG_PIN);
     _delay_us(15);
     TRIG_PORT &= ~(1<< TRIG_PIN);
@@ -43,11 +43,13 @@ uint16_t SONIC_measure(){
     }
 
     // return TIMER_getValue()*SOUND_V*100/F_CPU;
-    uint32_t value = (TIMER_getValue() >> 3);
+    uint16_t value = ((TIMER_getValue() >> 3));
 
-    if(value >= 2449)
-        value = 4200;
-    else if(value <= 116)
+    // if(value >= 2449)
+    //     value = 4200;
+    if(value >= 4198)
+        value = 7200;
+    else if(value <= 117)
         value = 0;
     else
         value = value * SOUND_V;

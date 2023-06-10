@@ -38,6 +38,7 @@ void COUNTER_Init();
 // Prawdopodobnie do wymiany, ale na razie zostawmy zobaczę czy będzie się przepełniać?
 #define COUNTER_clear() TCNT0 = 0
 #define COUNTER_read() TCNT0
+#define COUNTER_compValue OCR0A
 
 
 #endif
