@@ -50,7 +50,7 @@ int main(){
 
     UART_Init(true);
     PWM_Init(true, 45);
-    SONIC_Init(true);
+    SONIC_Init();
     ENGINE_Init();
     I2C_Init();
     ACC_Init();
@@ -162,12 +162,6 @@ int main(){
                         }
                     }
                 }break;
-
-                #if testing
-                case 't':{
-                        testing_fun();
-                }break;
-                #endif
 
                 case 'a':{
                     switch (string[1]){

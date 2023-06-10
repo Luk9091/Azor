@@ -11,6 +11,8 @@
 #define TIMER_start()   TCCR1B |= (PRESCALER << CS10)
 // #define TIMER_start_prescaler_8() TCCR1B |= (0b010 << CS10)
 #define TIMER_stop()    TCCR1B &= ~(7 <<CS10)
+#define TIMER_read()    TCNT1
+#define TIMER_run       TCCR1B & (7 << CS10)
 
 
 extern bool TIMER_overflow;

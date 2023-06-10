@@ -1,7 +1,7 @@
 #include "timer.hpp"
 
 uint8_t _TIMER_counter = 0;
-uint8_t _TIMER_limit;
+uint8_t _TIMER_limit = 255;
 bool *_TIMER_overflow;
 bool TIMER_overflow = false;
 uint16_t velocity = 0;

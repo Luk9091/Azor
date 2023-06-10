@@ -13,12 +13,11 @@
 #define TRIG_PORT PORTB
 #define TRIG_PIN PB6
 
-#define ECHO_DDR
+#define ECHO_DDR DDRD
 #define ECHO_PIN PD3
 
-extern bool SONIC_run;
 
-void SONIC_Init(bool run = true);
+void SONIC_Init();
 uint16_t SONIC_measure();
 
 

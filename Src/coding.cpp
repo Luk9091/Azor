@@ -345,28 +345,5 @@ void execute(uint8_t instruction){
             UART_println(reg[regAdr].S, 10);
         }return;
 
-        case DEVICE_ENABLE...(DEVICE_ENABLE+3):{
-            if(reg[regAdr].U & ENGINE){
-                ENGINE_ENABLE();
-            }else{
-                ENGINE_DISABLE();
-            }
-
-            if(reg[regAdr].U & ACC){
-                ACC_Init();
-            }else{
-                ACC_RESET();
-            }
-
-            SONIC_run = reg[regAdr].U & ULTRASONIC;
-            // BT_enable(reg[regAdr].U & BLUETOOTH);
-
-            if(reg[regAdr].U & PWM){
-                PWM_start();
-            }else{
-                PWM_stop();
-            }
-
-        }return;
     }
 }

@@ -126,7 +126,6 @@ enum INS{
     UART_SEND       = 0b1111 <<4 | 0b0100,
     UART_SEND_INT   = 0b1111 <<4 | 0b1000,
                         
-    DEVICE_ENABLE   = 0b1111 <<4 | 0b1100,
 };
 
 enum DEVICE_ADR{
