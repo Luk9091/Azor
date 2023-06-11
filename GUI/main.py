@@ -1,71 +1,49 @@
 import turtle
 import radar
+import GUI
+from azor import Azor
 
-radar_size = 400
-radar_position = (0, 0)
+screen = turtle.Screen()
+screen.setup(900, 900)
+screen.bgcolor(30/255, 30/255, 31/255)
+
+azor = Azor()
 
 
+# turtle.color("white")
+# turtle.hideturtle()
 
-
-
-compass_turtle = turtle.Turtle()
-compass_turtle.hideturtle()
-compass_turtle.speed(100)
-
-def arrow(pointer, x):
-    # pointer = turtle.Turtle()
-    mux = 100
-    pointer.down()
-    pointer.forward(mux*x)
-    pointer.left(135)
-    pointer.forward(mux/10*x)
-    pointer.up()
-    pointer.right(180)
-    pointer.forward(mux/10*x)
-    pointer.down()
-    pointer.right(90)
-    pointer.forward(mux/10*x)
-    pointer.up()
+def draw():
+    screen.tracer(0)
+    GUI.resize(0.25, 0.25)
+    GUI.move(0.3, -0.3)
+    GUI.draw()
+     
+    radar.resize(0.75)
+    radar.move(-0.2, -0.4)
+    radar.draw()
     
-    
+    screen.update()
+    screen.tracer(1)
 
 
+def resize(event):
+    draw()
 
-
-def compass(x, y, z):
-    compass_turtle.clear()
-    compass_turtle.up()
-
-    compass_turtle.color(0, 1, 0)
-    compass_turtle.goto(-300, -250)
-    compass_turtle.setheading(0)
-    compass_turtle.left(0)
-    arrow(compass_turtle, x)
-    
-    compass_turtle.color(1, 0, 0)
-    compass_turtle.goto(-300, -250)
-    compass_turtle.setheading(0)
-    compass_turtle.left(45)
-    arrow(compass_turtle, y/1.41)
-
-    compass_turtle.color(0, 0, 1)
-    compass_turtle.goto(-300, -250)
-    compass_turtle.setheading(0)
-    compass_turtle.left(90)
-    arrow(compass_turtle, z)
-
-
+def sayHello():
+    print("Hello word!")
 
 if __name__=="__main__":
+    screen.getcanvas().bind("<Configure>", resize)
+
+    draw()
+
+    GUI.forward.setFunctionHandlerOnClick(sayHello)
+    screen.onclick(GUI.forward.onClick)
+
+    while(True):
+        input("Hello")
 
 
-    radar.draw(radar_size, radar_position)
+
     
-    run = True
-    step = 3
-    while run:
-        # communication.measure("10")
-        radar.measure(step, radar_size, radar_position)
-        run = int(input("? "))
-
-    turtle.exitonclick()
