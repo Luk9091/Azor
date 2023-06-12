@@ -66,12 +66,14 @@ def sayHello():
 
 def cmdControl():
     while(True):
-            GUI.buffValue = input("?: ")
-            if not GUI.buffValue.isnumeric():
-                continue
-            GUI.buffValue = abs(int(GUI.buffValue))
-            print(GUI.buffValue)
+        GUI.buffValue = input("?: ")
+        if not GUI.buffValue.isnumeric():
+            if GUI.buffValue.lower() == "exit":
+                sys.exit(0)
             print("Value error")
+            continue
+        GUI.buffValue = abs(int(GUI.buffValue))
+        print(GUI.buffValue)
 
 if __name__=="__main__":
     screen.getcanvas().bind("<Configure>", resize)
@@ -85,15 +87,16 @@ if __name__=="__main__":
     GUI.right.setFunctionHandlerOnClick(rightClick)
     GUI.leftDown.setFunctionHandlerOnClick(leftHeadClick)
     GUI.rightDown.setFunctionHandlerOnClick(rightHeadClick)
+    GUI.button.setFunctionHandlerOnClick(measureClick)
     # screen.onclick(GUI.backward.onClick)
     # screen.onclick(GUI.forward.onClick)
     screen.onclick(GUI.onClick)
 
-    try:
-        _thread.start_new_thread(cmdControl())
-        _thread.start_new_thread(screen.mainloop())
-    except:
-        print("Error occurred")
+    # try:
+    _thread.start_new_thread(cmdControl())
+    _thread.start_new_thread(screen.mainloop())
+    # except:
+    # print("Error occurred")
 
     # while(True):
     #     input("Hello")

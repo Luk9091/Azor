@@ -1,6 +1,7 @@
 import turtle
 import arrow
 import geometry
+import circle
 
 
 forward   = arrow.Big    (0, 0, 200, 200)
@@ -9,6 +10,7 @@ right     = arrow.Big    (0, 0, 200, 200)
 backward  = arrow.Big    (0, 0, 200, 200)
 rightDown = arrow.BigDown(0, 0, 200, 200)
 leftDown  = arrow.BigDown(0, 0, 200, 200)
+button    = circle.Circle(0, 0, 100)
 
 left.rotate(90)
 right.rotate(-90)
@@ -33,6 +35,8 @@ def resize(width, height):
     rightDown.resize(width, height)
     leftDown.resize(width, height)
 
+    button.resize(width/2)
+
 def move(x, y):
     if -1 < x < 1 and -1 < y < 1:
         x = x*turtle.window_width()
@@ -47,6 +51,8 @@ def move(x, y):
     leftDown.move (x - 2*geometry.width, y + 2*geometry.height)
     rightDown.move(x + 2*geometry.width, y + 2*geometry.height)
 
+    button.move(x, y)
+
 
 
 def draw():
@@ -56,6 +62,7 @@ def draw():
     backward.draw()
     rightDown.draw()
     leftDown.draw()
+    button.draw()
 
 
 def onClick(x, y):
@@ -65,6 +72,7 @@ def onClick(x, y):
     right.onClick(x, y)
     leftDown.onClick(x, y)
     rightDown.onClick(x, y)
+    button.onClick(x, y)
 
 
 if __name__=="__main__":
