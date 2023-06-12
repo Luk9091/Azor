@@ -66,11 +66,12 @@ def sayHello():
 
 def cmdControl():
     while(True):
-        try:
-            GUI.buffValue = abs(int(input("Hello")))
+            GUI.buffValue = input("?: ")
+            if not GUI.buffValue.isnumeric():
+                continue
+            GUI.buffValue = abs(int(GUI.buffValue))
             print(GUI.buffValue)
-        except:
-            print("Only positive integer allowed!")
+            print("Value error")
 
 if __name__=="__main__":
     screen.getcanvas().bind("<Configure>", resize)
@@ -92,10 +93,10 @@ if __name__=="__main__":
         _thread.start_new_thread(cmdControl())
         _thread.start_new_thread(screen.mainloop())
     except:
-        print("Error occured")
+        print("Error occurred")
 
     # while(True):
     #     input("Hello")
-        # screen.mainloop()       # multi-threads ???
+    #     screen.mainloop()       # multi-threads ???
 
     
