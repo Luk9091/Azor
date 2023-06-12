@@ -3,6 +3,7 @@ import radar
 import GUI
 from azor import Azor
 import _thread
+import sys
 
 screen = turtle.Screen()
 screen.setup(900, 900)

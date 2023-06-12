@@ -10,10 +10,10 @@ backward  = arrow.Big    (0, 0, 200, 200)
 rightDown = arrow.BigDown(0, 0, 200, 200)
 leftDown  = arrow.BigDown(0, 0, 200, 200)
 
-left.rotate(-90)
-right.rotate(90)
+left.rotate(90)
+right.rotate(-90)
 backward.flip()
-leftDown.flipX()
+rightDown.flipX()
 
 buffValue = 0       # wartosc zmieniana z CMD, bedzie przekazywana do innych funkcji jako distance, angle
                     # przechowywanie w main sprawialo problemy z jej modyfikacja i odczytem
@@ -40,12 +40,12 @@ def move(x, y):
 
     geometry = forward.getGeometry()
     forward.move (x, y + 2*geometry.height)
-    left.move    (x + 2*geometry.width, y)
-    right.move   (x - 2*geometry.width, y)
+    left.move    (x - 2*geometry.width, y)
+    right.move   (x + 2*geometry.width, y)
     backward.move(x, y - 2*geometry.height)
 
-    leftDown.move (x + 2*geometry.width, y + 2*geometry.height)
-    rightDown.move(x - 2*geometry.width, y + 2*geometry.height)
+    leftDown.move (x - 2*geometry.width, y + 2*geometry.height)
+    rightDown.move(x + 2*geometry.width, y + 2*geometry.height)
 
 
 

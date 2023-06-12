@@ -85,7 +85,11 @@ class Big(Arrow):
         if(self.geometry.width > self.geometry.height):
             self.arrow.forward(self.geometry.width/(self.geometry.height/self.geometry.width*10))
 
-        self.arrow.right(45)
+        self.arrow.penup()
+        self.arrow.left(90)
+        self.arrow.forward(self.geometry.height/2)
+        self.arrow.pendown()
+        self.arrow.right(135)       #45 i wczesniejszy obrot o 90
         self.arrow.forward(self.geometry.radius/np.sqrt(2))
         self.arrow.right(135)
         self.arrow.forward(self.geometry.width/4)
