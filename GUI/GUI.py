@@ -15,6 +15,9 @@ right.rotate(90)
 backward.flip()
 leftDown.flipX()
 
+buffValue = 0       # wartosc zmieniana z CMD, bedzie przekazywana do innych funkcji jako distance, angle
+                    # przechowywanie w main sprawialo problemy z jej modyfikacja i odczytem
+
 
     
     
@@ -54,6 +57,14 @@ def draw():
     rightDown.draw()
     leftDown.draw()
 
+
+def onClick(x, y):
+    forward.onClick(x, y)
+    backward.onClick(x, y)
+    left.onClick(x, y)
+    right.onClick(x, y)
+    leftDown.onClick(x, y)
+    rightDown.onClick(x, y)
 
 
 if __name__=="__main__":
