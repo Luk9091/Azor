@@ -65,15 +65,19 @@ def sayHello():
     print("Hello word!")
 
 def cmdControl():
-    while(True):
-        GUI.buffValue = input("?: ")
-        if not GUI.buffValue.isnumeric():
-            if GUI.buffValue.lower() == "exit":
-                sys.exit(0)
+    # while True:
+    while turtle.TurtleScreen._RUNNING:
+        # turtle.done()
+
+        read = input("?: ")
+        if read.lower() == "exit":
+            sys.exit(0)
+        elif read.isnumeric():
+            GUI.buffValue = abs(int(read))
+            print(GUI.buffValue)
+        else:
             print("Value error")
-            continue
-        GUI.buffValue = abs(int(GUI.buffValue))
-        print(GUI.buffValue)
+        #     continue
 
 if __name__=="__main__":
     screen.getcanvas().bind("<Configure>", resize)
@@ -92,14 +96,11 @@ if __name__=="__main__":
     # screen.onclick(GUI.forward.onClick)
     screen.onclick(GUI.onClick)
 
-    # try:
-    _thread.start_new_thread(cmdControl())
-    _thread.start_new_thread(screen.mainloop())
-    # except:
-    # print("Error occurred")
+    cmdControl()
+    # while True:
+    # _thread.start_new_thread(cmdControl())
+    # _thread.start_new_thread(screen.mainloop())
 
-    # while(True):
-    #     input("Hello")
-    #     screen.mainloop()       # multi-threads ???
+    # print(runGUI)
 
     
