@@ -17,9 +17,6 @@ right.rotate(-90)
 backward.flip()
 rightDown.flipX()
 
-buffValue = 0       # wartosc zmieniana z CMD, bedzie przekazywana do innych funkcji jako distance, angle
-                    # przechowywanie w main sprawialo problemy z jej modyfikacja i odczytem
-
 
     
     

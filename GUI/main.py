@@ -2,8 +2,11 @@ import turtle
 import radar
 import GUI
 from azor import Azor
+from commands import CLI
 import _thread
 import sys
+
+
 
 screen = turtle.Screen()
 screen.setup(900, 900)
@@ -11,7 +14,6 @@ screen.bgcolor(30/255, 30/255, 31/255)
 
 # value = 1
 
-# azor = Azor()                                 # UWAGA zakomentowalem Azora !!!
 
 
 # turtle.color("white")
@@ -34,35 +36,35 @@ def draw():
 def resize(event):
     draw()
 
-def forwClick():
-    print(f"Forward {GUI.buffValue}")
-    GUI.buffValue = 0
+def forwardClick():
+    print(f"\nForward")
+
 
 def backClick():
-    print(f"Backward {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nBackward")
+
 
 def leftClick():
-    print(f"Left {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nLeft")
+
 
 def rightClick():
-    print(f"Right {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nRight")
+
 
 def leftHeadClick():
-    print(f"Left head {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nLeft head")
+
 
 def rightHeadClick():
-    print(f"Right head {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nRight head")
+
 
 def measureClick():
-    print("Measure")
+    print("\nMeasure")
 
 def sayHello():
-    print("Hello word!")
+    print("\nHello word!")
 
 def cmdControl():
     # while True:
@@ -70,11 +72,8 @@ def cmdControl():
         # turtle.done()
 
         read = input("?: ")
-        if read.lower() == "exit":
+        if read.lower() == "exit" or not turtle.TurtleScreen._RUNNING:
             sys.exit(0)
-        elif read.isnumeric():
-            GUI.buffValue = abs(int(read))
-            print(GUI.buffValue)
         else:
             print("Value error")
         #     continue
@@ -84,23 +83,39 @@ if __name__=="__main__":
 
     draw()
 
+    azor = Azor()
+    cli = CLI(azor)
     
-    GUI.forward.setFunctionHandlerOnClick(forwClick)
-    GUI.backward.setFunctionHandlerOnClick(backClick)
-    GUI.left.setFunctionHandlerOnClick(leftClick)
-    GUI.right.setFunctionHandlerOnClick(rightClick)
-    GUI.leftDown.setFunctionHandlerOnClick(leftHeadClick)
-    GUI.rightDown.setFunctionHandlerOnClick(rightHeadClick)
-    GUI.button.setFunctionHandlerOnClick(measureClick)
-    # screen.onclick(GUI.backward.onClick)
-    # screen.onclick(GUI.forward.onClick)
+    if azor.device.serial == None:
+        GUI.forward.setFunctionHandlerOnClick(forwardClick)
+        GUI.backward.setFunctionHandlerOnClick(backClick)
+        GUI.left.setFunctionHandlerOnClick(leftClick)
+        GUI.right.setFunctionHandlerOnClick(rightClick)
+        GUI.leftDown.setFunctionHandlerOnClick(leftHeadClick)
+        GUI.rightDown.setFunctionHandlerOnClick(rightHeadClick)
+        GUI.button.setFunctionHandlerOnClick(measureClick)
+    else:
+
+        GUI.forward.setFunctionHandlerOnClick(azor.forward)
+        GUI.backward.setFunctionHandlerOnClick(azor.backward)
+        GUI.left.setFunctionHandlerOnClick(azor.turnLeft)
+        GUI.right.setFunctionHandlerOnClick(azor.turnRight)
+
+        GUI.leftDown.setFunctionHandlerOnClick(azor.Head.rotate, 15)
+        GUI.rightDown.setFunctionHandlerOnClick(azor.Head.rotate, -15)
+
+
     screen.onclick(GUI.onClick)
 
-    cmdControl()
-    # while True:
+    # cmdControl()
+    
+    while turtle.TurtleScreen._RUNNING:
+        data = input("?: ")
+        print(cli.execute(data))
+    
+    
     # _thread.start_new_thread(cmdControl())
     # _thread.start_new_thread(screen.mainloop())
 
-    # print(runGUI)
 
     

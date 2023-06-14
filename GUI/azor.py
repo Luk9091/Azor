@@ -8,9 +8,14 @@ class Communication:
 
 
     def __init__(self) -> None:
-        try:
-            self.serial = serial.Serial(self.autoConnect, self.baud, 8, 'N', 1)
-        except:
+        ports = serialInfo.comports()
+        portsDev = []
+        for port in ports:
+            portsDev.append(port.device)
+        
+        if self.autoConnect in portsDev:
+            self.connect(self.autoConnect)
+        else: 
             self.showDevices()
 
     def showDevices(self):
@@ -22,30 +27,48 @@ class Communication:
             for (i, port) in enumerate(ports):
                 print(f"{i+1}.\t{port.device} -- {port.name}")
             
-            print(f"{ports.count()+1}.\tScan again")
+            print(f"{len(ports)+1}.\tScan again")
 
             choose = -1
             while choose == -1:
                 try:
                     choose = int(input("?: "))
-                except:
+                except ValueError:
                     print("Choice only number!")
 
-                if choose > ports.count()+1:
+                if choose > len(ports)+1:
                     choose = -1
                     print("This port dont exist!")
                     continue
 
-            if choose == 0:
-                sys.exit(-1)
-            elif choose == ports.count()+1:
+            if choose == len(ports)+1:
                 continue
             break
 
-        self.serial = serial.Serial(ports[choose].name, self.baud, 8, 'N', 1)
+        if choose != 0:
+            self.connect(ports[choose-1].device)
+        else:
+            self.serial = None
+
+
+        
+    def connect(self, device):
+        print("Connecting...")
+        self.serial = serial.Serial(device, self.baud, 8, 'N', 1)
+
+        data = self.cmd(" ")
+        if data == 0:
+            print("Status: Connected!\n")
+
+
+
+    def reconnect(self):
+        self.showDevices()
 
 
     def cmd(self, cmd):
+        if self.serial == None:
+            return 0
         self.send(cmd)
         return self.read(cmd)
 
@@ -97,7 +120,22 @@ class Head:
     def __init__(self, device : Communication) -> None:
         self.device = device
 
-    def rotate(self, angle = 90):
+    def getRotate(self):
+        currentAng = self.device.cmd("ua")[0]
+        currentAng = int(currentAng[currentAng.find(":")+2:])
+        return currentAng
+        
+
+    def rotate(self, angle = 6):
+        currentAng = self.getRotate()
+        if 0 <= (angle + currentAng) <= 180:
+            angle = angle + currentAng
+        else:
+            angle = currentAng
+
+        self.rotateTo(angle)
+
+    def rotateTo(self, angle = 90):
         cmd = "ur " + str(angle)
         self.device.cmd(cmd)
         
@@ -117,7 +155,7 @@ class Position:
         data = self.device.cmd("ca")
         data = str(data[0])
         data = data[data.find(":")+2:]
-        return data
+        return int(data)
 
     def magneticField(self):
         axis = {"x" : 0, "y" : 0, "z" : 0 }
@@ -176,26 +214,35 @@ class Azor:
     def __del__(self) -> None:
         self.disconnect()
 
-    def forward(self, distance = 10):
-        distance = distance * self.distanceMux
+    def forward(self, distance : int = 10):
+        distance = abs(int(distance))
+        distance = int(distance * self.distanceMux)
         cmd = "ef " + str(distance)
         self.device.cmd(cmd)
+        return True
 
-    def backward(self, distance = 10):
-        distance = distance * self.distanceMux
+    def backward(self, distance : int = 10):
+        distance = abs(int(distance))
+        distance = int(distance * self.distanceMux)
         cmd = "eb " + str(distance)
         self.device.cmd(cmd)
+        return True
 
     def turnLeft(self, angle = 90):
+        angle = -abs(int(angle))
         cmd = "ea " + str(angle)
         self.device.cmd(cmd)
+        return self.Position.azimuth()
 
-    def turnRight(self, angle = -90):
+    def turnRight(self, angle = 90):
+        angle = abs(int(angle))
         cmd = "ea " + str(angle)
         self.device.cmd(cmd)
+        return self.Position.azimuth()
 
     def stop(self):
-        self.device.send("es")
+        self.device.cmd("es")
+        return True
 
     def onRoad(self):
         data = str(self.device.cmd("ew")[0])
@@ -224,14 +271,15 @@ class Azor:
 
 
 
-    def connect(self):
-        if self.device.serial.is_open:
-            self.device.serial.open()
+    # def connect(self):
+    #     if self.device.serial.is_open:
+    #         self.device.serial.open()
     def disconnect(self):
-        self.stop()
-        self.Head.rotate(90)
+        if self.device.serial != None:
+            self.stop()
+            self.Head.rotateTo(90)
 
-        self.device.serial.close()
+            self.device.serial.close()
 
 
 
@@ -239,9 +287,12 @@ class Azor:
 if __name__=="__main__":
     azor = Azor()
 
+    if azor.device.serial == None:
+        sys.exit()
+    
+
     # while True:
     #     print(azor.Head.measure())
-
 
     print("Magnetic field:")
     print(azor.Position.magneticField())
@@ -253,7 +304,7 @@ if __name__=="__main__":
     print("Sonic sensor:")
     data = {}
     for i in [0, 30, 60, 90, 120, 150, 180]:
-        azor.Head.rotate(i)
+        azor.Head.rotateTo(i)
         data[str(i)] = azor.Head.measure()
     print(data)
 
