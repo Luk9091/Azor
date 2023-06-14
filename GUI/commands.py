@@ -12,11 +12,13 @@ class CLI:
             "right":    {"minimumArgs": 0, "handler" : azor.turnRight},
 
             "head":     {"minimumArgs": 1, "handler" : self.head},
-            "acc":      {"minimumArgs": 1, "handler" : 0},
-            "magnet":   {"minimumArgs": 1, "handler" : 0},
-            "azimuth":  {"minimumArgs": 1, "handler" : 0},
+            "acc":      {"minimumArgs": 1, "handler" : azor.Position.acceleration()},
+            "magnet":   {"minimumArgs": 1, "handler" : azor.Position.magneticField()},
+            "azimuth":  {"minimumArgs": 1, "handler" : azor.Position.azimuth},
             
-            "distance": {"minimumArgs": 1, "handler" : self.distance}
+            "distance": {"minimumArgs": 1, "handler" : self.distance},
+            "time":     {"minimumArgs": 0, "handler" : azor.getTime},
+            "velocity": {"minimumArgs": 0, "handler" : azor.getVelocity},
         }
 
 
