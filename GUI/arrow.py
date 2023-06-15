@@ -61,10 +61,15 @@ class Arrow:
             self.geometry.x-self.geometry.width/2 < x < self.geometry.x+self.geometry.width/2 and
             self.geometry.y-self.geometry.height/2 < y < self.geometry.y+self.geometry.height/2
         ):
-            self._functionHandler()
+            if self.arg == None:
+                self._functionHandler()
+            else:
+                self._functionHandler(self.arg)
     
-    def setFunctionHandlerOnClick(self, fun):
+    def setFunctionHandlerOnClick(self, fun, arg = None):
         self._functionHandler = fun
+        self.arg = arg
+
 
 
 
@@ -89,7 +94,7 @@ class Big(Arrow):
         self.arrow.left(90)
         self.arrow.forward(self.geometry.height/2)
         self.arrow.pendown()
-        self.arrow.right(135)       #45 i wczesniejszy obrot o 90
+        self.arrow.right(135)
         self.arrow.forward(self.geometry.radius/np.sqrt(2))
         self.arrow.right(135)
         self.arrow.forward(self.geometry.width/4)

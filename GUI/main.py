@@ -3,8 +3,11 @@ import radar
 import GUI
 import map
 from azor import Azor
+from commands import CLI
 import _thread
 import sys
+
+
 
 screen = turtle.Screen()
 screen.setup(900, 900)
@@ -13,7 +16,6 @@ azorTurtle = turtle.Turtle()
 mapedArea = map.Map(-300, -85, 600, 450)
 # value = 1
 
-# azor = Azor()                                 # UWAGA zakomentowalem Azora !!!
 
 
 # turtle.color("white")
@@ -43,73 +45,35 @@ def draw():
 def resize(event):
     draw()
 
-def forwClick():
-    # if GUI.buffValue <= 0:
-    #     azor.forward()
-    #     azorTurtle.forward(150*0.1)
-    # else
-    #     azor.forward(GUI.buffValue)
-    #     azorTurtle.forward(150*GUI.buffValue/100)
-    print(f"Forward {GUI.buffValue}")
-    GUI.buffValue = 0
+def forwardClick():
+    print(f"\nForward")
+
 
 def backClick():
-    # if GUI.buffValue <= 0:
-    #     azor.backward()
-    #     azorTurtle.forward(-150*0.1)
-    # else
-    #     azor.backward(GUI.buffValue)
-    #     azorTurtle.forward(-150*GUI.buffValue/100)
-    print(f"Backward {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nBackward")
+
 
 def leftClick():
-    # if GUI.buffValue <= 0:
-    #     azor.turnLeft()
-    #     azorTurtle.left(90)
-    # else
-    #     azor.turnLeft(GUI.buffValue)
-    #     azorTurtle.left(GUI.buffValue)
-    print(f"Left {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nLeft")
+
 
 def rightClick():
-    # if GUI.buffValue <= 0:
-    #     azor.turnRight()
-    #     azorTurtle.right(90)
-    # else
-    #     azor.turnRight(GUI.buffValue)
-    #     azorTurtle.right(GUI.buffValue)
-    print(f"Right {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nRight")
+
 
 def leftHeadClick():
-    # if GUI.buffValue <= 0:
-    #     azor.Head.rotate()                # czy dobrze jest dobrany znak?
-    # else
-    #     azor.Head.rotate(GUI.buffValue)
-    print(f"Left head {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nLeft head")
+
 
 def rightHeadClick():
-    # if GUI.buffValue <= 0:
-    #     azor.Head.rotate(-90)             # czy dobrze jest dobrany znak?
-    # else
-    #     azor.Head.rotate(-GUI.buffValue)
-    print(f"Right head {GUI.buffValue}")
-    GUI.buffValue = 0
+    print(f"\nRight head")
+
 
 def measureClick():
-    # distance = azor.Head.measure()    # pomiar manualny
-    # measure = -10                     # pomiar automatyczny
-    # for i in range(0, 181, 3):
-    #     azor.Head.rotate(i)           # czy dobrze dobrany kąt???     Czy potrzebny delay??
-    #     while measure == -10:
-    #         measure = azor.Head.measure()
-    print("Measure")
+    print("\nMeasure")
 
 def sayHello():
-    print("Hello word!")
+    print("\nHello word!")
 
 def cmdControl():
     # while True:
@@ -117,11 +81,8 @@ def cmdControl():
         # turtle.done()
 
         read = input("?: ")
-        if read.lower() == "exit":
+        if read.lower() == "exit" or not turtle.TurtleScreen._RUNNING:
             sys.exit(0)
-        elif read.isnumeric():
-            GUI.buffValue = abs(int(read))
-            print(GUI.buffValue)
         else:
             print("Value error")
         #     continue
@@ -160,39 +121,40 @@ if __name__=="__main__":
 
     draw()
 
+    azor = Azor()
+    cli = CLI(azor)
     
-    GUI.forward.setFunctionHandlerOnClick(forwClick)
-    GUI.backward.setFunctionHandlerOnClick(backClick)
-    GUI.left.setFunctionHandlerOnClick(leftClick)
-    GUI.right.setFunctionHandlerOnClick(rightClick)
-    GUI.leftDown.setFunctionHandlerOnClick(leftHeadClick)
-    GUI.rightDown.setFunctionHandlerOnClick(rightHeadClick)
-    GUI.button.setFunctionHandlerOnClick(measureClick)
+    if azor.device.serial == None:
+        GUI.forward.setFunctionHandlerOnClick(forwardClick)
+        GUI.backward.setFunctionHandlerOnClick(backClick)
+        GUI.left.setFunctionHandlerOnClick(leftClick)
+        GUI.right.setFunctionHandlerOnClick(rightClick)
+        GUI.leftDown.setFunctionHandlerOnClick(leftHeadClick)
+        GUI.rightDown.setFunctionHandlerOnClick(rightHeadClick)
+        GUI.button.setFunctionHandlerOnClick(measureClick)
+    else:
+
+        GUI.forward.setFunctionHandlerOnClick(azor.forward)
+        GUI.backward.setFunctionHandlerOnClick(azor.backward)
+        GUI.left.setFunctionHandlerOnClick(azor.turnLeft)
+        GUI.right.setFunctionHandlerOnClick(azor.turnRight)
+
+        GUI.leftDown.setFunctionHandlerOnClick(azor.Head.rotate, 15)
+        GUI.rightDown.setFunctionHandlerOnClick(azor.Head.rotate, -15)
+
 
     screen.onclick(GUI.onClick)
 
-    # azorTurtle.left(80)
-    # azorTurtle.forward(20)
-    # measureTest()
-    # azorTurtle.right(170)
+    # cmdControl()
     
-    # azorTurtle.forward(550)
-    # azorTurtle.left(90)
-    # azorTurtle.forward(400)
-    # measureTest()
-    mapTest()
-    # azorTurtle.right(90)
-    # azorTurtle.forward(520)
-    # azorTurtle.left(90)
-    # azorTurtle.forward(30)
-    # azorTurtle.right(135)
-    # measureTest()
-    cmdControl()
-    # while True:
+    while turtle.TurtleScreen._RUNNING:
+        data = input("?: ")
+        print(cli.execute(data))
+    
+    
     # _thread.start_new_thread(cmdControl())
     # _thread.start_new_thread(screen.mainloop())
 
-    # print(runGUI)
 
 
     
