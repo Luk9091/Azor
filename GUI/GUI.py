@@ -12,6 +12,7 @@ rightDown = arrow.BigDown(0, 0, 200, 200)
 leftDown  = arrow.BigDown(0, 0, 200, 200)
 button    = circle.Circle(0, 0, 100)
 
+
 left.rotate(90)
 right.rotate(-90)
 backward.flip()
@@ -35,7 +36,7 @@ def resize(width, height):
     rightDown.resize(width, height)
     leftDown.resize(width, height)
 
-    button.resize(width/2)
+    button.resize(width)
 
 def move(x, y):
     if -1 < x < 1 and -1 < y < 1:
