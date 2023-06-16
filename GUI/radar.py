@@ -3,105 +3,120 @@ import numpy as np
 # import communication
 import geometry
 
+class Radar:
+    def __init__(self, x, y, radius):
+        self.radar = turtle.Turtle()
+        self.geometry = geometry.geometry()
+        self._heading = 0
+        self.pointer = turtle.Turtle()
 
-font = "Font/DejaVuSansMono.ttf"
-radar = turtle.Turtle()
+        self.radar.color("white")
+        self.radar.hideturtle()
+        self.radar.speed(100)
 
-_geo = geometry.geometry()
+        self.pointer.hideturtle()
+        self.pointer.speed(100)
+        self.filled = False
 
-def move(x, y):
-    if -1 < x < 1 and -1 < y < 1:
-        x = x*turtle.window_width()
-        y = y*turtle.window_height()
-    _geo.x = x
-    _geo.y = y
+        self.geometry.x = x
+        self.geometry.y = y
+        self.geometry.radius = radius * np.sqrt(2)
 
+        self.font = "Font/DejaVuSansMono.ttf"
 
-def resize(radius):
-    if 0 < radius < 1:
-        radius = radius * 200
-    _geo.radius = abs(radius)
+    def move(self, x, y):
+        if -1 < x < 1 and -1 < y < 1:
+            x = x*turtle.window_width()
+            y = y*turtle.window_height()
+        self.geometry.x = x
+        self.geometry.y = y
 
+    def resize(self, radius):
+        if 0 < radius < 1:
+            radius = radius * self.geometry.radius
 
-def write(turtle, value, align="left"):
-    turtle.penup()
-    turtle.right(90)
-    turtle.forward(20)
-    turtle.write(value, font=font, align=align)
-    turtle.forward(-20)
-    turtle.left(90)
-    turtle.pendown()
+        self.geometry.radius = radius * np.sqrt(2)
 
+    def home(self):
+        self.radar.penup()
+        self.radar.goto(self.geometry.x, self.geometry.y)
+        self.radar.setheading(self._heading)
+        self.radar.pendown()
 
-
-def draw():
-    radar.home()
-    radar.clear()
-    # radar.speed(50)
-    radar.color("white")
-    radar.penup()
-    radar.setposition(_geo.x, _geo.y)
-    radar.pendown()
-
-    radar.forward(_geo.radius)
-    write(radar, "20")
-    radar.forward(_geo.radius)
-    write(radar, "40")
-    radar.left(90)
-    radar.circle(_geo.radius*2, extent=180)
-    radar.left(90)
-    write(radar, "40", "right")
-    radar.forward(_geo.radius)
-    write(radar, "20", "right")
-    radar.right(90)
-    radar.circle(_geo.radius, extent=-180)
-    radar.left(90)
-    radar.forward(_geo.radius*2)
-    radar.goto(_geo.x, _geo.y)
-
-    radar.setheading(0)
-    for i in [[30, "left"], [60, "left"], [90, "center"], [120, "right"], [150, "right"]]:
-        radar.left(i[0])
-        radar.forward(_geo.radius*2)
-        radar.write(i[0], font=font, align=i[1])
-        radar.goto(_geo.x, _geo.y)
-        radar.setheading(0)
-    radar.left(90)
+    def write(self, value, align = "left"):
+        self.radar.penup()
+        self.radar.right(90)
+        self.radar.forward(20)
+        self.radar.write(value, font=self.font, align=align)
+        self.radar.forward(-20)
+        self.radar.left(90)
+        self.radar.pendown()
+    
+    def draw(self):
+        self.radar.home()
+        self.radar.clear()
+        self.home()
 
 
+        self.radar.forward(self.geometry.radius/2)
+        self.write("20")
+        self.radar.forward(self.geometry.radius/2)
+        self.write("40")
+        self.radar.left(90)
+        self.radar.circle(self.geometry.radius, extent=180)
+        self.radar.left(90)
+        self.write("40", "right")
+        self.radar.forward(self.geometry.radius/2)
+        self.write("20", "right")
+        self.radar.right(90)
+        self.radar.circle(self.geometry.radius/2, extent=-180)
+        self.radar.left(90)
+        self.radar.forward(self.geometry.radius)
+        self.home()
 
-pointer = turtle.Turtle()
-pointer.hideturtle()
-pointer.speed(100)
-pointer.width(2)
+        for i in [[30, "left"], [60, "left"], [90, "center"], [120, "right"], [150, "right"]]:
+            self.radar.left(i[0])
+            self.radar.forward(self.geometry.radius)
+            self.radar.write(i[0], font=self.font, align=i[1])
+            self.radar.goto(self.geometry.x, self.geometry.y)
+            self.radar.setheading(0)
+        self.radar.left(90)
 
-def measure(step = 3, size = 720):
-    measure = 720
-    limit = _geo.radius
-    pointer.clear()
+    def measure(self, distance, angle):
+        limit = self.geometry.radius
+        self.pointer.penup()
+        self.pointer.goto(self.geometry.x, self.geometry.y)
+        self.pointer.setheading(0)
+        self.pointer.pendown()
 
-    pointer.penup()
-    pointer.goto(_geo.x, _geo.y)
-    pointer.pendown()
+        if distance > 400:
+            distance = 400
+        distance = distance/10
 
-    measure = -10
-    for i in range(0, 181, step):
-        while measure == -10:
-            # measure = float(communication.measure(str(i)))/10
-            if measure > 400:
-                measure = 400
-            print(measure)
-        
-        pointer.color("Green")
-        pointer.pendown()
-        pointer.left(i)
-        # measure = 250
+        self.pointer.color("green")
+        self.pointer.left(angle)
+        self.pointer.forward(distance*limit/40)
 
-        pointer.forward(measure*size/limit)
-        if((limit-measure) > 0):
-            pointer.color("Red")
-            pointer.forward((limit - measure)*size/limit)
-        pointer.penup()
-        pointer.goto(_geo.x, _geo.y)
-        pointer.setheading(0)
-        measure = -10
+        if limit - distance*limit/40 > 0:
+            self.pointer.color("red")
+            self.pointer.forward(limit - distance*limit/40)
+
+        self.filled = True
+
+    def clear(self):
+        self.pointer.clear()
+        self.filled = False
+
+
+if __name__ == "__main__":
+    screen = turtle.Screen()
+    screen.setup(900, 900)
+    screen.bgcolor(30/255, 30/255, 31/255)
+    screen.tracer(0)
+
+    radar2 = Radar(0, 0, 200)
+    radar2.draw()
+    radar2.measure(350, 50)
+
+    screen.update()
+    turtle.exitonclick()

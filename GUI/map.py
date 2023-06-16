@@ -24,14 +24,17 @@ class Map:
         self.font = "Font/DejaVuSansMono.ttf"
 
     def move(self, x, y):
+        if -1 < x < 1 and -1 < y < 1:
+            x = x*turtle.window_width()
+            y = y*turtle.window_height()
         self.geometry.x = x
         self.geometry.y = y
 
     def resize(self, width, height):
-        if -1 < width < 1:
+        if 0 < width < 1:
             width = width * geometry.geometry.width
 
-        if -1 < height < 1:
+        if 0 < height < 1:
             height = height * geometry.geometry.height
 
         self.geometry.width = width
@@ -65,7 +68,8 @@ class Map:
         defaultSize = self.map.width()
         thickSize = 3
 
-        hLabels = [[0, "center"], [50, "center"], [100, "center"], [150, "center"], [200, "center"], [250, "center"], [300, "center"], [350, "center"], [400, "center"]]
+        hLabels = [[0, "center"], [50, "center"], [100, "center"], [150, "center"], [200, "center"], 
+                   [250, "center"], [300, "center"], [350, "center"], [400, "center"]]
         vLabels = [[0, "right"], [50, "right"], [100, "right"], [150, "right"], [200, "right"], [250, "right"], [300, "right"]]
         self.map.width(thickSize)
         self.map.pendown()
@@ -104,8 +108,10 @@ class Map:
         self.write(*hLabels[-1])
 
     def measure(self, azorTurtle, distance, angle):
-        limit = 40*150/100      # 150 pikseli/metr
+        maxDistance = 400        # milimetry
+        coefficient = self.geometry.width/400   # [cm]; liczba pikseli/4 metry, zmienic jesli zmienimy wymiary mapy w metrach
         angleOffset = 90        # dostosowac do wartosci przyjmowanych przez Azora, 90 jest dla zakresu 0-180
+        limit = maxDistance/10*coefficient
         if distance > 400:
             distance = 400
         distance = distance/10
@@ -117,10 +123,14 @@ class Map:
         limitx = limit*np.cos((azorTurtle.heading() - angleOffset + angle)*np.pi/180)
         limity = limit*np.sin((azorTurtle.heading() - angleOffset + angle)*np.pi/180)
 
-        leftUpAngle = np.arctan2(self.geometry.y + self.geometry.height - self.pointer.position()[1], self.geometry.x - self.pointer.position()[0])*180/np.pi
-        leftDownAngle = np.arctan2(self.geometry.y - self.pointer.position()[1], self.geometry.x - self.pointer.position()[0])*180/np.pi
-        rightUpAngle = np.arctan2(self.geometry.y + self.geometry.height - self.pointer.position()[1], self.geometry.x + self.geometry.width - self.pointer.position()[0])*180/np.pi
-        rightDownAngle = np.arctan2(self.geometry.y - self.pointer.position()[1], self.geometry.x + self.geometry.width - self.pointer.position()[0])*180/np.pi
+        leftUpAngle = np.arctan2(self.geometry.y + self.geometry.height - self.pointer.position()[1], 
+                                 self.geometry.x - self.pointer.position()[0])*180/np.pi        # tak chyba bedzie lepiej
+        leftDownAngle = np.arctan2(self.geometry.y - self.pointer.position()[1], 
+                                   self.geometry.x - self.pointer.position()[0])*180/np.pi
+        rightUpAngle = np.arctan2(self.geometry.y + self.geometry.height - self.pointer.position()[1], 
+                                  self.geometry.x + self.geometry.width - self.pointer.position()[0])*180/np.pi
+        rightDownAngle = np.arctan2(self.geometry.y - self.pointer.position()[1], 
+                                    self.geometry.x + self.geometry.width - self.pointer.position()[0])*180/np.pi
         angles = [leftUpAngle, leftDownAngle, rightUpAngle, rightDownAngle]
         for i in range(4):
             if angles[i] < 0:
@@ -128,31 +138,52 @@ class Map:
         while azorTurtle.heading() - angleOffset + angle >= 360:
             angle -= 360
         # print(angles, "\t", angle, "\t", azorTurtle.heading() - angleOffset + angle)
-        if self.pointer.position()[0] + limitx <= self.geometry.x and (azorTurtle.heading() - angleOffset + angle >= angles[0] and azorTurtle.heading() - angleOffset + angle <= angles[1]):
+        if (
+                self.pointer.position()[0] + limitx <= self.geometry.x and      # tu chyba tez bedzie lepiej
+                (azorTurtle.heading() - angleOffset + angle >= angles[0] and 
+                azorTurtle.heading() - angleOffset + angle <= angles[1])
+            ):
             limitx = self.pointer.position()[0] - self.geometry.x
             limity = np.tan((azorTurtle.heading() - angleOffset + angle)*np.pi/180)*limitx
             limit = np.sqrt(limitx**2 + limity**2)
             # print(limitx, "\t", limity, "\t", limit)
-        elif self.pointer.position()[0] + limitx >= self.geometry.x + self.geometry.width and ((azorTurtle.heading() - angleOffset + angle <= angles[2] and azorTurtle.heading() - angleOffset + angle >= 0) or (azorTurtle.heading() - angleOffset + angle <= 360 and azorTurtle.heading() - angleOffset + angle >= angles[3]) or (azorTurtle.heading() - angleOffset + angle <= 0 and azorTurtle.heading() - angleOffset + angle >= angles[3] - 360)):
+        elif (
+                self.pointer.position()[0] + limitx >= self.geometry.x + self.geometry.width and 
+                ((azorTurtle.heading() - angleOffset + angle <= angles[2] and 
+                azorTurtle.heading() - angleOffset + angle >= 0) or 
+                (azorTurtle.heading() - angleOffset + angle <= 360 and 
+                azorTurtle.heading() - angleOffset + angle >= angles[3]) or 
+                (azorTurtle.heading() - angleOffset + angle <= 0 and 
+                azorTurtle.heading() - angleOffset + angle >= angles[3] - 360))
+            ):
             limitx = self.geometry.x + self.geometry.width - self.pointer.position()[0]
             limity = np.tan((azorTurtle.heading() - angleOffset + angle)*np.pi/180)*limitx
             limit = np.sqrt(limitx**2 + limity**2)
             # print(limitx, "\t", limity, "\t", limit)
-        elif self.pointer.position()[1] + limity <= self.geometry.y and ((azorTurtle.heading() - angleOffset + angle >= angles[1] and azorTurtle.heading() - angleOffset + angle <= angles[3]) or (azorTurtle.heading() - angleOffset + angle <= 0)):
+        elif (
+                self.pointer.position()[1] + limity <= self.geometry.y and 
+                ((azorTurtle.heading() - angleOffset + angle >= angles[1] and 
+                azorTurtle.heading() - angleOffset + angle <= angles[3]) or 
+                (azorTurtle.heading() - angleOffset + angle <= 0))
+            ):
             limity = self.pointer.position()[1] - self.geometry.y
             limitx = limity/np.tan((azorTurtle.heading() - angleOffset + angle)*np.pi/180)
             limit = np.sqrt(limitx**2 + limity**2)
             # print(limitx, "\t", limity, "\t", limit)
-        elif self.pointer.position()[1] + limity >= self.geometry.y + self.geometry.height and (azorTurtle.heading() - angleOffset + angle >= angles[2] and azorTurtle.heading() - angleOffset + angle <= angles[0]):
+        elif (
+                self.pointer.position()[1] + limity >= self.geometry.y + self.geometry.height and 
+                (azorTurtle.heading() - angleOffset + angle >= angles[2] and 
+                azorTurtle.heading() - angleOffset + angle <= angles[0])
+            ):
             limity = self.geometry.y + self.geometry.height - self.pointer.position()[1]
             limitx = limity/np.tan((azorTurtle.heading() - angleOffset + angle)*np.pi/180)
             limit = np.sqrt(limitx**2 + limity**2)
             # print(limitx, "\t", limity, "\t", limit)
-        if distance*150/100 <= limit:
+        if distance*coefficient <= limit:
             self.pointer.color("green")
-            self.pointer.forward(distance*150/100)
+            self.pointer.forward(distance*coefficient)
             self.pointer.color("red")
-            self.pointer.forward(limit - distance*150/100)
+            self.pointer.forward(limit - distance*coefficient)
         else:
             self.pointer.color("green")
             self.pointer.forward(limit)

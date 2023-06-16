@@ -1,5 +1,5 @@
 import turtle
-import radar
+from radar import Radar
 import GUI
 import map
 from azor import Azor
@@ -14,6 +14,7 @@ screen.setup(900, 900)
 screen.bgcolor(30/255, 30/255, 31/255)
 azorTurtle = turtle.Turtle()
 mapedArea = map.Map(-300, -85, 600, 450)
+radar = Radar(0, 0, 300)
 # value = 1
 
 
@@ -46,18 +47,26 @@ def resize(event):
     draw()
 
 def forwardClick():
+    if radar.filled:
+        radar.clear()
     print(f"\nForward")
 
 
 def backClick():
+    if radar.filled:
+        radar.clear()
     print(f"\nBackward")
 
 
 def leftClick():
+    if radar.filled:
+        radar.clear()
     print(f"\nLeft")
 
 
 def rightClick():
+    if radar.filled:
+        radar.clear()
     print(f"\nRight")
 
 
@@ -70,6 +79,7 @@ def rightHeadClick():
 
 
 def measureClick():
+    measureTest(1)
     print("\nMeasure")
 
 def sayHello():
@@ -97,6 +107,7 @@ def measureTest(num = 0):
         if num % 2 == 0:
             distance[i] = 400
         mapedArea.measure(azorTurtle, distance[i], angle[i])
+        radar.measure(distance[i], angle[i])
 
 def mapTest():
     # azorTurtle.right(90)
