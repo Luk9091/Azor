@@ -34,7 +34,7 @@ class Radar:
 
     def resize(self, radius):
         if 0 < radius < 1:
-            radius = radius * self.geometry.radius
+            radius = radius * geometry.geometry().radius*np.sqrt(2)
 
         self.geometry.radius = radius * np.sqrt(2)
 

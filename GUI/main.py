@@ -133,7 +133,8 @@ if __name__=="__main__":
     draw()
 
     azor = Azor()
-    cli = CLI(azor)
+    cli = CLI(azor, radar)
+    cli.radar = radar
     
     if azor.device.serial == None:
         GUI.forward.setFunctionHandlerOnClick(forwardClick)
