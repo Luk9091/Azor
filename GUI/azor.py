@@ -67,9 +67,21 @@ class Communication:
         self.showDevices()
 
 
-    def cmd(self, cmd):
+    def cmd(self, cmd: str):
+        cmd = cmd.lower()
         self.send(cmd)
         return self.read(cmd)
+
+    def getNumber(self, cmd, base = 10, terminator = ":", lineIndex = 0) -> int:
+            data = self.cmd(cmd)
+            
+            if data == None:
+                return 0            
+
+            data = str(data[lineIndex])
+            data = int(data[data.find(terminator)+2:], base)
+            return int(data)
+
 
 
         
@@ -95,22 +107,23 @@ class Communication:
             line = self.serial.readline().decode("utf-8")
             line = line[0:-1]
 
+            if line == "!OK":
+                return None
+
             if not saveData:
                 if line == expectFunction:
                     saveData = True
                 else:
                     continue
             
-            if line == "!OK":
-                return 0
 
             data.append(line)
             
         if(data.count == 0):
             return 1
         
+        
         return data[1:-1]
-
 
 
 
@@ -120,9 +133,10 @@ class Head:
         self.device = device
 
     def getRotate(self):
-        currentAng = self.device.cmd("ua")[0]
-        currentAng = int(currentAng[currentAng.find(":")+2:])
-        return currentAng
+        # currentAng = self.device.cmd("ua")[0]
+        # currentAng = int(currentAng[currentAng.find(":")+2:])
+        # return currentAng
+        return self.device.getNumber("ua")
         
 
     def rotate(self, angle = 6):
@@ -139,48 +153,54 @@ class Head:
         self.device.cmd(cmd)
         
     def measure(self):
-        data = self.device.cmd("um")
-        data = str(data[0])
-        data = data[data.find('Distance: '):]
-        data = data[data.find(':')+2:]
-
-        return int(data)
+        # data = self.device.cmd("um")
+        # data = str(data[0])
+        # data = data[data.find(': ')+2:]
+        # return int(data)
+        return self.device.getNumber("um")
 
 class Position:
     def __init__(self, device : Communication) -> None:
         self.device = device
         
     def azimuth(self):
-        data = self.device.cmd("ca")
-        data = str(data[0])
-        data = data[data.find(":")+2:]
-        return int(data)
+        # data = self.device.cmd("ca")
+        # data = str(data[0])
+        # data = data[data.find(":")+2:]
+        # return int(data)
+        return self.device.getNumber("ca")
 
     def magneticField(self):
         axis = {"x" : 0, "y" : 0, "z" : 0 }
 
-        data = str(self.device.cmd("cx")[0])
-        axis["x"] = int(data[data.find(":")+2:])
+        # data = str(self.device.cmd("cx")[0])
+        # axis["x"] = int(data[data.find(":")+2:])
+        axis["x"] = self.device.getNumber("cx")
 
-        data = str(self.device.cmd("cy")[0])
-        axis["y"] = int(data[data.find(":")+2:])
+        # data = str(self.device.cmd("cy")[0])
+        # axis["y"] = int(data[data.find(":")+2:])
+        axis["y"] = self.device.getNumber("cy")
 
-        data = str(self.device.cmd("cz")[0])
-        axis["z"] = int(data[data.find(":")+2:])
+        # data = str(self.device.cmd("cz")[0])
+        # axis["z"] = int(data[data.find(":")+2:])
+        axis["z"] = self.device.getNumber("cz")
 
         return axis
 
     def acceleration(self):
         axis = {"x" : 0, "y" : 0, "z" : 0 }
 
-        data = str(self.device.cmd("ax")[0])
-        axis["x"] = int(data[data.find(":")+2:])
+        # data = str(self.device.cmd("ax")[0])
+        # axis["x"] = int(data[data.find(":")+2:])
+        axis["x"] = self.device.getNumber("ax")
 
-        data = str(self.device.cmd("ay")[0])
-        axis["y"] = int(data[data.find(":")+2:])
+        # data = str(self.device.cmd("ay")[0])
+        # axis["y"] = int(data[data.find(":")+2:])
+        axis["y"] = self.device.getNumber("ay")
 
-        data = str(self.device.cmd("az")[0])
-        axis["z"] = int(data[data.find(":")+2:])
+        # data = str(self.device.cmd("az")[0])
+        # axis["z"] = int(data[data.find(":")+2:])
+        axis["z"] = self.device.getNumber("az")
 
         return axis
         
@@ -244,27 +264,33 @@ class Azor:
         return True
 
     def onRoad(self):
-        data = str(self.device.cmd("ew")[0])
-        data = int(data[data.find(':')+2:])
-        return data
+        # data = str(self.device.cmd("ew")[0])
+        # data = int(data[data.find(':')+2:])
+        # return data
+        return self.device.getNumber("ew")
 
 
 
     def getDistance(self):
-        data = str(self.device.cmd("ec")[0])
-        data = int(data[data.find(":")+2:])
+        # data = str(self.device.cmd("ec")[0])
+        # data = int(data[data.find(":")+2:])
+        data = self.device.getNumber("ec")
         data = (data*self.distancePerTic)/self.distanceMux
         return data
         
     def getTime(self):
-        data = str(self.device.cmd("et")[0])
-        data = int(data[data.find(":")+2:], 16)
-        return data/8
+        # data = str(self.device.cmd("et")[0])
+        # data = int(data[data.find(":")+2:], 16)
+        data = self.device.getNumber("et", base=16)
+        return data/100
 
     def getVelocity(self):
         distance = self.getDistance()
         time = self.getTime()
-        velocity = (distance/time)*10
+        if time != 0:
+            velocity = (distance/time)*10
+        else:
+            velocity = 0
         return round(velocity, 2)
 
 
@@ -274,11 +300,10 @@ class Azor:
     #     if self.device.serial.is_open:
     #         self.device.serial.open()
     def disconnect(self):
-        if self.device.serial != Simulator:
-            self.stop()
-            self.Head.rotateTo(90)
+        self.stop()
+        self.Head.rotateTo(90)
 
-            self.device.serial.close()
+        self.device.serial.close()
 
 
 

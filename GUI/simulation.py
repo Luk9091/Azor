@@ -5,9 +5,16 @@ class Simulator:
 
 
 
-    def write(data):
-        # data = data()
+    def write(self, data):
+        # data = data.decode("utr-8")
+        # print(data)
         pass
 
-    def read():
-        return "!OK"
+    def read(self):
+        return "!OK\n".encode("utf-8")
+
+    def readline(self):
+        return "!OK\n".encode("utf-8")
+
+    def close(self):
+        pass
