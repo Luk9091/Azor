@@ -11,7 +11,7 @@ class Circle:
         self.circle.color("white")
         self.circle.hideturtle()
 
-        self.geometry.radius = radius*np.sqrt(2)        # geometry.radius zwraca wartosc mniejsza o sqrt(2) niz podany radius, dlatego mnozenie przez sqrt(2)
+        self.geometry.radius = radius*np.sqrt(2)        # geometry.radius zwraca wartość mniejsza o sqrt(2) niz podany radius, dlatego mnożenie przez sqrt(2)
         # self.geometry.width = radius
         # self.geometry.height = radius
         self.geometry.x = x
@@ -25,7 +25,7 @@ class Circle:
 
     def resize(self, radius):
         if -1 < radius < 1:
-            radius = radius * geometry.geometry().radius/2
+            radius = radius * geometry.geometry().radius*0.71
         
         self.geometry.radius = radius*np.sqrt(2)        # analogicznie jak w __init__
         # self.geometry.width = radius

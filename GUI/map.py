@@ -39,10 +39,10 @@ class Map:
 
     def resize(self, width, height):
         if 0 < width < 1:
-            width = width * geometry.geometry.width
+            width = width * geometry.geometry().width
 
         if 0 < height < 1:
-            height = height * geometry.geometry.height
+            height = height * geometry.geometry().height
 
         self.geometry.width = width
         self.geometry.height = height

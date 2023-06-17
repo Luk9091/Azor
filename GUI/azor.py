@@ -157,7 +157,7 @@ class Head:
         # data = str(data[0])
         # data = data[data.find(': ')+2:]
         # return int(data)
-        return self.device.getNumber("um")
+        return self.device.getNumber("um")/10
 
 class Position:
     def __init__(self, device : Communication) -> None:
@@ -221,7 +221,7 @@ class Memory:
 class Azor:
     distanceMux = 100
     distancePerTic = 64
-    seeDistance = 720 # mm
+    seeDistance = 720
 
     def __init__(self) -> None:
         self.device = Communication()
