@@ -1,10 +1,10 @@
 import turtle
 from radar import Radar
 import GUI
-import map
+from map import Map
 from azor import Azor
 from commands import CLI
-import _thread
+# import _thread
 import sys
 
 
@@ -12,9 +12,9 @@ import sys
 screen = turtle.Screen()
 screen.setup(900, 900)
 screen.bgcolor(30/255, 30/255, 31/255)
-azorTurtle = turtle.Turtle()
-mappedArea = map.Map(-300, -85, 600, 450)
-radar = Radar(0, 0, 300)
+screen.tracer(0)
+mappedArea = Map(-300, -85, 600, 450)
+radar = Radar(0, 0, 900)
 # value = 1
 
 
@@ -33,11 +33,6 @@ def draw():
     radar.draw()
 
     mappedArea.draw()
-
-    azorTurtle.penup()
-    azorTurtle.color("blue")
-    azorTurtle.left(90)
-    azorTurtle.goto(-300 + 150*0.3, -80)
     
     screen.update()
     screen.tracer(1)
@@ -106,26 +101,26 @@ def measureTest(num = 0):
     for i in range(len(distance)):
         if num % 2 == 0:
             distance[i] = 400
-        mappedArea.measure(azorTurtle, distance[i], angle[i])
+        mappedArea.measure(distance[i], angle[i])
         radar.measure(distance[i], angle[i])
 
 def mapTest():
-    # azorTurtle.right(90)
-    # azorTurtle.forward(530)
-    # azorTurtle.left(90)
+    # mappedArea.right(90)
+    # mappedArea.forward(530)
+    # mappedArea.left(90)
     for i in range(7):
-        azorTurtle.right(180)
+        mappedArea.right(180)
         for j in range(6):
             measureTest(j)
-            azorTurtle.left(180)
-            azorTurtle.forward(80)
-            azorTurtle.right(180)
-        # azorTurtle.left(30)
-        azorTurtle.left(90)
-        azorTurtle.forward(85)
-        azorTurtle.right(90)
-        azorTurtle.forward(480)
-        azorTurtle.left(180)
+            mappedArea.left(180)
+            mappedArea.forward(80)
+            mappedArea.right(180)
+        # mappedArea.left(30)
+        mappedArea.left(90)
+        mappedArea.forward(85)
+        mappedArea.right(90)
+        mappedArea.forward(480)
+        mappedArea.left(180)
 
 if __name__=="__main__":
     screen.getcanvas().bind("<Configure>", resize)
@@ -155,6 +150,7 @@ if __name__=="__main__":
 
 
     screen.onclick(GUI.onClick)
+    # screen.update()
 
     # cmdControl()
     
@@ -162,7 +158,7 @@ if __name__=="__main__":
         data = input("?: ")
         print(cli.execute(data))
     
-    
+    # mapTest()
     # _thread.start_new_thread(cmdControl())
     # _thread.start_new_thread(screen.mainloop())
 

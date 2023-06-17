@@ -6,7 +6,7 @@ class Simulator:
 
 
     def write(self, data):
-        # data = data.decode("utr-8")
+        # data = data.decode("utf-8")
         # print(data)
         pass
 

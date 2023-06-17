@@ -34,7 +34,7 @@ class Radar:
 
     def resize(self, radius):
         if 0 < radius < 1:
-            radius = radius * self.geometry.radius
+            radius = radius * geometry.geometry().radius
 
         self.geometry.radius = radius * np.sqrt(2)
 
@@ -119,6 +119,9 @@ if __name__ == "__main__":
 
     radar2 = Radar(0, 0, 200)
     radar2.draw()
+    # print(radar2.geometry.radius)
+    # radar2.resize(0.75)
+    # print(radar2.geometry.radius)
 
     distance = 0
     for angle in range (0, 181, 3):

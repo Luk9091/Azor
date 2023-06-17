@@ -25,7 +25,7 @@ class Circle:
 
     def resize(self, radius):
         if -1 < radius < 1:
-            radius = radius * self.geometry.radius
+            radius = radius * geometry.geometry().radius/2
         
         self.geometry.radius = radius*np.sqrt(2)        # analogicznie jak w __init__
         # self.geometry.width = radius
