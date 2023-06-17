@@ -13,7 +13,7 @@ screen = turtle.Screen()
 screen.setup(900, 900)
 screen.bgcolor(30/255, 30/255, 31/255)
 azorTurtle = turtle.Turtle()
-mapedArea = map.Map(-300, -85, 600, 450)
+mappedArea = map.Map(-300, -85, 600, 450)
 radar = Radar(0, 0, 300)
 # value = 1
 
@@ -32,7 +32,7 @@ def draw():
     radar.move(-0.2, -0.4)
     radar.draw()
 
-    mapedArea.draw()
+    mappedArea.draw()
 
     azorTurtle.penup()
     azorTurtle.color("blue")
@@ -106,7 +106,7 @@ def measureTest(num = 0):
     for i in range(len(distance)):
         if num % 2 == 0:
             distance[i] = 400
-        mapedArea.measure(azorTurtle, distance[i], angle[i])
+        mappedArea.measure(azorTurtle, distance[i], angle[i])
         radar.measure(distance[i], angle[i])
 
 def mapTest():

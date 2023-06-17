@@ -201,7 +201,7 @@ class Memory:
 class Azor:
     distanceMux = 100
     distancePerTic = 64
-
+    seeDistance = 720 # mm
 
     def __init__(self) -> None:
         self.device = Communication()

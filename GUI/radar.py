@@ -2,6 +2,7 @@ import turtle
 import numpy as np
 # import communication
 import geometry
+from azor import Azor
 
 class Radar:
     def __init__(self, x, y, radius):
@@ -59,15 +60,15 @@ class Radar:
 
 
         self.radar.forward(self.geometry.radius/2)
-        self.write("20")
+        self.write(str(round(Azor.seeDistance/2/10)))
         self.radar.forward(self.geometry.radius/2)
-        self.write("40")
+        self.write(str(round(Azor.seeDistance/10)))
         self.radar.left(90)
         self.radar.circle(self.geometry.radius, extent=180)
         self.radar.left(90)
-        self.write("40", "right")
+        self.write(str(round(Azor.seeDistance/10)), "right")
         self.radar.forward(self.geometry.radius/2)
-        self.write("20", "right")
+        self.write(str(round(Azor.seeDistance/2/10)), "right")
         self.radar.right(90)
         self.radar.circle(self.geometry.radius/2, extent=-180)
         self.radar.left(90)
@@ -89,17 +90,19 @@ class Radar:
         self.pointer.setheading(0)
         self.pointer.pendown()
 
-        if distance > 400:
-            distance = 400
-        distance = distance/10
+        if distance > Azor.seeDistance:
+            distance = Azor.seeDistance
+        else:
+            distance = distance * (limit/Azor.seeDistance)*2
+        distance = distance * limit/(2*limit)
 
         self.pointer.color("green")
         self.pointer.left(angle)
-        self.pointer.forward(distance*limit/40)
+        self.pointer.forward(distance)
 
-        if limit - distance*limit/40 > 0:
+        if limit - distance > 0:
             self.pointer.color("red")
-            self.pointer.forward(limit - distance*limit/40)
+            self.pointer.forward(limit - distance)
 
         self.filled = True
 
@@ -116,7 +119,12 @@ if __name__ == "__main__":
 
     radar2 = Radar(0, 0, 200)
     radar2.draw()
-    radar2.measure(350, 50)
+
+    distance = 0
+    for angle in range (0, 181, 3):
+        distance = angle * 4
+        radar2.measure(distance, angle)
+
 
     screen.update()
     turtle.exitonclick()

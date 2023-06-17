@@ -14,8 +14,6 @@ class geometry:
             return np.sqrt((np.power(2*self.height, 2)+np.power(2*self.height, 2))/2)/2
         elif self.height > self.width:
             return np.sqrt((np.power(2*self.width, 2)+np.power(2*self.width, 2))/2)/2
-
-
         
 
     @radius.setter

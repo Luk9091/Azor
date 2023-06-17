@@ -1,6 +1,7 @@
 import turtle
 import geometry
 import numpy as np
+from azor import Azor
 
 class Map:
     def __init__(self, x, y, width, height):
@@ -40,17 +41,21 @@ class Map:
         self.geometry.width = width
         self.geometry.height = height
 
+
     def home(self, dx = 0, dy = 0):
         self.map.penup()
         self.map.goto(self.geometry.x + dx, self.geometry.y + dy)
         self.map.setheading(self._heading)
         self.map.pendown()
 
+
     def color(self, color :str):
         self.map.color(color)
 
+
     def getGeometry(self):
         return self.geometry
+
     
     def write(self, value, align="left"):
         self.map.penup()
@@ -60,6 +65,7 @@ class Map:
         self.map.forward(-30)
         self.map.left(90)
         self.map.pendown()
+        
 
     def draw(self):
         self.map.clear()
@@ -106,15 +112,18 @@ class Map:
             self.map.forward(-self.geometry.height - 2)
             self.map.right(90)
         self.write(*hLabels[-1])
+        
 
-    def measure(self, azorTurtle, distance, angle):
-        maxDistance = 400        # milimetry
-        coefficient = self.geometry.width/400   # [cm]; liczba pikseli/4 metry, zmienic jesli zmienimy wymiary mapy w metrach
-        angleOffset = 90        # dostosowac do wartosci przyjmowanych przez Azora, 90 jest dla zakresu 0-180
+    def measure(self, azorTurtle: turtle.Turtle, distance, angle):
+        maxDistance = Azor.seeDistance        # milimetry
+        coefficient = self.geometry.width/400   # [cm]; liczba pikseli/4 metry, zmienić jeśli zmienimy wymiary mapy w metrach
+        angleOffset = 90        # dostosować do wartości przyjmowanych przez Azora, 90 jest dla zakresu 0-180
         limit = maxDistance/10*coefficient
-        if distance > 400:
-            distance = 400
+
+        if distance > maxDistance:
+            distance = maxDistance
         distance = distance/10
+
         self.pointer.penup()
         self.pointer.goto(azorTurtle.position())
         self.pointer.setheading(azorTurtle.heading() - angleOffset + angle)
@@ -124,22 +133,30 @@ class Map:
         limity = limit*np.sin((azorTurtle.heading() - angleOffset + angle)*np.pi/180)
 
         leftUpAngle = np.arctan2(self.geometry.y + self.geometry.height - self.pointer.position()[1], 
-                                 self.geometry.x - self.pointer.position()[0])*180/np.pi        # tak chyba bedzie lepiej
+                                 self.geometry.x - self.pointer.position()[0])*180/np.pi        # tak chyba będzie lepiej
+
         leftDownAngle = np.arctan2(self.geometry.y - self.pointer.position()[1], 
                                    self.geometry.x - self.pointer.position()[0])*180/np.pi
+
         rightUpAngle = np.arctan2(self.geometry.y + self.geometry.height - self.pointer.position()[1], 
                                   self.geometry.x + self.geometry.width - self.pointer.position()[0])*180/np.pi
+
         rightDownAngle = np.arctan2(self.geometry.y - self.pointer.position()[1], 
                                     self.geometry.x + self.geometry.width - self.pointer.position()[0])*180/np.pi
+
+
         angles = [leftUpAngle, leftDownAngle, rightUpAngle, rightDownAngle]
+
         for i in range(4):
             if angles[i] < 0:
                 angles[i] += 360
+
         while azorTurtle.heading() - angleOffset + angle >= 360:
             angle -= 360
         # print(angles, "\t", angle, "\t", azorTurtle.heading() - angleOffset + angle)
+
         if (
-                self.pointer.position()[0] + limitx <= self.geometry.x and      # tu chyba tez bedzie lepiej
+                self.pointer.position()[0] + limitx <= self.geometry.x and      # tu chyba tez będzie lepiej
                 (azorTurtle.heading() - angleOffset + angle >= angles[0] and 
                 azorTurtle.heading() - angleOffset + angle <= angles[1])
             ):
@@ -179,6 +196,7 @@ class Map:
             limitx = limity/np.tan((azorTurtle.heading() - angleOffset + angle)*np.pi/180)
             limit = np.sqrt(limitx**2 + limity**2)
             # print(limitx, "\t", limity, "\t", limit)
+        
         if distance*coefficient <= limit:
             self.pointer.color("green")
             self.pointer.forward(distance*coefficient)
