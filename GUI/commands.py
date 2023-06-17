@@ -5,31 +5,25 @@ import serial.tools.list_ports as serialInfo
 
 class CLI:
     def __init__(self, azor: Azor) -> None:
-        if azor.device.send != None:
-            COMMANDS = {
-                #  cmd      [[min, max] num of args, parameter args]
-                "forward":  {"minimumArgs": 0, "handler" : azor.forward},
-                "backward": {"minimumArgs": 0, "handler" : azor.backward},
-                "left":     {"minimumArgs": 0, "handler" : azor.turnLeft},
-                "right":    {"minimumArgs": 0, "handler" : azor.turnRight},
+        self.COMMANDS = {
+            #  cmd      [[min, max] num of args, parameter args]
+            "forward":  {"minimumArgs": 0, "handler" : azor.forward},
+            "backward": {"minimumArgs": 0, "handler" : azor.backward},
+            "left":     {"minimumArgs": 0, "handler" : azor.turnLeft},
+            "right":    {"minimumArgs": 0, "handler" : azor.turnRight},
 
-                "head":     {"minimumArgs": 1, "handler" : self.head},
-                "acc":      {"minimumArgs": 1, "handler" : azor.Position.acceleration()},
-                "magnet":   {"minimumArgs": 1, "handler" : azor.Position.magneticField()},
-                "azimuth":  {"minimumArgs": 1, "handler" : azor.Position.azimuth},
-            
-                "distance": {"minimumArgs": 1, "handler" : self.distance},
-                "time":     {"minimumArgs": 0, "handler" : azor.getTime},
-                "velocity": {"minimumArgs": 0, "handler" : azor.getVelocity},
-            }
-        else:
-            COMMANDS = {}
-
-        terminalCmd = {
-            "connect"
+            "head":     {"minimumArgs": 1, "handler" : self.head},
+            "acc":      {"minimumArgs": 1, "handler" : azor.Position.acceleration()},
+            "magnet":   {"minimumArgs": 1, "handler" : azor.Position.magneticField()},
+            "azimuth":  {"minimumArgs": 1, "handler" : azor.Position.azimuth},
+        
+            "distance": {"minimumArgs": 1, "handler" : self.distance},
+            "time":     {"minimumArgs": 0, "handler" : azor.getTime},
+            "velocity": {"minimumArgs": 0, "handler" : azor.getVelocity},
+        
+        
+            "exit":     {"minimumArgs": 0, "handler" : self.exit},
         }
-
-        self.COMMANDS = terminalCmd | COMMANDS
 
 
 

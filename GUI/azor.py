@@ -1,6 +1,7 @@
 import serial
 import serial.tools.list_ports as serialInfo
 import sys
+from simulation import Simulator
 
 class Communication:
     autoConnect = "/dev/rfcomm0"
@@ -48,7 +49,7 @@ class Communication:
         if choose != 0:
             self.connect(ports[choose-1].device)
         else:
-            self.serial = None
+            self.serial = Simulator()
 
 
         
@@ -67,8 +68,6 @@ class Communication:
 
 
     def cmd(self, cmd):
-        if self.serial == None:
-            return 0
         self.send(cmd)
         return self.read(cmd)
 
@@ -275,7 +274,7 @@ class Azor:
     #     if self.device.serial.is_open:
     #         self.device.serial.open()
     def disconnect(self):
-        if self.device.serial != None:
+        if self.device.serial != Simulator:
             self.stop()
             self.Head.rotateTo(90)
 
