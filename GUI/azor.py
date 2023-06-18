@@ -133,9 +133,6 @@ class Head:
         self.device = device
 
     def getRotate(self):
-        # currentAng = self.device.cmd("ua")[0]
-        # currentAng = int(currentAng[currentAng.find(":")+2:])
-        # return currentAng
         return self.device.getNumber("ua")
         
 
@@ -153,10 +150,6 @@ class Head:
         self.device.cmd(cmd)
         
     def measure(self):
-        # data = self.device.cmd("um")
-        # data = str(data[0])
-        # data = data[data.find(': ')+2:]
-        # return int(data)
         return self.device.getNumber("um")/10
 
 class Position:
@@ -164,25 +157,15 @@ class Position:
         self.device = device
         
     def azimuth(self):
-        # data = self.device.cmd("ca")
-        # data = str(data[0])
-        # data = data[data.find(":")+2:]
-        # return int(data)
         return self.device.getNumber("ca")
 
     def magneticField(self):
         axis = {"x" : 0, "y" : 0, "z" : 0 }
 
-        # data = str(self.device.cmd("cx")[0])
-        # axis["x"] = int(data[data.find(":")+2:])
         axis["x"] = self.device.getNumber("cx")
 
-        # data = str(self.device.cmd("cy")[0])
-        # axis["y"] = int(data[data.find(":")+2:])
         axis["y"] = self.device.getNumber("cy")
 
-        # data = str(self.device.cmd("cz")[0])
-        # axis["z"] = int(data[data.find(":")+2:])
         axis["z"] = self.device.getNumber("cz")
 
         return axis
@@ -190,16 +173,10 @@ class Position:
     def acceleration(self):
         axis = {"x" : 0, "y" : 0, "z" : 0 }
 
-        # data = str(self.device.cmd("ax")[0])
-        # axis["x"] = int(data[data.find(":")+2:])
         axis["x"] = self.device.getNumber("ax")
 
-        # data = str(self.device.cmd("ay")[0])
-        # axis["y"] = int(data[data.find(":")+2:])
         axis["y"] = self.device.getNumber("ay")
 
-        # data = str(self.device.cmd("az")[0])
-        # axis["z"] = int(data[data.find(":")+2:])
         axis["z"] = self.device.getNumber("az")
 
         return axis
@@ -219,7 +196,7 @@ class Memory:
 
 
 class Azor:
-    distanceMux = 100
+    distanceMux = 10
     distancePerTic = 64
     seeDistance = 720
 
@@ -233,14 +210,14 @@ class Azor:
     def __del__(self) -> None:
         self.disconnect()
 
-    def forward(self, distance : int = 10):
+    def forward(self, distance : int = 100):
         distance = abs(int(distance))
         distance = int(distance * self.distanceMux)
         cmd = "ef " + str(distance)
         self.device.cmd(cmd)
         return True
 
-    def backward(self, distance : int = 10):
+    def backward(self, distance : int = 100):
         distance = abs(int(distance))
         distance = int(distance * self.distanceMux)
         cmd = "eb " + str(distance)
@@ -264,23 +241,16 @@ class Azor:
         return True
 
     def onRoad(self):
-        # data = str(self.device.cmd("ew")[0])
-        # data = int(data[data.find(':')+2:])
-        # return data
         return self.device.getNumber("ew")
 
 
 
     def getDistance(self):
-        # data = str(self.device.cmd("ec")[0])
-        # data = int(data[data.find(":")+2:])
         data = self.device.getNumber("ec")
         data = (data*self.distancePerTic)/self.distanceMux
         return data
         
     def getTime(self):
-        # data = str(self.device.cmd("et")[0])
-        # data = int(data[data.find(":")+2:], 16)
         data = self.device.getNumber("et", base=16)
         return data/100
 
@@ -296,9 +266,6 @@ class Azor:
 
 
 
-    # def connect(self):
-    #     if self.device.serial.is_open:
-    #         self.device.serial.open()
     def disconnect(self):
         self.stop()
         self.Head.rotateTo(90)
@@ -315,8 +282,6 @@ if __name__=="__main__":
         sys.exit()
     
 
-    # while True:
-    #     print(azor.Head.measure())
 
     print("Magnetic field:")
     print(azor.Position.magneticField())

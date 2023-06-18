@@ -61,12 +61,9 @@ class Arrow:
             self.geometry.x-self.geometry.width/2 < x < self.geometry.x+self.geometry.width/2 and
             self.geometry.y-self.geometry.height/2 < y < self.geometry.y+self.geometry.height/2
         ):
-            if self.arg == None:
-                self._functionHandler()
-            else:
-                self._functionHandler(self.arg)
+            self._functionHandler(*self.arg)
     
-    def setFunctionHandlerOnClick(self, fun, arg = None):
+    def setFunctionHandlerOnClick(self, fun, *arg):
         self._functionHandler = fun
         self.arg = arg
 

@@ -2,18 +2,20 @@ import sys
 from azor import Azor
 import serial.tools.list_ports as serialInfo
 from radar import Radar
+from map import Map
 # azor = Azor()
 
 class CLI:
-    def __init__(self, azor: Azor, radar : Radar) -> None:
+    def __init__(self, azor: Azor, radar : Radar, map : Map) -> None:
         self.Azor = azor
-        self.radar = radar
+        self.Radar = radar
+        self.Map = map
         self.COMMANDS = {
             #  cmd      [[min, max] num of args, parameter args]
-            "forward":  {"minimumArgs": 0, "handler" : self.Azor.forward},
-            "backward": {"minimumArgs": 0, "handler" : self.Azor.backward},
-            "left":     {"minimumArgs": 0, "handler" : self.Azor.turnLeft},
-            "right":    {"minimumArgs": 0, "handler" : self.Azor.turnRight},
+            "forward":  {"minimumArgs": 0, "handler" : self.forward},
+            "backward": {"minimumArgs": 0, "handler" : self.backward},
+            "left":     {"minimumArgs": 0, "handler" : self.turnLeft},
+            "right":    {"minimumArgs": 0, "handler" : self.turnRight},
 
             "head":     {"minimumArgs": 1, "handler" : self.head},
             "acc":      {"minimumArgs": 1, "handler" : self.Azor.Position.acceleration()},
@@ -50,16 +52,51 @@ class CLI:
 
         # print()
 
+    def forward(self, distance = 100):
+        if(self.Map.forward(float(distance))):
+            return self.Azor.forward(distance)
+        else:
+            return False
+
+    def backward(self, distance = 100):
+        if(self.Map.backward(float(distance))):
+            return self.Azor.backward(distance)
+        else:
+            return False
+
+    def turnLeft(self, angle = 0):
+        if(self.Map.left(int(angle))):
+            return self.Azor.turnLeft(angle)
+        else:
+            return False
+
+    def turnRight(self, angle = 0):
+        if(self.Map.right(int(angle))):
+            return self.Azor.turnRight(angle)
+        else:
+            return False
+
+
+
+
     def head(self, *args):
 
         if args[0] == "left":
+            if len(args) < 2:
+                return False
             self.Azor.Head.rotate(int(args[1]))
+            self.Radar.left(int(args[1]))
             return True
         elif args[0] == "right":
+            if len(args) < 2:
+                return False
             self.Azor.Head.rotate(-int(args[1]))
+            self.Radar.right(int(args[1]))
             return True
         elif args[0] == "measure":
-            return self.Azor.Head.measure()
+            data = self.Azor.Head.measure()
+            self.Radar.measure(data)
+            return data
         elif args[0] == "set":
             self.Azor.Head.rotateTo(int(args[0]))
             return True
@@ -91,10 +128,16 @@ class CLI:
 
 
     def radarFun(self, *args):
+
+        self.Radar.clear()
         for i in range(0, 181, 3):
             self.Azor.Head.rotateTo(i)
             measure = self.Azor.Head.measure()
-            self.radar.measure(measure/10, i)
+            self.Radar.rotate(i)
+            self.Radar.measure(int(measure), i)
+            self.Map.setPoint(int(measure), i)
+
+
             print(f"{i}.\t{measure}")
         return True
             

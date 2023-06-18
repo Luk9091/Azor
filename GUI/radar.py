@@ -1,6 +1,5 @@
 import turtle
 import numpy as np
-# import communication
 import geometry
 from azor import Azor
 
@@ -12,11 +11,8 @@ class Radar:
         self.pointer = turtle.Turtle()
 
         self.radar.color("white")
-        self.radar.hideturtle()
-        self.radar.speed(100)
 
         self.pointer.hideturtle()
-        self.pointer.speed(100)
         self.filled = False
 
         self.geometry.x = x
@@ -83,7 +79,10 @@ class Radar:
             self.radar.setheading(0)
         self.radar.left(90)
 
-    def measure(self, distance, angle):
+    def measure(self, distance, angle = -1):
+        if angle == -1:
+            angle = self.radar.heading()
+        turtle.tracer(0)
         limit = self.geometry.radius
         self.pointer.penup()
         self.pointer.goto(self.geometry.x, self.geometry.y)
@@ -105,6 +104,19 @@ class Radar:
             self.pointer.forward(limit - distance)
 
         self.filled = True
+        turtle.tracer(1)
+        # screen.update()
+
+    def rotate(self, angle):
+        self.radar.setheading(angle)
+
+    def left(self, angle):
+        if self.radar.heading()  < 180:
+            self.radar.left(angle)
+
+    def right(self, angle):
+        if 0 < self.radar.heading():
+            self.radar.right(angle)
 
     def clear(self):
         self.pointer.clear()
@@ -119,9 +131,6 @@ if __name__ == "__main__":
 
     radar2 = Radar(0, 0, 200)
     radar2.draw()
-    # print(radar2.geometry.radius)
-    # radar2.resize(0.75)
-    # print(radar2.geometry.radius)
 
     distance = 0
     for angle in range (0, 181, 3):

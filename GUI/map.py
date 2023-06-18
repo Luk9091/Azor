@@ -3,30 +3,60 @@ import geometry
 import numpy as np
 from azor import Azor
 
+from dataclasses import dataclass
+
+@dataclass
+class Point:
+    distance    : int = 0
+    angle       : int = 0
+
+    @property
+    def x(self) -> int:
+        x = self.distance*np.cos(self.angle*np.pi/180)
+        return x
+
+    @property
+    def y(self) -> int:
+        y = self.distance*np.sin(self.angle*np.pi/180)
+        return y
+
+
 class Map:
-    def __init__(self, x, y, width, height):
+    drawLimit = 420
+
+    def __init__(self, x_axis = 200, y_axis = 200, numberOfTics = 8):
         self.map = turtle.Turtle()
         self.geometry = geometry.geometry()
         self._heading = 0
-        self.pointer = turtle.Turtle()
         self.azorTurtle = turtle.Turtle()
+
+        self.numOfTic = numberOfTics
+        self.x_axis = x_axis
+        self.y_axis = y_axis
         
         self.map.color("white")
         self.map.hideturtle()
-        self.map.speed(100)
 
+
+        self.pointer = turtle.Turtle()
+        self.pointer.color("red")
+        self.pointer.width(2)
         self.pointer.hideturtle()
-        self.pointer.speed(100)
+        self.pointer.penup()
+        # self.pointer.speed(100)
 
         self.azorTurtle.penup()
         self.azorTurtle.color("blue")
         self.azorTurtle.left(90)
-        self.azorTurtle.goto(x + Azor.seeDistance*0.08, y)
+        self.azorTurtle.speed(1)
 
-        self.geometry.x = x
-        self.geometry.y = y
-        self.geometry.width = width
-        self.geometry.height = height
+        self.azorPosition = geometry.geometry()
+
+
+        wallPadding = 25
+        self.azorPosition.x = wallPadding
+        self.azorPosition.y = wallPadding - self.geometry.y
+        self.azorTurtle.goto(self.azorPosition.x, self.azorPosition.y)
 
         self.font = "Font/DejaVuSansMono.ttf"
 
@@ -37,22 +67,45 @@ class Map:
         self.geometry.x = x
         self.geometry.y = y
 
-    def resize(self, width, height):
-        if 0 < width < 1:
-            width = width * geometry.geometry().width
+        self.goto(self.azorPosition.x, self.azorPosition.y)
 
-        if 0 < height < 1:
-            height = height * geometry.geometry().height
+    def resize(self, width, height):
+        if 0 < width <= 1:
+            width = width * turtle.window_width()
+
+        if 0 < height <= 1:
+            height = height * turtle.window_height()
 
         self.geometry.width = width
         self.geometry.height = height
+        
+        self.goto(self.azorPosition.x, self.azorPosition.y)
 
 
-    def home(self, dx = 0, dy = 0):
-        self.map.penup()
-        self.map.goto(self.geometry.x + dx, self.geometry.y + dy)
-        self.map.setheading(self._heading)
-        self.map.pendown()
+    def goto(self, x = 0, y = 0):
+        self.azorTurtle.goto(
+            self.geometry.x + x*self.geometry.width/self.x_axis, 
+            self.geometry.y + y*self.geometry.height/self.y_axis
+        )
+        self.azorTurtle.setheading(90)
+        self.azorPosition.x = 0 + x
+        self.azorPosition.y = 0 + y
+
+    def pointerGoto(self, x, y):
+        if x < 0:
+            x = 0
+        elif x > self.x_axis:
+            x = self.x_axis
+
+        if y < 0:
+            y = 0
+        elif y > self.y_axis:
+            y = self.y_axis
+
+        self.pointer.goto(
+            self.geometry.x + x*self.geometry.width/self.x_axis, 
+            self.geometry.y + y*self.geometry.height/self.y_axis
+        )
 
 
     def color(self, color :str):
@@ -64,9 +117,10 @@ class Map:
 
     
     def write(self, value, align="left"):
-        self.map.penup()
         self.map.right(90)
-        self.map.forward(30)
+        self.map.forward(10)
+        self.map.penup()
+        self.map.forward(20)
         self.map.write(value, font=self.font, align=align)
         self.map.forward(-30)
         self.map.left(90)
@@ -74,62 +128,60 @@ class Map:
         
 
     def draw(self):
+        self.map.goto(self.geometry.x, self.geometry.y)
+        self.map.setheading(0)
         self.map.clear()
-        self.home(-1, -1)
 
-        defaultSize = self.map.width()
-        thickSize = 3
-
-        hLabels = [[0, "center"], [50, "center"], [100, "center"], [150, "center"], [200, "center"], 
-                   [250, "center"], [300, "center"], [350, "center"], [400, "center"]]
-        vLabels = [[0, "right"], [50, "right"], [100, "right"], [150, "right"], [200, "right"], [250, "right"], [300, "right"]]
-        self.map.width(thickSize)
-        self.map.pendown()
-        self.map.forward(self.geometry.width + 2)
-        self.map.left(90)
-        for i in range(6):
-            self.write(*vLabels[i])
-            self.map.width(thickSize)
-            self.map.forward((self.geometry.height + 2)/6)
-            self.map.width(defaultSize)
+        for dx in range(self.numOfTic):
+            self.write(str(round(dx*self.x_axis/self.numOfTic)), "center")
+            self.map.forward(self.geometry.width/self.numOfTic)
             self.map.left(90)
-            self.map.forward(self.geometry.width + 2)
-            self.map.left(90)
-            self.write(vLabels[i + 1][0])
+            self.map.forward(self.geometry.height)
+            self.map.backward(self.geometry.height)
             self.map.right(90)
-            self.map.forward(-self.geometry.width - 2)
-            self.map.right(90)
-
-        self.write(*vLabels[-1])
-        self.map.left(90)
-        self.map.width(thickSize)
-        self.map.forward(self.geometry.width + 2)
-        self.map.left(90)
-        self.map.forward(self.geometry.height + 2)
-        self.map.width(defaultSize)
-        self.write(vLabels[0][0])
+        self.write(str(round(self.x_axis)), "center")
 
         self.map.left(90)
-        for i in range(8):
-            self.write(*hLabels[i])
-            self.map.forward((self.geometry.width + 2)/8)
+        for dy in range(self.numOfTic):
+            self.write(str(round(dy*self.y_axis/self.numOfTic)))
+            self.map.forward(self.geometry.height/self.numOfTic)
             self.map.left(90)
-            self.map.forward(self.geometry.height + 2)
-            self.map.forward(-self.geometry.height - 2)
+            self.map.forward(self.geometry.width)
+            self.map.backward(self.geometry.width)
             self.map.right(90)
-        self.write(*hLabels[-1])
+        self.write(str(round(self.y_axis)))
+
+        self.map.left(90)
+        self.map.forward(self.geometry.width)
+        self.map.left(90)
+
+        for dy in range(self.numOfTic):
+            self.write(str(round((self.numOfTic-dy)*self.y_axis/self.numOfTic)), "right")
+            self.map.forward(self.geometry.height/self.numOfTic)
+        self.write(str(round(0)))
+
+
+
+
+
         
+    # get distance in mm
     def forward(self, distance):
         angle = self.azorTurtle.heading()
         dx = distance*np.cos(angle*np.pi/180)
         dy = distance*np.sin(angle*np.pi/180)
-        x = self.azorTurtle.xcor()
-        y = self.azorTurtle.ycor()
+        x = self.azorPosition.x
+        y = self.azorPosition.y
         if (
-            (self.geometry.x < x + dx < self.geometry.x + self.geometry.width) and 
-            (self.geometry.y < y + dy < self.geometry.y + self.geometry.height)
+            (0 < x + dx < self.x_axis) and 
+            (0 < y + dy < self.y_axis)
             ):
-            self.azorTurtle.forward(distance)
+            self.azorTurtle.goto(
+                self.azorTurtle.xcor() + dx*self.geometry.width/self.x_axis,
+                self.azorTurtle.ycor() + dy*self.geometry.height/self.y_axis,
+            )
+            self.azorPosition.x = self.azorPosition.x + dx
+            self.azorPosition.y = self.azorPosition.y + dy
             return True
         else:
             return False
@@ -138,13 +190,18 @@ class Map:
         angle = self.azorTurtle.heading() + 180
         dx = distance*np.cos(angle*np.pi/180)
         dy = distance*np.sin(angle*np.pi/180)
-        x = self.azorTurtle.xcor()
-        y = self.azorTurtle.ycor()
+        x = self.azorPosition.x
+        y = self.azorPosition.y
         if (
-            (self.geometry.x < x + dx < self.geometry.x + self.geometry.width) and 
-            (self.geometry.y < y + dy < self.geometry.y + self.geometry.height)
+            (0 < x + dx < self.x_axis) and 
+            (0 < y + dy < self.y_axis)
             ):
-            self.azorTurtle.forward(distance)
+            self.azorTurtle.goto(
+                self.azorTurtle.xcor() + dx*self.geometry.width/self.x_axis,
+                self.azorTurtle.ycor() + dy*self.geometry.height/self.y_axis,
+            )
+            self.azorPosition.x = self.azorPosition.x + dx
+            self.azorPosition.y = self.azorPosition.y + dy
             return True
         else:
             return False
@@ -155,108 +212,60 @@ class Map:
     def left(self, angle):
         self.azorTurtle.left(angle)
 
-    def measure(self, distance, angle):
-        maxDistance = Azor.seeDistance        # milimetry
-        coefficient = self.geometry.width/400   # [cm]; liczba pikseli/4 metry, zmienić jeśli zmienimy wymiary mapy w metrach
-        angleOffset = 90        # dostosować do wartości przyjmowanych przez Azora, 90 jest dla zakresu 0-180
-        limit = maxDistance/10*coefficient
+    # get radius and angle of 2 point,
+    # both value are depend of position of Azor
+    def drawWall(self, start, stop):
+        start = Point(*start)
+        stop = Point(*stop)
 
-        if distance > maxDistance:
-            distance = maxDistance
-        distance = distance/10
-
-        self.pointer.penup()
-        self.pointer.goto(self.azorTurtle.position())
-        self.pointer.setheading(self.azorTurtle.heading() - angleOffset + angle)
+        self.pointerGoto(self.azorPosition.x + start.x, self.azorPosition.y + start.y)
         self.pointer.pendown()
+        self.pointerGoto(self.azorPosition.x + stop.x,  self.azorPosition.y + stop.y)
+        self.pointer.penup()
 
-        limitx = limit*np.cos((self.azorTurtle.heading() - angleOffset + angle)*np.pi/180)
-        limity = limit*np.sin((self.azorTurtle.heading() - angleOffset + angle)*np.pi/180)
-
-        leftUpAngle = np.arctan2(self.geometry.y + self.geometry.height - self.pointer.position()[1], 
-                                 self.geometry.x - self.pointer.position()[0])*180/np.pi        # tak chyba będzie lepiej
-
-        leftDownAngle = np.arctan2(self.geometry.y - self.pointer.position()[1], 
-                                   self.geometry.x - self.pointer.position()[0])*180/np.pi
-
-        rightUpAngle = np.arctan2(self.geometry.y + self.geometry.height - self.pointer.position()[1], 
-                                  self.geometry.x + self.geometry.width - self.pointer.position()[0])*180/np.pi
-
-        rightDownAngle = np.arctan2(self.geometry.y - self.pointer.position()[1], 
-                                    self.geometry.x + self.geometry.width - self.pointer.position()[0])*180/np.pi
-
-
-        angles = [leftUpAngle, leftDownAngle, rightUpAngle, rightDownAngle]
-
-        for i in range(4):
-            if angles[i] < 0:
-                angles[i] += 360
-
-        while self.azorTurtle.heading() - angleOffset + angle >= 360:
-            angle -= 360
-        # print(angles, "\t", angle, "\t", azorTurtle.heading() - angleOffset + angle)
-
-        if (
-                self.pointer.position()[0] + limitx <= self.geometry.x and      # tu chyba tez będzie lepiej
-                (self.azorTurtle.heading() - angleOffset + angle >= angles[0] and 
-                self.azorTurtle.heading() - angleOffset + angle <= angles[1])
-            ):
-            limitx = self.pointer.position()[0] - self.geometry.x
-            limity = np.tan((self.azorTurtle.heading() - angleOffset + angle)*np.pi/180)*limitx
-            limit = np.sqrt(limitx**2 + limity**2)
-            # print(limitx, "\t", limity, "\t", limit)
-        elif (
-                self.pointer.position()[0] + limitx >= self.geometry.x + self.geometry.width and 
-                ((self.azorTurtle.heading() - angleOffset + angle <= angles[2] and 
-                self.azorTurtle.heading() - angleOffset + angle >= 0) or 
-                (self.azorTurtle.heading() - angleOffset + angle <= 360 and 
-                self.azorTurtle.heading() - angleOffset + angle >= angles[3]) or 
-                (self.azorTurtle.heading() - angleOffset + angle <= 0 and 
-                self.azorTurtle.heading() - angleOffset + angle >= angles[3] - 360))
-            ):
-            limitx = self.geometry.x + self.geometry.width - self.pointer.position()[0]
-            limity = np.tan((self.azorTurtle.heading() - angleOffset + angle)*np.pi/180)*limitx
-            limit = np.sqrt(limitx**2 + limity**2)
-            # print(limitx, "\t", limity, "\t", limit)
-        elif (
-                self.pointer.position()[1] + limity <= self.geometry.y and 
-                ((self.azorTurtle.heading() - angleOffset + angle >= angles[1] and 
-                self.azorTurtle.heading() - angleOffset + angle <= angles[3]) or 
-                (self.azorTurtle.heading() - angleOffset + angle <= 0))
-            ):
-            limity = self.pointer.position()[1] - self.geometry.y
-            limitx = limity/np.tan((self.azorTurtle.heading() - angleOffset + angle)*np.pi/180)
-            limit = np.sqrt(limitx**2 + limity**2)
-            # print(limitx, "\t", limity, "\t", limit)
-        elif (
-                self.pointer.position()[1] + limity >= self.geometry.y + self.geometry.height and 
-                (self.azorTurtle.heading() - angleOffset + angle >= angles[2] and 
-                self.azorTurtle.heading() - angleOffset + angle <= angles[0])
-            ):
-            limity = self.geometry.y + self.geometry.height - self.pointer.position()[1]
-            limitx = limity/np.tan((self.azorTurtle.heading() - angleOffset + angle)*np.pi/180)
-            limit = np.sqrt(limitx**2 + limity**2)
-            # print(limitx, "\t", limity, "\t", limit)
-        
-        if distance*coefficient <= limit:
-            self.pointer.color("green")
-            self.pointer.forward(distance*coefficient)
-            self.pointer.color("red")
-            self.pointer.forward(limit - distance*coefficient)
+    def setPoint(self, radius, angle):
+        point = Point(radius, angle)
+        self.pointerGoto(point.x, point.y)
+        if radius <= self.drawLimit:
+            self.pointer.pendown()
         else:
-            self.pointer.color("green")
-            self.pointer.forward(limit)
+            self.pointer.penup()
+        
 
+
+        
+
+def draw():
+    screen.tracer(0)
+    map.resize(0.8, 0.8)
+    map.move(-0.4, -0.4)
+    map.draw()
+    
+    screen.update()
+    screen.tracer(1)
+    
+
+def resize(event):
+    draw()
 
 if __name__ == "__main__":
+    from time import sleep
     screen = turtle.Screen()
     screen.setup(900, 900)
     screen.bgcolor(30/255, 30/255, 31/255)
-    screen.tracer(0)
+    
+    map = Map(2000, 2000)
+    
+    screen.getcanvas().bind("<Configure>", resize)
 
-    map = Map(-300, -150, 600, 450)
+    draw()
 
-    map.draw()
+    map.goto(250, 250)
+    sleep(2)
+    map.forward(1000)
+    # map.right(45)
+    # map.forward(250*np.sqrt(2))1
 
-    screen.update()
+    # map.drawWall((200, 180), (210, 180-15))
+
     turtle.exitonclick()

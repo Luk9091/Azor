@@ -45,10 +45,11 @@ class Circle:
     
     def onClick(self, x, y):
         if self._functionHandler != None and (x - self.geometry.x)**2 + (y - self.geometry.y)**2 < (self.geometry.radius)**2:
-            self._functionHandler()
+            self._functionHandler(*self.args)
 
-    def setFunctionHandlerOnClick(self, fun):
+    def setFunctionHandlerOnClick(self, fun, *args):
         self._functionHandler = fun
+        self.args = args
 
     def draw(self):
         self.circle.clear()
