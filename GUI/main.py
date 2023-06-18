@@ -40,6 +40,10 @@ def draw():
 def resize(event):
     draw()
 
+def onClick(x, y):
+    radar.onClick(x, y)
+    GUI.onClick(x, y)
+
 if __name__=="__main__":
     screen.getcanvas().bind("<Configure>", resize)
 
@@ -62,10 +66,11 @@ if __name__=="__main__":
     GUI.rightDown.setFunctionHandlerOnClick(cli.head, "right", 15)
     GUI.button.setFunctionHandlerOnClick(cli.head, "measure")
 
+    radar.setFunctionHandlerOnClick(cli.radarFun)
 
 
 
-    screen.onclick(GUI.onClick)
+    screen.onclick(onClick)
     screen.tracer(1)
 
     while turtle.TurtleScreen._RUNNING:

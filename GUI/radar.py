@@ -19,6 +19,8 @@ class Radar:
         self.geometry.y = y
         self.geometry.radius = radius * np.sqrt(2)
 
+        self._functionHandler = None
+
         self.font = "Font/DejaVuSansMono.ttf"
 
     def move(self, x, y):
@@ -121,6 +123,14 @@ class Radar:
     def clear(self):
         self.pointer.clear()
         self.filled = False
+
+    def onClick(self, x, y):
+        if self._functionHandler != None and (x - self.geometry.x)**2 + (y - self.geometry.y)**2 < self.geometry.radius**2 and y - self.geometry.y >= 0:
+            self._functionHandler(*self.args)
+
+    def setFunctionHandlerOnClick(self, fun, *args):
+        self._functionHandler = fun
+        self.args = args
 
 
 if __name__ == "__main__":

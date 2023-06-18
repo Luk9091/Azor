@@ -64,13 +64,13 @@ class CLI:
         else:
             return False
 
-    def turnLeft(self, angle = 0):
+    def turnLeft(self, angle = 90):
         if(self.Map.left(int(angle))):
             return self.Azor.turnLeft(angle)
         else:
             return False
 
-    def turnRight(self, angle = 0):
+    def turnRight(self, angle = 90):
         if(self.Map.right(int(angle))):
             return self.Azor.turnRight(angle)
         else:
