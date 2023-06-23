@@ -54,6 +54,7 @@ class Radar:
     def draw(self):
         self.radar.home()
         self.radar.clear()
+        self.clear()
         self.home()
 
 

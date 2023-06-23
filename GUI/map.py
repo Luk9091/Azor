@@ -53,9 +53,11 @@ class Map:
         self.azorPosition = geometry.geometry()
 
 
-        wallPadding = 25
-        self.azorPosition.x = wallPadding
-        self.azorPosition.y = wallPadding - self.geometry.y
+        # wallPadding = 25
+        # self.azorPosition.x = wallPadding
+        # self.azorPosition.y = wallPadding - self.geometry.y
+        self.azorPosition.x = x_axis/2
+        self.azorPosition.y = y_axis/2
         self.azorTurtle.goto(self.azorPosition.x, self.azorPosition.y)
 
         self.font = "Font/DejaVuSansMono.ttf"
@@ -92,19 +94,19 @@ class Map:
         self.azorPosition.y = 0 + y
 
     def pointerGoto(self, x, y):
-        if x < 0:
-            x = 0
-        elif x > self.x_axis:
-            x = self.x_axis
+        # if x < 0:
+        #     x = 0
+        # elif x > self.x_axis:
+        #     x = self.x_axis
 
-        if y < 0:
-            y = 0
-        elif y > self.y_axis:
-            y = self.y_axis
+        # if y < 0:
+        #     y = 0
+        # elif y > self.y_axis:
+        #     y = self.y_axis
 
         self.pointer.goto(
-            self.geometry.x + x*self.geometry.width/self.x_axis, 
-            self.geometry.y + y*self.geometry.height/self.y_axis
+            self.geometry.x + (self.azorPosition.x + x)*self.geometry.width/self.x_axis, 
+            self.geometry.y + (self.azorPosition.y + y)*self.geometry.height/self.y_axis
         )
 
 
@@ -225,11 +227,10 @@ class Map:
 
     def setPoint(self, radius, angle):
         point = Point(radius, angle)
-        self.pointerGoto(point.x, point.y)
-        if radius <= self.drawLimit:
-            self.pointer.pendown()
-        else:
+        if radius >= 3/4 * Azor.seeDistance:
             self.pointer.penup()
+        self.pointerGoto(point.x, point.y)
+        self.pointer.pendown()
         
 
 

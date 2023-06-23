@@ -128,17 +128,48 @@ class CLI:
 
 
     def radarFun(self, *args):
+        self.Azor.Head.rotate(0)
+        value = []
 
         self.Radar.clear()
+
         for i in range(0, 181, 3):
             self.Azor.Head.rotateTo(i)
             measure = self.Azor.Head.measure()
             self.Radar.rotate(i)
-            self.Radar.measure(int(measure), i)
-            self.Map.setPoint(int(measure), i)
+            self.Radar.measure(measure, i)
+            
+            value.append(measure)
 
+        for i in range(180, -1, -3):
+            self.Azor.Head.rotateTo(i)
+            measure = self.Azor.Head.measure()
+            self.Radar.rotate(i)
+            self.Radar.measure(measure, i)
 
-            print(f"{i}.\t{measure}")
+            value[int(i/3)] = (value[int(i/3)] + measure)/2
+
+        # for i in range(0, 181, 3):
+        #     self.Azor.Head.rotateTo(i)
+        #     measure = self.Azor.Head.measure()
+        #     self.Radar.rotate(i)
+        #     self.Radar.measure(measure, i)
+            
+        #     value[int(i/3)] = (value[int(i/3)] + measure)/2
+        # self.Azor.Head.rotate(0)
+
+        
+        for i in range(1, 59):
+            dif = value[i-1] - value[i+1]
+            if dif == 0:
+                value[i] = value[i-1]
+
+        for i in range(0, 181, 3):
+            val = value[int(i/3)]
+            self.Map.setPoint(round(val), i)
+            # print(f"{i}.\t{val}")
+        self.Map.pointer.penup()
+        
         return True
             
 
