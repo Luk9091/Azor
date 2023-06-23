@@ -1,0 +1,29 @@
+\section{Programowanie}
+    \tab Do wykorzystania przez użytkownika został oddany jeszcze jeden interfejs kontrolowania „Azora”.
+    Jest nim prosty język służy do programowania prostych algorytmów, które Azor ma wykonywać.
+    Aby zaprogramować „Azora” należy zamknąć okno interfejsu graficznego oraz zakończyć połączenie z „Azorem”. 
+    Następnie należy przejść do folderu „Assembler”, w którym znajdują się dwa skrypty: „compile” oraz „programming”.
+    Pierwszy skrypt służy do kompilacji mnemonicznych instrukcji na język wartości zrozumiałe przez interpreter Azora.
+    Drugi skrypt wykorzystywany jest do wgrywania programu oraz sprawdzenie czy program wgrał się poprawnie.
+
+    W celu stworzenia własnego programu należy, stworzyć plik tekstowy. Napisać program z pomocą instrukcji zamieszczonych w tabeli poniżej, skompilować go za pomocą komendy:
+    \begin{lstlisting}[gobble = 8, frame = L]
+        $ python compile.py <nazwa pliku>
+    \end{lstlisting}
+    oraz wgrać go do Azora za pomocą komendy:
+    \begin{lstlisting}[gobble = 8, frame = L]
+        $ python programming.py <nazwa pliku>.dec
+    \end{lstlisting}
+
+    \begin{table}[!h]
+        \centering
+        \begin{tabularx}{\textwidth}{|l|l|>{\centering\arraybackslash}X|>{\centering\arraybackslash}p{1.5cm}|}\hline
+            Nr. & Instrukcja & Opis & Ilość bajtów\\\hline
+             1. & NOP & Nic nie rób & 1\\\hline
+             2. & END & Zakończ wykonywanie programu & 1\\\hline
+             3. & SLEEP & Usypia procesor i wyłącza wszystkie peryferia* & 1 \\\hline
+             4. & SET $<reg>$ & Ustaw wskaźnik adresu pamięci & 1 \\\hline
+             5. & I2C\_WRITE $<reg>$ & Zapisz do pamięci EEPROM wartość & 1 \\\hline
+        \end{tabularx}
+        \caption{Tabela instrukcji „Azora”}
+    \end{table}

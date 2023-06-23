@@ -7,7 +7,7 @@
         Standard komunikacji UART, jest to prosty dwukierunkowy asynchroniczny sposób do przesyłania danych między dwoma urządzeniami.\\
         Opis przykładowej ramki w standardzie UART:
             
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \begin{tikzpicture}
                 \draw
@@ -50,7 +50,7 @@
         \tab Procesor bez programu, jest bezużytecznym kawałkiem krzemu dlatego niezwykle istotnym jest zaprogramowanie układu.
         Podstawową metodą programowania układów z rodziny ATmega jest interfejs SPI. 
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \begin{tikzpicture}
                 \draw
@@ -151,12 +151,12 @@
         
 
     \newpage
-    \subsection{Interfejs Two Wire (I$^2$C)}
+    \subsection{Interfejs Two Wire (I²C)}
         \tab Ostatnim interfejsem, wykorzystywanym przez „Azora” jest interfejs I$^2$C -- czyli dwukierunkowa szeregowa magistrala OC z układ Master-Slave.
         Standard ten służy do połączenie urządzeń peryferyjnych z kontrolerem.
         Komunikacja odbywa się w 8bitowych ramkach, z tym że pierwsza ramka zawsze definiuje adres urządzenia docelowego oraz określa kierunek transmisji „do” lub „z”~urządzenia.
 
-        \begin{figure}[!h]
+        \begin{figure}[!ht]
             \centering
             \begin{circuitikz}
                 \draw

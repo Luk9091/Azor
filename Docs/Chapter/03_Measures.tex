@@ -25,22 +25,81 @@
                     (HC) ++ (0, 0.5) node[vcc]{$V_{CC}$}
                     (SG) ++ (0, 0.5) node[vcc]{$V_{CC}$}
 
-                    (HC) ++ (1, 0) node[ground]{}
+                    (HC) --++ (1.5, 0) node[ground]{}
+                    (SG) --++ (1.5, 0) node[ground]{}
                 ;
             \end{circuitikz}
+            \caption{Schemat podłączenia czujnika odległości i serwomechanizmu}
+        \end{figure}\\
+        Poniżej przedstawiono algorytm pomiaru odległości:
+        \begin{figure}[!h]
+            \centering
+            \begin{circuitikz}
+                \draw
+                    (0, 0) node   [draw, circle,  minimum width = 2.5cm, text width = 2cm, align=center](start){Wysłanie sygnału TRIG}
+                    (6, 0) node   [draw, diamond, minimum width = 2.5cm, text width = 2cm, align=center](if1){Czy odebrano ECHO}
+                    (12, -2.5) node [draw, circle,  minimum width = 2.5cm, text width = 2.5cm, align=center](timer){Rozpoczęcie pomiaru czasu}
+                    (6, -5) node  [draw, diamond, minimum width = 2.5cm, text width = 2cm, align=center](if2){Czy cały sygnał wrócił}
+                    (0, -5) node  [draw, circle,  minimum width = 2.5cm, text width = 2cm, align=center](end){Zwrócenie odległości}
+                ;
+                \draw[-stealth, thick, line width = 0.5mm] (start) -- (if1);
+                \draw[-stealth, thick, line width = 0.5mm] (if1.east) to[bend left] node[above]{Tak} (timer.north);
+                \draw[-stealth, thick, line width = 0.5mm] (timer.south) to[bend left] node[below]{Tak} (if2.east);
+                \draw[-stealth, thick, line width = 0.5mm] (if2) -- (end);
+
+                % \path(start) edge[loop above];
+                \draw[-stealth, thick, line width = 0.5mm] (if1) to[loop right, rotate = 80] node[] {Nie} ();
+                \draw[-stealth, thick, line width = 0.5mm] (if2) to[loop right, rotate = 80] node[] {Nie} ();
+
+            \end{circuitikz}
+            \caption{Schemat blokowy algorytmu pomiaru odległości}
         \end{figure}
 
-        \subsection{Algorytm działania:}
-            \begin{figure}[!h]
-                \centering
-                \begin{circuitikz}
-                    \draw
-                        (0, 0) node [draw, circle, minimum width = 2cm, text width = 2cm, align=center]{Wysłanie sygnału TRIG}
-                        (0, -4) node[draw, diamond, minimum width= 2cm, text width = 2cm, align=center]{Czy został odebrany sygnał z ECHO}
-                    ;
-                \end{circuitikz}
-            \end{figure}
-
     \subsection{Prędkość -- enkoder}
+        \tab Pomiar prędkości, a właściwie odległości odbywa się za pomocą enkodera połączonego do jednego z silników.
+        Kolejne impulsy enkodera zliczane są za pomocą Timera 0 ustawionego w tryb normalnej pracy z zewnętrznym źródłem taktującym.  % 
+        \begin{figure}[!h]
+            \centering
+            \begin{tikzpicture}
+                
+            \end{tikzpicture}
+            \caption{Schemat podłączenia enkodera}
+        \end{figure}
+        Odebrane impulsy mnożone są przez doświadczalnie wyznaczony mnożnik i w ten sposób uzyskiwana jest przebyta droga.
+        \begin{equation*}
+            \text{Współczynnik} = 6.3 \frac{mm}{tic}
+        \end{equation*}
+        Jednocześnie podczas pracy silników mierzony jest czas, dzięki czemu można określić prędkość „Azora” zgodnie ze wzorem:
+        \begin{equation*}
+            v = \frac{x\cdot 6.3}{\frac{1}{8}\cdot t}\frac{[mm]}{[us]}
+        \end{equation*}
+        gdzie:
+        \begin{itemize}
+            \item $x$ -- ilość zliczonych impulsów z enkodera,
+            \item $t$ -- czas zmierzony przez timer 1.
+        \end{itemize}
+        
     \subsection{Przyspieszenie -- akcelerometr}
+        \tab Pomiaru prędkości można dokonać także w inny sposób.
+        „Azor”, wyposażony jest w cyfrowy akcelerometr (MMA8451) komunikujący się z jednostką sterującą za pomocą I²C.
+        Dzięki akcelerometrowi można wykryć czy „Azor” nie został podniesiony -- za każdym razem gdy „Azor” zostanie ruszony, zgłaszane jest zewnętrzne przerwanie. 
+        Jednocześnie pomiar przyspieszenia pozwala z dużym przybliżeniem określić aktualną prędkość „Azora”.\\
+        Zgodnie ze wzorem:
+        \begin{equation*}
+            v = \int\limits_{0}^{t} a dt \approx \sum_{i = 0}^{\text{liczby próbek}} a_i \cdot t_i
+        \end{equation*}
+        \begin{itemize}
+            \item $a_i$ -- kolejne próbki przyspieszenie
+            \item $t_i$ -- kolejne zapisane wartości czasu
+        \end{itemize}
+
     \subsection{Magnetometr -- cyfrowy kompas}
+        \tab Czujnik $QMC588L$ jest 3-osiowym czujnikiem pola magnetycznego. Zwracającym 16bitowe wartości zmierzone na każdej z osi, za pomocą magistrali I²C.
+        
+        Pomiar azymutu - odchylenia od północy, jest prostym sposobem wyznaczenie obrotu „Azora” wzdłuż własnej osi.
+        Wartości zmierzone pod odebraniu przez kontroler muszą zostać przeskalowane w celu eliminacji zakłóceń.
+        Po czym tak zmodyfikowany pomiar trafia do  funkcji trygonometrycznej:
+        \begin{equation*}
+            \text{azymut} = arctan2(y, x)
+        \end{equation*}
+        Tak otrzymana wartość azymutu zawiera się w wartościach od $-180^\circ$ do $180^\circ$, aby otrzymać ostateczny wynik należy do wartości ujemnych dodać $360^\circ$.
