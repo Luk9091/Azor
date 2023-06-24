@@ -44,8 +44,8 @@
                 ;
                 \draw[-stealth, thick, line width = 0.5mm] (start) -- (if1);
                 \draw[-stealth, thick, line width = 0.5mm] (if1.east) to[bend left] node[above]{Tak} (timer.north);
-                \draw[-stealth, thick, line width = 0.5mm] (timer.south) to[bend left] node[below]{Tak} (if2.east);
-                \draw[-stealth, thick, line width = 0.5mm] (if2) -- (end);
+                \draw[-stealth, thick, line width = 0.5mm] (timer.south) to[bend left] (if2.east);
+                \draw[-stealth, thick, line width = 0.5mm] (if2) -- node[below]{Tak} (end);
 
                 % \path(start) edge[loop above];
                 \draw[-stealth, thick, line width = 0.5mm] (if1) to[loop right, rotate = 80] node[] {Nie} ();
@@ -86,9 +86,10 @@
         Jednocześnie pomiar przyspieszenia pozwala z dużym przybliżeniem określić aktualną prędkość „Azora”.\\
         Zgodnie ze wzorem:
         \begin{equation*}
-            v = \int\limits_{0}^{t} a dt \approx \sum_{i = 0}^{\text{liczby próbek}} a_i \cdot t_i
+            v = \int\limits_{0}^{t} a dt \approx \sum_{i = 0}^{N} a_i \cdot t_i
         \end{equation*}
         \begin{itemize}
+            \item $N$ -- liczba próbek
             \item $a_i$ -- kolejne próbki przyspieszenie
             \item $t_i$ -- kolejne zapisane wartości czasu
         \end{itemize}
