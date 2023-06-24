@@ -9,6 +9,7 @@ import sys
 
 
 
+turtle.title("Azor control")
 screen = turtle.Screen()
 screen.setup(900, 900)
 screen.bgcolor(30/255, 30/255, 31/255)
