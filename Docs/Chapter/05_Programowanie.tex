@@ -15,15 +15,74 @@
         $ python programming.py <nazwa pliku>.dec
     \end{lstlisting}
 
+
+    \subsection{Rejestry}
+        \tab Do dowolnego użytku, zostały oddane cztery 16bitowe rejestry: REG0, REG1, REG2, REG3.
+        Każdy z podanych rejestrów może zostać w dowolnej instrukcji.
+        To znaczy, że każdego rejestru można wykorzystać jako akumulatora, zewnętrznego czy rejestru przesuwnego.
+        Znaczną wadą całego układu jest jednak brak możliwości swobodnej migracji danych między rejestrami, autorzy proponują rozwiązanie przedstawione poniżej:
+        \begin{lstlisting}[gobble = 8, frame = L, caption={Skopiowanie wartości z Rejestru 0 do Rejestru 1}, captionpos=b]
+            PUSH R0 ; zapisanie na stosie wartości z R0
+            POP R1  ; Pobranie ze stosu wartości R0 i zapisanie jej w R1
+        \end{lstlisting}
+
+    \subsection{Stos}
+        \tab Programista, ma możliwość wykorzystania także stosu programowego, o głębokości 16 słów dwu bajtowych.
+
+    \subsection{Pamięć eeprom}
+        \tab Ostatnią przestrzenią do magazynowania danych użytkownika jest kość pamięci EEPROM o pojemności 256kB - co odpowiada 128 słowom bitowym.
+    
+    \newpage
     \begin{table}[!h]
         \centering
-        \begin{tabularx}{\textwidth}{|l|l|>{\centering\arraybackslash}X|>{\centering\arraybackslash}p{1.5cm}|}\hline
-            Nr. & Instrukcja & Opis & Ilość bajtów\\\hline
-             1. & NOP & Nic nie rób & 1\\\hline
-             2. & END & Zakończ wykonywanie programu & 1\\\hline
-             3. & SLEEP & Usypia procesor i wyłącza wszystkie peryferia* & 1 \\\hline
-             4. & SET $<reg>$ & Ustaw wskaźnik adresu pamięci & 1 \\\hline
-             5. & I2C\_WRITE $<reg>$ & Zapisz do pamięci EEPROM wartość & 1 \\\hline
+        % \vspace{2.5cm}
+        \begin{tabularx}{\textwidth}{|c|L{5cm}|>{\centering\arraybackslash}X|>{\centering\arraybackslash}p{1.5cm}|}\hline
+            Nr. & Instrukcja & Opis & Bajty\\\hline
+             1. & NOP                   & Nic nie rób & 1\\\hline
+             2. & END                   & Zakończ wykonywanie programu & 1\\\hline
+             3. & SLEEP                 & Usypia procesor i wyłącza wszystkie peryferia* & 1 \\\hline
+             4. & ADR\_SET $<reg>$      & Ustaw wskaźnik adresu pamięci & 1 \\\hline
+             5. & I2C\_WRITE $<reg>$    & Zapisz do pamięci EEPROM wartość & 1 \\\hline
+             6. & I2C\_READ $<reg>$     & Odczyt pamięci EEPROM & 1 \\\hline
+             7. & INNER\_READ $<reg>$   & Odczyt pamięci programu & 1 \\\hline
+             8. & LDR $<reg>, <val>$    & Zapisz do rejestru wartość & 3 \\\hline
+             9. & JUMP\_IF $<reg>,\ <adr>$      & Skocz pod adres jeśli wartość z rejestru $\neq 0$ & 3 \\\hline
+            10. & JUMP\_IF\_NOT $<reg>,\ <adr>$ & Skocz pod adres jeśli wartość z rejestru $= 0 $ & 3 \\\hline  
+            11. & NOT $<reg>$           & Zaneguj wartość w rejestrze & 1 \\\hline
+            12. & ADD $<reg1>,\ <reg2>$ & $reg1 + reg2 = reg1$ & 1 \\\hline
+            13. & SUB $<reg1>,\ <reg2>$ & $reg1 - reg2 = reg1$ & 1 \\\hline
+            14. & OR  $<reg1>,\ <reg2>$ & $reg1 \wedge  reg2 = reg1$ & 1 \\\hline
+            15. & AND $<reg1>,\ <reg2>$ & $reg1 \vee  reg2 = reg1$ & 1 \\\hline
+            16. & XOR $<reg1>,\ <reg2>$ & $reg1 \oplus  reg2 = reg1$ & 1 \\\hline
+            17. & SHIFT\_LEFT $<reg>$   & Przesuń wartość w rejestrze w lewo o 1 & 1 \\\hline
+            18. & SHIFT\_RIGHT $<reg>$  & Przesuń wartość w rejestrze w prawo o 1 & 1\\\hline
+            19. & SHIFT\_8\_LEFT $<reg>$ & Przesuń wartość w rejestrze w lewo o 8 & 1 \\\hline
+            20. & SHIFT\_8\_RIGHT $<reg>$& Przesuń wartość w rejestrze w prawo o 8 & 1\\\hline
+            21. & PUSH $<reg>$          & Wrzuć wartość z rejestru na stos & 1 \\\hline
+            22. & POP  $<reg>$          & Zdejmij wartość ze stosu i umieść w rejestrze & 1 \\\hline
+            23. & JUMP $<adr>$          & Skod bezwzględnie pod adres & 3 \\\hline
+            24. & CALL $<adr>$          & Skocz do funkcji\footnotemark & 3 \\\hline
+            25. & RET  $<adr>$          & Wraca z funkcji & 1\\\hline
+            26. & INC $<reg>$           & Inkrementuje wartość w rejestrze & 1 \\\hline
+            27. & DEC $<reg>$           & Dekementuje wartość w rejestrze & 1 \\\hline
+            28. & UART\_READ $<reg>$    & Przeczytaj znak wysłany po serialu & 1 \\\hline
+            29. & UART\_SEND $<char>$   & Wyświetl znak z pamięci & 2 \\\hline
+            30. & UART\_SEND $<reg>$    & Wyświetl wartość zapisaną w rejestrze & 1 \\\hline
+            31. & LED $<reg>$           & Zapal/Zgaś diode & 1 \\\hline
+            32. & WAIT $<reg>$          & Poczekaj czas wyrażony w ms & 1 \\\hline
+            
+            32. & FORWARD               & Uruchom silniki do przodu & 1\\\hline
+            33. & BACKWARD              & Uruchom silniki w tył & 1 \\\hline
+            34. & TURN $<reg>$        & Obróć pojazd o zadany kąt & 1 \\\hline
+            35. & STOP                  & Zatrzymaj silniki & 1 \\\hline
+
+            36. & MEASURE $<reg>$       & Dokonaj pomiaru odległości, wynik zapisz w rejestrze & 1 \\\hline
+            37. & ROTATE $<reg>$     & Obróć głową o zadany kąt & 1 \\\hline
+            % \multicolumn{4}{|c|}{Instrukcje dla akcelerometru}\\\hline
+            % 32. 
+
         \end{tabularx}
+        % \vspace{2.5cm}
         \caption{Tabela instrukcji „Azora”}
     \end{table}
+    \footnotetext[1]{Zapisuje na stosie adres powrotu}

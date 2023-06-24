@@ -44,8 +44,45 @@
         Dodatkowo, standard pozwala na przesyłanie dodatkowego bity parzystości ,,doklejanego" do końca wiadomości, jako sposób sprawdzania poprawności wysłanej wiadomości.
 
         Dalszą częścią kanału transmisyjnego jest przekaźnik bluetooth, który łączy się z komputerem na odpowiednim porcie szeregowym łatwym do oczytania dla programu napisanego na komputerze.
+    
+    \subsection{Interfejs Two Wire (I²C)}
+        \tab Ostatnim interfejsem, wykorzystywanym przez „Azora” jest interfejs I$^2$C -- czyli dwukierunkowa szeregowa magistrala OC z układ Master-Slave.
+        Standard ten służy do połączenie urządzeń peryferyjnych z kontrolerem.
+        Komunikacja odbywa się w 8bitowych ramkach, z tym że pierwsza ramka zawsze definiuje adres urządzenia docelowego oraz określa kierunek transmisji „do” lub „z”~urządzenia.
 
-\subsection{Interfejs SPI}
+        \begin{figure}[!ht]
+            \centering
+            \begin{circuitikz}
+                \draw
+                    (0, 0) node[draw, rectangle, minimum width = 2cm, minimum height = 2cm](Master){Master}
+                    (0, -3.5) node[draw, rectangle, minimum width = 2cm, minimum height = 2cm](Slave1){Slave 1}
+                    (2.5, -3.5) node[draw, rectangle, minimum width = 2cm, minimum height = 2cm](Slave2){Slave 2}
+                    (5, -3.5) node[draw, rectangle, minimum width = 2cm, minimum height = 2cm](Slave3){Slave 2}
+
+                    (0.25, -1.5) coordinate(clk) -- (5.5, -1.5) ++ (-1, 0) node[above]{$CLK$}
+                    (0.25, -1.5) to[short, *-] ++ (0, 0.5) 
+                        
+                    (-0.25, -2.25) coordinate(sda) -- (5, -2.25) ++ (-1, 0) node[above]{$SDA$}
+                    (-0.25, -2.25) to[short, *-] ++ (0, 1.25) 
+
+                    ( 0.25, -1.5) -- ++ (0, -1)
+                    (-0.25, -2.25) -- ++ (0, -0.25)
+                        
+                    (2.75, -1.5) to[short, *-] ++ (0, -1)
+                    (2.25, -2.25) to[short, *-] ++ (0, -0.25)
+
+                    (5.5, -1.5) to[short, -] ++ (0, -1)
+                    (5.0, -2.25) to[short, -] ++ (0, -0.25)
+
+                    (clk) -- ++ (-2.5, 0) to[R] ++ (0, 2) node[vcc]{+5V}
+                    (sda) -- ++ (-3.0, 0) -- ++ (0, 0.75) to[R] ++(0, 2) node[vcc]{+5V}
+                ;
+            \end{circuitikz}
+            \caption{Schemat blokowy magistrali I$^2$C}
+        \end{figure}
+
+\newpage
+    \subsection{Interfejs SPI}
         % źródło: http://extronic.pl/content/60-kurs-xmega-interfejs-spi
         \tab Procesor bez programu, jest bezużytecznym kawałkiem krzemu dlatego niezwykle istotnym jest zaprogramowanie układu.
         Podstawową metodą programowania układów z rodziny ATmega jest interfejs SPI. 
@@ -151,41 +188,6 @@
         
 
     \newpage
-    \subsection{Interfejs Two Wire (I²C)}
-        \tab Ostatnim interfejsem, wykorzystywanym przez „Azora” jest interfejs I$^2$C -- czyli dwukierunkowa szeregowa magistrala OC z układ Master-Slave.
-        Standard ten służy do połączenie urządzeń peryferyjnych z kontrolerem.
-        Komunikacja odbywa się w 8bitowych ramkach, z tym że pierwsza ramka zawsze definiuje adres urządzenia docelowego oraz określa kierunek transmisji „do” lub „z”~urządzenia.
-
-        \begin{figure}[!ht]
-            \centering
-            \begin{circuitikz}
-                \draw
-                    (0, 0) node[draw, rectangle, minimum width = 2cm, minimum height = 2cm](Master){Master}
-                    (0, -3.5) node[draw, rectangle, minimum width = 2cm, minimum height = 2cm](Slave1){Slave 1}
-                    (2.5, -3.5) node[draw, rectangle, minimum width = 2cm, minimum height = 2cm](Slave2){Slave 2}
-                    (5, -3.5) node[draw, rectangle, minimum width = 2cm, minimum height = 2cm](Slave3){Slave 2}
-
-                    (0.25, -1.5) coordinate(clk) -- (5.5, -1.5) ++ (-1, 0) node[above]{$CLK$}
-                    (0.25, -1.5) to[short, *-] ++ (0, 0.5) 
-                        
-                    (-0.25, -2.25) coordinate(sda) -- (5, -2.25) ++ (-1, 0) node[above]{$SDA$}
-                    (-0.25, -2.25) to[short, *-] ++ (0, 1.25) 
-
-                    ( 0.25, -1.5) -- ++ (0, -1)
-                    (-0.25, -2.25) -- ++ (0, -0.25)
-                        
-                    (2.75, -1.5) to[short, *-] ++ (0, -1)
-                    (2.25, -2.25) to[short, *-] ++ (0, -0.25)
-
-                    (5.5, -1.5) to[short, -] ++ (0, -1)
-                    (5.0, -2.25) to[short, -] ++ (0, -0.25)
-
-                    (clk) -- ++ (-2.5, 0) to[R] ++ (0, 2) node[vcc]{+5V}
-                    (sda) -- ++ (-3.0, 0) -- ++ (0, 0.75) to[R] ++(0, 2) node[vcc]{+5V}
-                ;
-            \end{circuitikz}
-            \caption{Schemat blokowy magistrali I$^2$C}
-        \end{figure}
             
 
         
