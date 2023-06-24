@@ -3,10 +3,10 @@
 002. 		SLEEP
 
 EEPROM
-003.		INNER_PROG -- write only UART
 004 - 007. 	I2C_WRITE
 008 - 011. 	I2C_READ
 012 - 015. 	INNER_READ
+124 - 127.  SET EEPROM ADDRESS reg
 
 Operacje na rejestrach:
 016 - 019.	LDR - load data to reg
@@ -35,12 +35,13 @@ Stack:
 120.	    JUMP WITH ADD from mem, first high, next low
 121.        CALL to address from memory
 122.        RET from subroutine
-124 - 127.  SET EEPROM ADDRESS (high) reg + 1 (low) reg 
 
 128 - 131.  SHIFT LEFT    reg
 132 - 135.  SHIFT RIGHT   reg
 136 - 139.  SHIFT 8 LEFT  reg
 140 - 143.  SHIFT 8 RIGHT reg
+
+200 - 203.  INC reg
 
 Acc:
 144 - 147.	READ from register and save it in reg. As address take value from reg
@@ -54,20 +55,9 @@ Engine:
 193.	    BACKWARD
 195.        STOP
 
-196.    	LEFT FORWARD
-197.        LEFT BACKWARD
-198.        RIGHT FORWARD
-199.        RIGHT BACKWARD
-
-
-200 - 203.  INC reg
-
 204 - 207.	ROTATE	MSB - signed dir, and angle on 6-0b
 
 TIMER:
-208 - 211.	START in reg max value of interrupt
-212 - 215.	STOP and return number of interrupt
-216 - 219.	READ return counter value
 220 - 223.	WAIT delay reg ms
 
 224 - 227.  LED in out reg
@@ -75,7 +65,7 @@ TIMER:
 ULTRASONIC:
 228 - 231.	MEASURE return to reg
 232 - 235.	ROTATE angle from reg
-236 - 239.	BACK SENSOR READ to reg
+*236 - 239.	BACK SENSOR READ to reg
 
 
 UART & BT
@@ -85,7 +75,6 @@ UART & BT
 
 
 
-252 - 255.	DEVICE ENABLE reg
 
 
 
@@ -95,3 +84,15 @@ Wolne adresu:
 176 - 192
 
 Empty INST: 
+003.		INNER_PROG -- write only UART
+252 - 255.	DEVICE ENABLE reg
+196.    	LEFT FORWARD
+197.        LEFT BACKWARD
+198.        RIGHT FORWARD
+199.        RIGHT BACKWARD
+208 - 211.	START in reg max value of interrupt
+212 - 215.	STOP and return number of interrupt
+216 - 219.	READ return counter value
+
+
+Linie z * nie istnieją w procesorze

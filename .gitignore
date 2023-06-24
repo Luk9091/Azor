@@ -12,5 +12,7 @@ main.pdf
 *.asm
 *.dec
 *.synctex(busy)
+*.toc
 settings.json
 */__pycache__/*
+launch.json
