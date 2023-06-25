@@ -31,7 +31,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <stdlib.h>
+#include <avr/sleep.h>
 
 #include "coding.hpp"
 
@@ -56,6 +56,8 @@ int main(){
     ACC_Init();
     COUNTER_Init();
     COMPASS_Init();
+
+    set_sleep_mode(SLEEP_MODE_IDLE);
 
     UART_println("Hello world!");
     UART_print("F cpu: ");
@@ -259,13 +261,25 @@ int main(){
                     }
                     
                 }break;
+                case 'l':{
+                    switch(string[1])
+                    {
+                    case '1':
+                        LED_ON();
+                    break;
+
+                    case '0':
+                        LED_OFF();
+                    break;
+                    
+                    default:
+                        LED_PORT ^= (LED_PIN_num);
+                    }
+                }break;
 
                 case 'r':
                     // readFifo();
                     // UART_println("\n\n");
-                    #if ACC_FIFO_ENABLE
-                        ACC_FIFORead();
-                    #endif
                     UART_print("EEPROM address: ");
                     UART_println(eeprom_address);
                     UART_println("General purpose register:");

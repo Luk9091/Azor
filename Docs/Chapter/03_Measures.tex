@@ -58,13 +58,18 @@
     \subsection{Prędkość -- enkoder}
         \tab Pomiar prędkości, a właściwie odległości odbywa się za pomocą enkodera połączonego do jednego z silników.
         Kolejne impulsy enkodera zliczane są za pomocą Timera 0 ustawionego w tryb normalnej pracy z zewnętrznym źródłem taktującym.  % 
-        \begin{figure}[!h]
-            \centering
-            \begin{tikzpicture}
-                
-            \end{tikzpicture}
-            \caption{Schemat podłączenia enkodera}
-        \end{figure}
+        % \begin{figure}[!h]
+        %     \centering
+        %     \begin{tikzpicture}
+        %         \draw
+        %             (0, 1) --++ (0, -2)
+        %             (0, 0) node[left]{(T0) PD4} --++(1, 0) node[draw, rectangle, right](enkoder){enkoder}
+        %             % (enkoder.north) node[vcc]{$V_{CC}$}
+        %             (enkoder.south) node[ground]{}
+        %         ;
+        %     \end{tikzpicture}
+        %     \caption{Schemat podłączenia enkodera}
+        % \end{figure}
         Odebrane impulsy mnożone są przez doświadczalnie wyznaczony mnożnik i w ten sposób uzyskiwana jest przebyta droga.
         \begin{equation*}
             \text{Współczynnik} = 6.3 \frac{mm}{tic}

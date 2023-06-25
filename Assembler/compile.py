@@ -6,98 +6,83 @@ MAX_EEPROM_SPACE = 1024
 
 
 INSTRUCTION = {
-    #                           INS               , NUM of args in reg, Byte of next memory byte
-    "NOP"                   : [0b0000 <<4 | 0b0000, 0, 0],
-    "END"                   : [0b0000 <<4 | 0b0001, 0, 0],
-    "SLEEP"                 : [0b0000 <<4 | 0b0010, 0, 0],
-    "PROG_INNER_EEPROM"     : [0b0000 <<4 | 0b0011, 0, 1], #Programowanie odbywa się po UART
+    #                           INS, NUM of args in reg, Number of next memory byte
+    "NOP"                   : [  0, 0, 0],
+    "END"                   : [  1, 0, 0],
+    "SLEEP"                 : [  2, 0, 0],
 
-    # INNER_EEPROM_WRITE    : [0b0000 <<4 | 0b0100, 0],
-    "INNER_EEPROM_READ"     : [0b0000 <<4 | 0b1100, 0, 0],
+    "INNER_EEPROM_READ"     : [ 12, 0, 0],
 
     
-    "I2C_EEPROM_WRITE"      : [0b0000 <<4 | 0b0100, 1, 0],
-    "I2C_EEPROM_READ"       : [0b0000 <<4 | 0b1000, 1, 0],
+    "I2C_EEPROM_WRITE"      : [  4, 1, 0],
+    "I2C_EEPROM_READ"       : [  8, 1, 0],
+    "SET_EEPROM_ADR"        : [124, 1, 0],
 
 
-    "LDR"                   : [0b0001 <<4 | 0b0000, 1, 1],
-    "JUMP_IF"               : [0b0001 <<4 | 0b0100, 1, 1],
-    "JUMP_IF_NOT"           : [0b0001 <<4 | 0b1000, 1, 1],
+    "LDR"                   : [ 16, 1, 2],
 
-    "JUMP_IF_LOW"           : [16, 1, 2],
-    "JUMP_IF_GREAT"         : [16, 1, 2],
-    "JUMP_IF_LOW_E"         : [16, 1, 2],
-    "JUMP_IF_GREAT_E"       : [16, 1, 2],
+    "JUMP_IF"               : [ 20, 1, 2],
+    "JUMP_IF_LOW"           : [ 24, 1, 2],
 
 
-    "NOT"                   : [0b0001 <<4 | 0b1100, 1, 0],
+    "NOT"                   : [ 28, 1, 0],
 
 
-    "ADD"                   : [0b0010 <<4,          2, 0],#|RdRr
-    "SUB"                   : [0b0011 <<4,          2, 0],#|RdRr
+    "ADD"                   : [ 32, 2, 0],#|RdRr
+    "SUB"                   : [ 48, 2, 0],#|RdRr
 
-    "INC"                   : [0b1100 <<4 | 0b1000, 1, 0],
+    "INC"                   : [144, 1, 0],
+    "DEC"                   : [148, 1, 0],
     
-    "OR"                    : [0b0100 <<4,          2, 0],#|RdRr
-    "AND"                   : [0b0101 <<4,          2, 0],#|RdRr
-    "XOR"                   : [0b0110 <<4,          2, 0],#|RdRr
+    "OR"                    : [ 64,2, 0],#|RdRr
+    "AND"                   : [ 80,2, 0],#|RdRr
+    "XOR"                   : [ 96,2, 0],#|RdRr
 
     # MOV"                 : [0b0111 <<4, 2],#|RdRr
-    "PUSH"                  : [0b0111 <<4 | 0b0000, 1, 0],
-    "POP"                   : [0b0111 <<4 | 0b0100, 1, 0],
+    "PUSH"                  : [112, 1, 0],
+    "POP"                   : [116, 1, 0],
 
-    "JUMP"                  : [0b0111 <<4 | 0b1000, 0, 1],
-    "CALL"                  : [0b0111 <<4 | 0b1001, 0, 1],
-    "RET"                   : [0b0111 <<4 | 0b1010, 0, 0],
+    "JUMP"                  : [120, 0, 1],
+    "CALL"                  : [121, 0, 1],
+    "RET"                   : [122, 0, 0],
 
     # "POP2"                : 0b0111 <<4 | 0b1100,
-    "SET_EEPROM_ADR"        : [0b0111 <<4 | 0b1100, 1, 0],
 
 
-    "SHIFT_LEFT"            : [0b1000 <<4 | 0b0000, 1, 0],
-    "SHIFT_RIGHT"           : [0b1000 <<4 | 0b0100, 1, 0],
-    "SHIFT_8LEFT"           : [0b1000 <<4 | 0b1000, 1, 0],
-    "SHIFT_8RIGHT"          : [0b1000 <<4 | 0b1100, 1, 0],
+    "SHIFT_LEFT"            : [128, 1, 0],
+    "SHIFT_RIGHT"           : [132, 1, 0],
+    "SHIFT_8LEFT"           : [136, 1, 0],
+    "SHIFT_8RIGHT"          : [140, 1, 0],
 
 
 
     # Operacje na dwóch rejestrach, odpowiednio R0 i R1 lub R2 i R3
-    "ACC_READ"              : [0b1001 <<4 | 0b0000, 1, 0],
-    "ACC_READ_AXIS"         : [0b1001 <<4 | 0b0100, 1, 0],
-    "ACC_WRITE"             : [0b1001 <<4 | 0b1000, 1, 0],
-    "ACC_CAL"               : [0b1001 <<4 | 0b1100, 1, 0],
+    # "ACC_READ"              : [, 1, 0],
+    # "ACC_READ_AXIS"         : [, 1, 0],
+    # "ACC_WRITE"             : [, 1, 0],
+    # "ACC_CAL"               : [, 1, 0],
 
     # "ACC_START"           : 0b1000 <<4 | 0b1000,
     # "ACC_STOP"            : 0b1000 <<4 | 0b1100,
 
     # "ENGINE_ENABLE"       : 0b1000 <<4 | 0b0000,
-    "ENGINE_FORWARD"        : [0b1100 <<4 | 0b0000, 0, 0],
-    "ENGINE_BACKWARD"       : [0b1100 <<4 | 0b0001, 0, 0],  
-    "ENGINE_STOP"           : [0b1100 <<4 | 0b0011, 0, 0],
+    "ENGINE_FORWARD"        : [192, 1, 0],
+    "ENGINE_BACKWARD"       : [196, 1, 0],  
+    "ENGINE_STOP"           : [200, 0, 0],
 
-    "ENGINE_LEFT_FORWARD"   : [0b1100 <<4 | 0b0100, 0, 0], 
-    "ENGINE_RIGHT_FORWARD"  : [0b1100 <<4 | 0b0101, 0, 0],
-    "ENGINE_LEFT_BACKWARD"  : [0b1100 <<4 | 0b0110, 0, 0], 
-    "ENGINE_RIGHT_BACKWARD" : [0b1100 <<4 | 0b0111, 0, 0],
+    "ENGINE_ROTATE"         : [204, 1, 0],
 
-    "ENGINE_ROTATE"         : [0b1100 <<4 | 0b1100, 1, 0],
+    "WAIT"                  : [220, 1, 0], # delay ms reg
 
-    # "TIMER_START"         : 0b1101 <<4 | 0b0000, # jako parametr przyjmuje ile maksymalnie może zmierzyć
-    # "TIMER_STOP"          : 0b1101 <<4 | 0b0100,
-    # "TIMER_READ"          : 0b1101 <<4 | 0b1000,
-    "WAIT"                  : [0b1101 <<4 | 0b1100, 1, 0], # delay ms reg
+    "LED"                   : [224, 1, 0],
 
-    "LED"                   : [0b1110 <<4 | 0b0000, 1, 0],
+    "ULTRASONIC_MEASURE"    : [228, 1, 0],
+    "ULTRASONIC_ROTATE"     : [232, 1, 0],
+    "BACK_SENSOR_READ"      : [236, 1, 0],
 
-    "ULTRASONIC_MEASURE"    : [0b1110 <<4 | 0b0100, 1, 0],
-    "ULTRASONIC_ROTATE"     : [0b1110 <<4 | 0b1000, 1, 0],
-    "BACK_SENSOR_READ"      : [0b1110 <<4 | 0b1100, 1, 0],
-
-    "UART_READ"             : [0b1111 <<4 | 0b0000, 1, 0],
-    "UART_SEND"             : [0b1111 <<4 | 0b0100, 0, 1],
-    "UART_SEND_INT"         : [0b1111 <<4 | 0b1000, 1, 0],
-    
-    "DEVICE_ENABLE"         : [0b1111 <<4 | 0b1100, 1, 0],
+    "UART_READ"             : [240, 1, 0],
+    "UART_SEND"             : [244, 0, 1],
+    "UART_SEND_INT"         : [248, 1, 0],
 }
 
 

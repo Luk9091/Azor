@@ -40,14 +40,15 @@
             Nr. & Instrukcja & Opis & Bajty\\\hline
              1. & NOP                   & Nic nie rób & 1\\\hline
              2. & END                   & Zakończ wykonywanie programu & 1\\\hline
-             3. & SLEEP                 & Usypia procesor i wyłącza wszystkie peryferia* & 1 \\\hline
+             3. & SLEEP                 & Usypia procesor i wyłącza peryferia & 1 \\\hline
              4. & ADR\_SET $<reg>$      & Ustaw wskaźnik adresu pamięci & 1 \\\hline
              5. & I2C\_WRITE $<reg>$    & Zapisz do pamięci EEPROM wartość & 1 \\\hline
              6. & I2C\_READ $<reg>$     & Odczyt pamięci EEPROM & 1 \\\hline
              7. & INNER\_READ $<reg>$   & Odczyt pamięci programu & 1 \\\hline
              8. & LDR $<reg>, <val>$    & Zapisz do rejestru wartość & 3 \\\hline
              9. & JUMP\_IF $<reg>,\ <adr>$      & Skocz pod adres jeśli wartość z rejestru $\neq 0$ & 3 \\\hline
-            10. & JUMP\_IF\_NOT $<reg>,\ <adr>$ & Skocz pod adres jeśli wartość z rejestru $= 0 $ & 3 \\\hline  
+            % 10. & JUMP\_IF\_NOT $<reg>,\ <adr>$ & Skocz pod adres jeśli wartość z rejestru $= 0 $ & 3 \\\hline  
+            10. & JUMP\_IF\_LOW $<reg>,\ <adr>$ & Skocz pod adres jeśli wartość z rejestru $< 0 $ & 3 \\\hline
             11. & NOT $<reg>$           & Zaneguj wartość w rejestrze & 1 \\\hline
             12. & ADD $<reg1>,\ <reg2>$ & $reg1 + reg2 = reg1$ & 1 \\\hline
             13. & SUB $<reg1>,\ <reg2>$ & $reg1 - reg2 = reg1$ & 1 \\\hline
@@ -76,7 +77,7 @@
             34. & TURN $<reg>$        & Obróć pojazd o zadany kąt & 1 \\\hline
             35. & STOP                  & Zatrzymaj silniki & 1 \\\hline
 
-            36. & MEASURE $<reg>$       & Dokonaj pomiaru odległości, wynik zapisz w rejestrze & 1 \\\hline
+            36. & MEASURE $<reg>$       & Dokonaj pomiaru odległości do rejestru & 1 \\\hline
             37. & ROTATE $<reg>$     & Obróć głową o zadany kąt & 1 \\\hline
             % \multicolumn{4}{|c|}{Instrukcje dla akcelerometru}\\\hline
             % 32. 
@@ -85,4 +86,5 @@
         % \vspace{2.5cm}
         \caption{Tabela instrukcji „Azora”}
     \end{table}
-    \footnotetext[1]{Zapisuje na stosie adres powrotu}
+    % \footnotetext[1]{Wyłączony zostaje kompas, akcelerometr ciągle działa gdyby Azor został podniesiony}
+    \footnotetext[2]{Zapisuje na stosie adres powrotu}

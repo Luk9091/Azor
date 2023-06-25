@@ -3,9 +3,9 @@
 002. 		SLEEP
 
 EEPROM
-004 - 007. 	I2C_WRITE
-008 - 011. 	I2C_READ
-012 - 015. 	INNER_READ
+004 - 007. 	I2C WRITE
+008 - 011. 	I2C READ
+012 - 015. 	INNER READ
 124 - 127.  SET EEPROM ADDRESS reg
 
 Operacje na rejestrach:
@@ -13,11 +13,7 @@ Operacje na rejestrach:
 
 IF:
 020 - 023.	JUMP IF value in reg is not 0
-024 - 027.	JUMP IF value in reg is 0
-160 - 163.  JUMP IF LOW than reg
-164 - 167.  JUMP IF GREAT then reg
-168 - 171.  JUMP IF EQUAL OR LOW
-172 - 175.  JUMP IF EQUAL OR GREAT
+024 - 027.	JUMP IF value in reg is low than 0
 
 ALU:
 028 - 031.	NOT value in reg
@@ -41,19 +37,15 @@ Stack:
 136 - 139.  SHIFT 8 LEFT  reg
 140 - 143.  SHIFT 8 RIGHT reg
 
-200 - 203.  INC reg
+144 - 147.  INC reg
+148 - 151.  DEC reg
 
-Acc:
-144 - 147.	READ from register and save it in reg. As address take value from reg
-148 - 151.  READ AXIS to read AXIS or read from FIFO, in LOW byte of reg send number of axis: 
-152 - 155.	WRITE to register from address in HIGH byte of reg data from LOW byte of reg
-156 - 159.	CAL transition on axis in reg and return value in reg and reg + 1
 
 
 Engine:
-192.	    FORWARD
-193.	    BACKWARD
-195.        STOP
+192 - 195.  FORWARD
+196 - 199.  BACKWARD
+200.        STOP
 
 204 - 207.	ROTATE	MSB - signed dir, and angle on 6-0b
 
@@ -79,20 +71,23 @@ UART & BT
 
 
 Wolne adresu:
-194 
 123
 176 - 192
+201, 202, 203
 
-Empty INST: 
-003.		INNER_PROG -- write only UART
+003.        INNER EEPROM PROG
 252 - 255.	DEVICE ENABLE reg
-196.    	LEFT FORWARD
-197.        LEFT BACKWARD
-198.        RIGHT FORWARD
-199.        RIGHT BACKWARD
 208 - 211.	START in reg max value of interrupt
 212 - 215.	STOP and return number of interrupt
 216 - 219.	READ return counter value
+160 - 163.  JUMP IF LOW than reg
+164 - 167.  JUMP IF GREAT then reg
+168 - 171.  JUMP IF EQUAL OR LOW
+172 - 175.  JUMP IF EQUAL OR GREAT
+152 - 155.	WRITE to register from address in HIGH byte of reg data from LOW byte of reg
+156 - 159.	CAL transition on axis in reg and return value in reg and reg + 1
+
+Empty INST: 
 
 
 Linie z * nie istnieją w procesorze

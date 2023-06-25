@@ -6,10 +6,6 @@ uint16_t ACC_time;
 
 #if ACC_INTERRUPT_ENABLE
     ISR(INT0_vect){
-        #if ACC_FIFO_ENABLE
-            ACC_FIFORead();
-            UART_print_char('\n');
-        #endif
         ACC_FIFO = ACC_readAxis(X_AXIS_REG);
         ACC_time = TCNT1;
         
