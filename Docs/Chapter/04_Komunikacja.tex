@@ -20,7 +20,7 @@
             \tab Ostatnią ale nie mniej ważną częścią interfejsu jest 6 strzałek i kulka. 
             Dzięki strzałkom góra/dół można poruszać „Azorem” w przód i w tył.
             Dwie kolejne strzałki w prawo i lewo pozwalają na obrót „Azora” o $90^\circ$.
-            Ostatnie dwie strzałeczki odpowiadają za obrót głowy o $15^\circ$, a kuleczka pośrodku odpowiada za wykonanie pojedynczego pomiary odległości.
+            Ostatnie dwie strzałeczki odpowiadają za obrót głowy o $15^\circ$, a kuleczka pośrodku odpowiada za wykonanie pojedynczego pomiaru odległości.
 
     \begin{figure}[!ht]
         \centering
@@ -31,25 +31,25 @@
     
     \newpage
     \subsection{Zaawansowane sterowanie}
-        \tab Oprócz sterowania za pomocą przycisków istnieje możliwość wysyłania poleceń do „Azora” za pośrednictwem Command Line'a.\\
+        \tab Oprócz sterowania za pomocą przycisków istnieje możliwość wysyłania poleceń do „Azora” za pośrednictwem Command Line'a.
         \begin{figure}[!h]
             \centering
             \includegraphics[width = 0.8\textwidth]{Img/CLI.png}
             \caption{Wybór portu do sterowania}
         \end{figure}
-        Możliwe komendy:
+        \\Możliwe komendy:
         \begin{itemize}
             \item \textit{forward [wartość]}            - przemieszczenie „Azora” w przód o podaną odległość w mm, domyślna wartość to 100 mm,
             \item \textit{backward [wartość]}           - przemieszczenie „Azora” w tył o podaną odległość w mm, domyślna wartość to 100 mm,
             \item \textit{left [wartość]}               - obrót „Azora” w lewo o podany kąt, wartość domyślna to $90^\circ$,
             \item \textit{right [wartość]}              - obrót „Azora” w prawo o podany kąt, wartość domyślna to $90^\circ$,
             \item \textit{head left/right [wartość]}    - obrót czujnikiem odległości w lewo/prawo o podany kąt,wartość domyślna to $6^\circ$,
-            \item \textit{head set [wartość]}           - obrót głową „Azora” do zadanego kąta z zakresu $0^\circ-180^\circ$, domyślnie $90^\circ$, co oznacza „patrzenie” w przód,
+            \item \textit{head set [wartość]}           - obrót „głową Azora” do zadanego kąta z zakresu $0^\circ-180^\circ$, domyślnie $90^\circ$, co oznacza „patrzenie” w przód,
             \item \textit{head measure}                 - wykonanie pomiaru odległości dla obecnego ustawienia czujnika odległości,
             \item \textit{acc}                          - zwrócenie aktualnej wartości przyspieszenia na każdej z 3 osi,
-            \item \textit{magnet}                       - zwrócenie zmierzone wartości pola magnetycznego na każdej z 3 osi,
+            \item \textit{magnet}                       - zwrócenie zmierzonej wartości pola magnetycznego na każdej z 3 osi,
             \item \textit{azimuth}                      - zwrócenie aktualnej wartości azymutu,
-            \item \textit{distance}                     - zwrócenia wartości ostatnio pokonanej odległości,
+            \item \textit{distance}                     - zwrócenie wartości ostatnio pokonanej odległości,
             \item \textit{time}                         - zwrócenie czasu pracy silników,
             \item \textit{velocity}                     - zwrócenie wartości ostatnio zarejestrowanej prędkości,
             \item \textit{radar}                        - wykonanie automatycznego pomiaru odległości w zakresie $0^\circ-180^\circ$ z krokiem $3^\circ$,

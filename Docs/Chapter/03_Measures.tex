@@ -1,7 +1,7 @@
 \section{Metody pomiarowe}
     \subsection{Odległość -- dalmierz}
-        \tab Podstawowym zadaniem „Azora” jest stworzenie mapy tereny.
-        Proces ten wykonywany jest za pomocą dalmierza HC-SR04 zamocowane na serwo mechanizmie, dzięki czemu dalmierz może obracać się w osi Z od $0^\circ$ do $180^\circ$.\\
+        \tab Podstawowym zadaniem „Azora” jest stworzenie mapy terenu.
+        Proces ten wykonywany jest za pomocą dalmierza HC-SR04 zamocowanego na serwomechanizmie, dzięki czemu dalmierz może obracać się w osi Z od $0^\circ$ do $180^\circ$.\\
         Schemat połączenia:
         \begin{figure}[!h]
             \centering
@@ -56,7 +56,7 @@
         \end{figure}
 
     \subsection{Prędkość -- enkoder}\label{section:measure:enkoder}
-        \tab Pomiar prędkości, a właściwie odległości odbywa się za pomocą enkodera połączonego do jednego z silników.
+        \tab Pomiar prędkości, a właściwie odległości odbywa się za pomocą enkodera zamocowanego do jednego z silników.
         Kolejne impulsy enkodera zliczane są za pomocą Timera 0 ustawionego w tryb normalnej pracy z zewnętrznym źródłem taktującym.  % 
         % \begin{figure}[!h]
         %     \centering
@@ -95,15 +95,15 @@
         \end{equation}
         \begin{itemize}
             \item $N$ -- liczba próbek
-            \item $a_i$ -- kolejne próbki przyspieszenie
+            \item $a_i$ -- kolejne próbki przyspieszenia
             \item $t_i$ -- kolejne zapisane wartości czasu
         \end{itemize}
 
     \subsection{Magnetometr -- cyfrowy kompas}\label{section:measure:azimuth}
-        \tab Czujnik $QMC588L$ jest 3-osiowym czujnikiem pola magnetycznego. Zwracającym 16bitowe wartości zmierzone na każdej z osi, za pomocą magistrali I²C.
+        \tab Czujnik $QMC588L$ jest 3-osiowym czujnikiem pola magnetycznego. Zwraca on 16-bitowe wartości zmierzone na każdej z osi, za pomocą magistrali I²C.
         
         Pomiar azymutu - odchylenia od północy, jest prostym sposobem wyznaczenie obrotu „Azora” wzdłuż własnej osi.
-        Wartości zmierzone pod odebraniu przez kontroler muszą zostać przeskalowane w celu eliminacji zakłóceń.
+        Wartości zmierzone po odebraniu przez kontroler muszą zostać przeskalowane w celu eliminacji zakłóceń.
         Po czym tak zmodyfikowany pomiar trafia do  funkcji trygonometrycznej:
         \begin{equation}
             \text{azymut} = arctan2(y, x)

@@ -40,15 +40,15 @@
         \end{figure}
 % 
         \noindent
-        W tym projekcie komunikacja odbywa się z szybkością 9600baud'ów (Do zmiany prawie na 100\%).
-        Dodatkowo, standard pozwala na przesyłanie dodatkowego bity parzystości ,,doklejanego" do końca wiadomości, jako sposób sprawdzania poprawności wysłanej wiadomości.
+        W tym projekcie komunikacja odbywa się z szybkością 9600baud'ów.
+        Dodatkowo, standard pozwala na przesyłanie dodatkowego bitu parzystości ,,doklejanego" do końca wiadomości, jako sposób sprawdzania poprawności wysłanej wiadomości.
 
         Dalszą częścią kanału transmisyjnego jest przekaźnik bluetooth, który łączy się z komputerem na odpowiednim porcie szeregowym łatwym do oczytania dla programu napisanego na komputerze.
     
     \subsection{Interfejs Two Wire (I²C)}
-        \tab Ostatnim interfejsem, wykorzystywanym przez „Azora” jest interfejs I$^2$C -- czyli dwukierunkowa szeregowa magistrala OC z układ Master-Slave.
-        Standard ten służy do połączenie urządzeń peryferyjnych z kontrolerem.
-        Komunikacja odbywa się w 8bitowych ramkach, z tym że pierwsza ramka zawsze definiuje adres urządzenia docelowego oraz określa kierunek transmisji „do”~lub~„z”~urządzenia.
+        \tab Ostatnim interfejsem, wykorzystywanym przez „Azora” jest interfejs I$^2$C -- czyli dwukierunkowa szeregowa magistrala OC z układami Master-Slave.
+        Standard ten służy do połączenia urządzeń peryferyjnych z kontrolerem.
+        Komunikacja odbywa się w 8-bitowych ramkach, z tym że pierwsza ramka zawsze definiuje adres urządzenia docelowego oraz określa kierunek transmisji „do”~lub~„z”~urządzenia.
 
         \begin{figure}[!ht]
             \centering
@@ -84,7 +84,7 @@
 \newpage
     \subsection{Interfejs SPI}
         % źródło: http://extronic.pl/content/60-kurs-xmega-interfejs-spi
-        \tab Procesor bez programu, jest bezużytecznym kawałkiem krzemu dlatego niezwykle istotnym jest zaprogramowanie układu.
+        \tab Procesor bez programu, jest bezużytecznym kawałkiem krzemu, dlatego niezwykle istotnym jest zaprogramowanie układu.
         Podstawową metodą programowania układów z rodziny ATmega jest interfejs SPI. 
 
         \begin{figure}[!ht]
@@ -179,10 +179,10 @@
             \caption{Schemat interfejsu SPI}
         \end{figure}
         \noindent
-        W przeciwieństwie do poprzednio omawianego interfejsu,
+        W przeciwieństwie do UARTa,
         SPI jest interfejsem typu Master-Slave -- wyróżniamy układ sterujący (Master),
         którego zadaniem jest wyznaczenie taktowania zegara 
-        oraz zarządzanie magistralą układami układami podrzędnymi (Slave), poprzez wystawienie stanu aktywnego na pinie \textit{,,CS"}.
+        oraz zarządzanie magistralą oraz układami podrzędnymi (Slave), poprzez wystawienie stanu aktywnego na pinie \textit{,,CS"}.
 
         % Dodatkowo, urządzenia slave posiadają specjalne wejście ,,CS", których aktywacja zezwala na komunikację za pomocą protokołu SPI.
         
