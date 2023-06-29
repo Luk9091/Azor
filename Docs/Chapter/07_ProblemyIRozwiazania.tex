@@ -109,3 +109,20 @@
         \begin{equation}
             x = (x_{measure} - x_{offset}) \cdot x_{scale}
         \end{equation}
+
+    \subsection{„Azor poznaje świat” - problem z pomiarem odległości}
+        \tab Główną cechą „Azora” jest możliwość  tworzenia mapy terenu na podstawie odległości.
+        Jednak co w przypadku gdy pomiar odległości okaże się błędny?
+        \begin{figure}[!h]
+            \centering
+            \includegraphics[width = 0.8\textwidth]{Img/radar_error.png}
+            \caption{Przykład błędnego odczytu odległości.}
+            \label{error:radar_error}
+        \end{figure}
+        Jak widać na powyższym rysunku \ref{error:radar_error}, kilka pomiarów wychodzi dość dziwnych.
+        Na przykład pomiar dla kąta $57^\circ$, znacząco odbiega od pozostałych i tak jest w rzeczywistości jest to zwyczajnie błędny pomiar.
+
+        \paragraph{Rozwiązanie\\}
+        Najprostszym sposobem rozwiązania problemu jest wykonanie kilku pomiarów i wyznaczenie średniej.
+        Jednak ta metoda nie zawsze się sprawdza.
+        Dlatego po wyznaczeniu średniej dla każdego puntu wyznaczana jest wartość pochodnej i jeśli: $r_{i+1} - r_{i-1} = 0$ wtedy wartość $r_i = r_{i-1}$.
