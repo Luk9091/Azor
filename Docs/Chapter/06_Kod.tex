@@ -31,15 +31,15 @@
             \item azor.py       -- skrypt do komunikacji z „Azorem”,
             \item circle.py     -- skrypt do rysowania kulki,
             \item commands.py   -- skrypt do interpretacji komend z CLI,
-            \item geometry.py   -- data class z geometrią, poszczególne obiekty dziedziczą tę klasę i w jej obiektach przechowują swoje wymiary i położenie,
+            \item geometry.py   -- data class z geometrią, poszczególne obiekty korzystają z  tej klasy i w jej obiektach przechowują swoje wymiary i położenie,
             \item GUI.py        -- skrypt zbiorczy do narysowania i rozłożenia obiektów na planszy,
             \item main.py       -- skrypt główny, odpowiedzialny za połączenie CLI i GUI,
-            \item map.py        -- skrypt odpowiedzialny za rysowanie mapy tereny,
+            \item map.py        -- skrypt odpowiedzialny za rysowanie mapy terenu,
             \item radar.py      -- skrypt rysowania radaru,
             \item simulation.py -- skrypt zawierający symulację „Azora” w przypadku gdy użytkownik nie ma możliwości połączenia się z oryginałem.
         \end{itemize}
 % 
-        Dodatkowo w tym katalogu znajduje się jeszcze jeden katalog $Font/$ zawierający font używany w GUI.
+        Dodatkowo w tym katalogu znajduje się jeszcze jeden katalog $Font/$ zawierający czcionkę używaną w GUI.
 
 
     \subsection{Src}
@@ -50,7 +50,7 @@
             \item compass*      -- obsługa kompasu,
             \item eeprom*       -- obsługa pamięci wewnętrznej i zewnętrznej pamięci EEPROM,
             \item engine*       -- obsługa silników,
-            \item I2C*          -- biblioteka dodatkowa do I2C,
+            \item I2C*          -- biblioteka dodatkowa do I$^2$C,
             \item main          -- główna pętla programu,
             \item PWM*          -- biblioteka pomocnicza do sterowania obrotem „głowy Azora” ,
             \item sonic*        -- obsługa dalmierza - współpracuje z timerem 1,

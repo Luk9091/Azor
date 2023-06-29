@@ -1,11 +1,11 @@
 \section{Problemy i rozwiązania}
-    \tab Przy tak rozbudowanym projekcie wiele problemów jest nieuniknionych a czas na rozwiązanie, zajmuje ogromne ilości czasu.
-    W tym rozdziale zostanie omówione w porządku chronologicznym problemy oraz próby ich rozwiązania lub obejścia.
+    \tab Przy tak rozbudowanym projekcie wiele problemów jest nieuniknionych, a ich rozwiązanie zajmuje ogromne ilości czasu.
+    W tym rozdziale zostaną omówione w porządku chronologicznym problemy oraz próby ich rozwiązania lub obejścia.
 
     \subsection{Zasilanie}
         \tab Pierwszym problemem, na jakie natrafi każdy konstruktor elektroniki przenośnej jest zasilanie własnego urządzenia.
         Nie inaczej było w przypadku „Azora”, pierwszym rozwiązaniem jakie powstało na czas testów była „smycz” od „Azora” do zasilacza laboratoryjnego.
-        To rozwiązania jednak szybko okazało sie nieskuteczne -- „Azor był ciągnięty w jedną stronę przez smycz”. 
+        To rozwiązanie jednak szybko okazało sie nieskuteczne -- „Azor był ciągnięty w jedną stronę przez smycz”. 
         Rozwiązaniem więc musiały zostać akumulatory, jednak to niesie za sobą kolejne problemy.
 
         Pierwszą sprawą do załatwienia jest podniesienie napięcia z $3.7V$ do $5V$. 
@@ -22,7 +22,7 @@
         Teoretycznie napięcie wejściowe tej przetwornicy dopuszcza minimalną wartość $3V$, jednak producent modułu deklaruje minimalne napięcie pracy o jeden wolt wyższe!
         Kłopotliwa staje sie konstrukcja modułu, w której producent zwarł na stałe napięcie wejściowe i pin Enable przetwornicy, przez co podłączenie napięcia niższego niż $3.5V$ powoduje niestabilną pracę przetwornicy!\\
         Dodatkowo napięcie akumulatorów wcale nie jest napięciem stałym i może zmieniać się od $3.3V - 4.2V$.
-        Jednak napięcie $3.3V$ jest minimalnym napięciem pracy! Czyli jest napięciem, którego akumulator \underline{nigdy} nie powinien osiągnąć.
+        Jednak napięcie $3.3V$ jest minimalnym napięciem pracy ogniwa! Czyli jest napięciem, którego akumulator \underline{nigdy} nie powinien osiągnąć.
 
         \newpage
         \textbf{Rozwiązaniem} obu problemów okazuje się prosty obwód detektora progowego na około $3.5V$ przedstawiony na rysunku \ref{schemat:detector}.
@@ -51,17 +51,17 @@
         \end{figure}
 
         Istnieje jeszcze jeden problem z tym modułem przetwornicy.
-        Gdy spojrzy się na schemat typowego rozwiązania udostępnionego przez producent (rys. \ref{schemat:typ_stepUp}):
+        Gdy spojrzy się na schemat typowego rozwiązania udostępniony przez producenta (rys. \ref{schemat:typ_stepUp}):
         \begin{figure}[!h]
             \centering
             \includegraphics[width = 0.8\textwidth]{Img/prztwornica_schemat.png}
             \caption{Schemat typowej aplikacji przetwornicy}
             \label{schemat:typ_stepUp}
         \end{figure}
-        Zauważyć można olbrzymią wadę układu! Diodę \textbf{D1}, która w stanie wyłączenia układu zwiera wejście z wyjściem! 
+        \\Zauważyć można olbrzymią wadę układu! Diodę \textbf{D1}, która w stanie wyłączenia układu zwiera wejście z wyjściem! 
         Przepuszczając napięcie z akumulatora do układu, pomimo teoretycznie wyłączonego układu!
 
-        \textbf{Rozwiązanie} tego problemu jest MOSFET typu P odcinający zasilanie przetwornicy.
+        \textbf{Rozwiązaniem} tego problemu jest MOSFET typu P odcinający zasilanie przetwornicy.
         Jednak ze względu na założenia minimalizacji kosztów, autorzy „wyjęli z szuflady” NMOSa, odcinając za jego pomocą masę układu wykonawczego.
 
 
@@ -72,12 +72,12 @@
         Przykładowo, podczas ruszania zgodnie z osią $x$ akcelerometru, odczytana wartość przyspieszenia była zgodna co do wartości z teoretyczną wartością jednak jej znak był ujemny!
 
         \paragraph{Próby rozwiązania\\}
-        Autorzy kilkukrotnie rozwiązać ten problem. 
+        Autorzy kilkukrotnie próbowali rozwiązać ten problem. 
         Jednak żaden ze sposobów nie okazał się dostatecznie dobry.
         Poniżej przedstawiona została lista kilku rozwiązań:
         \begin{enumerate}
             \item Zastosowanie wewnętrznego rejestru FIFO - układ akcelerometru MMA8451Q, posiada do dyspozycji użytkownika wewnętrzny rejestr FIFO pozwalający na zapianie do 32 sampli.
-            Jednak włączenie tego rejestru skoków przyspieszenia od wartości dodatnich do wartości ujemnych.
+            Jednak włączenie tego rejestru nie eliminuje skoków przyspieszenia od wartości dodatnich do wartości ujemnych.
             % 
             \item Debouncing - w nocie katalogowej układu znajduje się możliwość „hardwerowego” debouncingu pomiarów, jednak włączenie tej funkcji w układzie sprawia, że pomiar potrafi nigdy nie dość do skutku przez ciągłe skoki pojazdu na gąsienicach.
             \item Odrzucanie próbek ujemnych - o dziwo, układ akcelerometru bardzo dobrze radzi sobie z określeniem kierunku ruchu! Jednak odrzucenie próbek o przeciwnym znaku niż ten oczekiwany i wyznaczenie z nich średniej wartości prędkości daje w rezultacie totalną bzdurę uparcie zwracając niezerową wartość prędkości pomimo zatrzymania silników!
@@ -89,7 +89,7 @@
 
     \subsection{Obróć się - problematyczny azymut}
         W sekcji \ref{section:measure:azimuth} został opisany sposób pomiary azymutu, na podstawie którego dokonywany jest obrót „Azora” o określony kąt.
-        Jednak wartość odchylenia od północy, jaką zwraca uw pomiar, jest wątpliwa.
+        Jednak wartość odchylenia od północy, jaką zwraca pomiar, jest wątpliwa.
         Okazuje się, że każdorazowe wyłączenie i włączenie zasilania kompasu, wprowadza nową wartość offsetu w każdej z osi.
         Przez co pomiary konkretnych wartości są niemożliwe do odtworzenia. 
 
@@ -119,8 +119,8 @@
             \caption{Przykład błędnego odczytu odległości.}
             \label{error:radar_error}
         \end{figure}
-        Jak widać na powyższym rysunku \ref{error:radar_error}, kilka pomiarów wychodzi dość dziwnych.
-        Na przykład pomiar dla kąta $57^\circ$, znacząco odbiega od pozostałych i tak jest w rzeczywistości jest to zwyczajnie błędny pomiar.
+        \\Jak widać na powyższym rysunku \ref{error:radar_error}, kilka pomiarów wychodzi dość dziwnych.
+        Na przykład pomiar dla kąta $57^\circ$, znacząco odbiega od pozostałych i jest to po prostu błędny pomiar.
 
         \paragraph{Rozwiązanie\\}
         Najprostszym sposobem rozwiązania problemu jest wykonanie kilku pomiarów i wyznaczenie średniej.
