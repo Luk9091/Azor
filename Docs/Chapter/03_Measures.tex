@@ -55,7 +55,7 @@
             \caption{Schemat blokowy algorytmu pomiaru odległości}
         \end{figure}
 
-    \subsection{Prędkość -- enkoder}
+    \subsection{Prędkość -- enkoder}\label{section:measure:enkoder}
         \tab Pomiar prędkości, a właściwie odległości odbywa się za pomocą enkodera połączonego do jednego z silników.
         Kolejne impulsy enkodera zliczane są za pomocą Timera 0 ustawionego w tryb normalnej pracy z zewnętrznym źródłem taktującym.  % 
         % \begin{figure}[!h]
@@ -71,13 +71,13 @@
         %     \caption{Schemat podłączenia enkodera}
         % \end{figure}
         Odebrane impulsy mnożone są przez doświadczalnie wyznaczony mnożnik i w ten sposób uzyskiwana jest przebyta droga.
-        \begin{equation*}
+        \begin{equation}
             \text{Współczynnik} = 6.3 \frac{mm}{tic}
-        \end{equation*}
+        \end{equation}
         Jednocześnie podczas pracy silników mierzony jest czas, dzięki czemu można określić prędkość „Azora” zgodnie ze wzorem:
-        \begin{equation*}
+        \begin{equation}
             v = \frac{x\cdot 6.3}{\frac{1}{8}\cdot t}\frac{[mm]}{[us]}
-        \end{equation*}
+        \end{equation}
         gdzie:
         \begin{itemize}
             \item $x$ -- ilość zliczonych impulsów z enkodera,
@@ -90,22 +90,22 @@
         Dzięki akcelerometrowi można wykryć czy „Azor” nie został podniesiony -- za każdym razem gdy „Azor” zostanie ruszony, zgłaszane jest zewnętrzne przerwanie. 
         Jednocześnie pomiar przyspieszenia pozwala z dużym przybliżeniem określić aktualną prędkość „Azora”.\\
         Zgodnie ze wzorem:
-        \begin{equation*}
+        \begin{equation}
             v = \int\limits_{0}^{t} a dt \approx \sum_{i = 0}^{N} a_i \cdot t_i
-        \end{equation*}
+        \end{equation}
         \begin{itemize}
             \item $N$ -- liczba próbek
             \item $a_i$ -- kolejne próbki przyspieszenie
             \item $t_i$ -- kolejne zapisane wartości czasu
         \end{itemize}
 
-    \subsection{Magnetometr -- cyfrowy kompas}
+    \subsection{Magnetometr -- cyfrowy kompas}\label{section:measure:azimuth}
         \tab Czujnik $QMC588L$ jest 3-osiowym czujnikiem pola magnetycznego. Zwracającym 16bitowe wartości zmierzone na każdej z osi, za pomocą magistrali I²C.
         
         Pomiar azymutu - odchylenia od północy, jest prostym sposobem wyznaczenie obrotu „Azora” wzdłuż własnej osi.
         Wartości zmierzone pod odebraniu przez kontroler muszą zostać przeskalowane w celu eliminacji zakłóceń.
         Po czym tak zmodyfikowany pomiar trafia do  funkcji trygonometrycznej:
-        \begin{equation*}
+        \begin{equation}
             \text{azymut} = arctan2(y, x)
-        \end{equation*}
+        \end{equation}
         Tak otrzymana wartość azymutu zawiera się w wartościach od $-180^\circ$ do $180^\circ$, aby otrzymać ostateczny wynik należy do wartości ujemnych dodać $360^\circ$.

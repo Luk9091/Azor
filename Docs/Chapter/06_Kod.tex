@@ -1,0 +1,68 @@
+\section{Struktura katalogów i kodu}
+    \tab Poniższy rozdział zostanie podzielony na dwie współbieżne sekcje:
+    Opis struktury katalogów oraz opis kodu.
+
+    % \subsection{Struktura katalogów}
+    \paragraph{Struktura katalogów:\\}
+        Projekt ten zawiera się w kilku katalogach, każdy przeznaczony na inną część projektu.
+        \begin{itemize}
+            \item Assembler,
+            \item Docs,
+            \item GUI,
+            \item Src.
+        \end{itemize}
+
+    \subsection{Assembler}
+        \tab W powyższym folderze zawarte są pliki do kompilacji programów użytkownika.
+
+        Plik $compile.py$ zawiera skrypt odpowiedzialny za kompilację programu użytkownika.
+        Lwią część skryptu zajmuje słownik, z listą instrukcji jako klucze i odpowiadającymi im kodami. 
+        Dodatkowo w wartościach słownika przechowywane są informację na temat liczby wykorzystywanych rejestrów oraz ilości dodatkowych bajtów wymaganych przez instrukcję.
+
+        Drugim składnikiem tego katalogu jest skrypt $programming.py$ odpowiedzialny za przeczytanie „skompilowanego” pliku oraz wgranie go do pamięci EEPROM mikrokontrolera.
+
+    \subsection{Docs}
+        \tab Drugim w kolejności jest katalog $Docs$, który zawiera kod poniższej dokumentacji.
+    
+    \subsection{GUI}
+        \tab Następnym katalogiem jest folder z graficznym interfejsem użytkownika.
+        \begin{itemize}
+            \item arrow.py      -- skrypt do rysowania strzałek w GUI,
+            \item azor.py       -- skrypt do komunikacji z „Azorem”,
+            \item circle.py     -- skrypt do rysowania kulki,
+            \item commands.py   -- skrypt do interpretacji komend z CLI,
+            \item geometry.py   -- data class z geometrią, poszczególne obiekty dziedziczą tę klasę i w jej obiektach przechowują swoje wymiary i położenie,
+            \item GUI.py        -- skrypt zbiorczy do narysowania i rozłożenia obiektów na planszy,
+            \item main.py       -- skrypt główny, odpowiedzialny za połączenie CLI i GUI,
+            \item map.py        -- skrypt odpowiedzialny za rysowanie mapy tereny,
+            \item radar.py      -- skrypt rysowania radaru,
+            \item simulation.py -- skrypt zawierający symulację „Azora” w przypadku gdy użytkownik nie ma możliwości połączenia się z oryginałem.
+        \end{itemize}
+% 
+        Dodatkowo w tym katalogu znajduje się jeszcze jeden katalog $Font/$ zawierający font używany w GUI.
+
+
+    \subsection{Src}
+        \tab Ostatnim katalogiem jest $Src$, zawierający wszystkie pliki z programem głównym „Azora”. 
+        \begin{itemize}
+            \item accelerometer*-- obsługa akcelerometru,
+            \item coding*       -- switch z programowaniem i wykonywaniem kodu użytkownika,
+            \item compass*      -- obsługa kompasu,
+            \item eeprom*       -- obsługa pamięci wewnętrznej i zewnętrznej pamięci EEPROM,
+            \item engine*       -- obsługa silników,
+            \item I2C*          -- biblioteka dodatkowa do I2C,
+            \item main          -- główna pętla programu,
+            \item PWM*          -- biblioteka pomocnicza do sterowania obrotem „głowy Azora” ,
+            \item sonic*        -- obsługa dalmierza - współpracuje z timerem 1,
+            \item timer*        -- biblioteka pomocnicza do obsługi timerów i liczników,
+            \item uart*         -- biblioteka do komunikacji po USART,
+        \end{itemize}
+        \vspace{4pt}
+        \hrule
+        \vspace{16pt}
+        \tab * plik podzielony na header $(.hpp)$ i plik źródłowy $(.cpp)$.
+
+    
+
+    % \subsection{Peryferia}
+        
