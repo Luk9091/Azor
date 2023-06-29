@@ -72,15 +72,17 @@ class Communication:
         self.send(cmd)
         return self.read(cmd)
 
-    def getNumber(self, cmd, base = 10, terminator = ":", lineIndex = 0) -> int:
+    def getNumber(self, cmd, base = 10, terminator = ":", lineIndex = 0, numberOfColon = 1) -> int:
             data = self.cmd(cmd)
             
             if data == None:
                 return 0            
 
             data = str(data[lineIndex])
-            data = int(data[data.find(terminator)+2:], base)
-            return int(data)
+            for _ in range(numberOfColon):
+                data = data[data.find(terminator)+2:]
+
+            return int(data, base)
 
 
 
@@ -150,7 +152,7 @@ class Head:
         self.device.cmd(cmd)
         
     def measure(self):
-        return self.device.getNumber("um")/10
+        return int(self.device.getNumber("um", numberOfColon= 2))/10
 
 class Position:
     def __init__(self, device : Communication) -> None:
