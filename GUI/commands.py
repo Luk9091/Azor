@@ -26,7 +26,8 @@ class CLI:
             "time":     {"minimumArgs": 0, "handler" : self.Azor.getTime},
             "velocity": {"minimumArgs": 0, "handler" : self.Azor.getVelocity},
 
-            "radar":      {"minimumArgs": 0, "handler": self.radarFun},
+            "radar":    {"minimumArgs": 0, "handler": self.radarFun},
+            "clear":    {"minimumArgs": 0, "handler": self.Map.clear},
         
         
             "exit":     {"minimumArgs": 0, "handler" : self.exit},
@@ -46,6 +47,8 @@ class CLI:
             if len(args) < self.COMMANDS[cmd]["minimumArgs"]:
                 arg = self.COMMANDS[cmd]["minimumArgs"]
                 return f"Not enough argument. Code expected minium {arg}!"
+            if len(args) == self.COMMANDS[cmd]["minimumArgs"]:
+                args = args[:self.COMMANDS[cmd]["minimumArgs"]]
             return self.COMMANDS[cmd]["handler"](*args)
         else:
             return "Invalid cmd"
@@ -97,8 +100,10 @@ class CLI:
             data = self.Azor.Head.measure()
             self.Radar.measure(data)
             return data
+        elif args[0] == "get":
+            return self.Azor.Head.getRotate()
         elif args[0] == "set":
-            self.Azor.Head.rotateTo(int(args[0]))
+            self.Azor.Head.rotateTo(int(args[1]))
             return True
         elif args[0].isdigit() and 0 <= int(args[0]) <= 180:
             self.Azor.Head.rotateTo(int(args[0]))
@@ -129,34 +134,24 @@ class CLI:
 
     def radarFun(self, *args):
         self.Azor.Head.rotate(0)
-        value = []
+        value = [0] * 61
 
         self.Radar.clear()
 
         for i in range(0, 181, 3):
             self.Azor.Head.rotateTo(i)
-            measure = self.Azor.Head.measure()
+            measure1 = self.Azor.Head.measure()
+            measure2 = self.Azor.Head.measure()
+            measure3 = self.Azor.Head.measure()
+
             self.Radar.rotate(i)
+            measure = measure1 + measure2 + measure3
+            measure = measure/3
             self.Radar.measure(measure, i)
             
-            value.append(measure)
-
-        for i in range(180, -1, -3):
-            self.Azor.Head.rotateTo(i)
-            measure = self.Azor.Head.measure()
-            self.Radar.rotate(i)
-            self.Radar.measure(measure, i)
-
-            value[int(i/3)] = (value[int(i/3)] + measure)/2
-
-        # for i in range(0, 181, 3):
-        #     self.Azor.Head.rotateTo(i)
-        #     measure = self.Azor.Head.measure()
-        #     self.Radar.rotate(i)
-        #     self.Radar.measure(measure, i)
+            value[int(i/3)] = measure
             
-        #     value[int(i/3)] = (value[int(i/3)] + measure)/2
-        # self.Azor.Head.rotate(0)
+        self.Azor.Head.rotateTo(90)
 
         
         for i in range(1, 59):
@@ -164,26 +159,17 @@ class CLI:
             if dif == 0:
                 value[i] = value[i-1]
 
-        for i in range(0, 181, 3):
-            val = value[int(i/3)]
-            self.Map.setPoint(round(val), i)
-            # print(f"{i}.\t{val}")
-        self.Map.pointer.penup()
+        self.Map.drawWall(value)
         
         return True
             
 
     def exit(self):
+        self.Azor.__del__()
         sys.exit()
 
     
 
 
 if __name__ == "__main__":
-    azor = Azor()
-    radar = Radar()
-    cli = CLI(azor, radar)
-    while True:
-        data = input("?: ")
-        
-        print(cli.execute(data))
+    print("Run main file!")

@@ -150,6 +150,11 @@ int main(){
                             // PWM_setDuty(0);
                         }break;
 
+                        case 'a':{
+                            UART_print("Angle: ");
+                            UART_println(((OCR2A - PWM_ANGLE_OFFSET) * 3));
+                        }break;
+
                         case 'm':{
                             UART_print("Angle: ");
                             UART_print((OCR2A - PWM_ANGLE_OFFSET)*3);

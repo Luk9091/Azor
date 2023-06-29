@@ -52,7 +52,6 @@ if __name__=="__main__":
     radar = Radar(0, 0, 900)
 
 
-    draw()
 
     azor = Azor()
     cli = CLI(azor, radar, mappedArea)
@@ -72,6 +71,8 @@ if __name__=="__main__":
 
 
     screen.onclick(onClick)
+    
+    draw()
     screen.tracer(1)
 
     while turtle.TurtleScreen._RUNNING:

@@ -216,22 +216,29 @@ class Map:
 
     # get radius and angle of 2 point,
     # both value are depend of position of Azor
-    def drawWall(self, start, stop):
-        start = Point(*start)
-        stop = Point(*stop)
+    def drawWall(self, points: list):
+        for i in range(len(points)):
+            points[i] = Point(points[i], i*3)
 
-        self.pointerGoto(self.azorPosition.x + start.x, self.azorPosition.y + start.y)
-        self.pointer.pendown()
-        self.pointerGoto(self.azorPosition.x + stop.x,  self.azorPosition.y + stop.y)
-        self.pointer.penup()
-
-    def setPoint(self, radius, angle):
-        point = Point(radius, angle)
-        if radius >= 3/4 * Azor.seeDistance:
-            self.pointer.penup()
-        self.pointerGoto(point.x, point.y)
-        self.pointer.pendown()
+        self.pointerGoto(points[0].x, points[0].y)
         
+        for i in range(0, len(points)-1):
+            self.pointer.pendown()
+            if (
+                abs(points[i+1].distance - points[i].distance) >= 0.1* points[i].distance
+                or
+                points[i].distance >= 3/4 * Azor.seeDistance
+            ):
+                self.pointer.penup()
+                i = i + 1
+            self.pointerGoto(points[i].x, points[i].y)
+
+        self.pointer.penup()
+            
+
+    def clear(self):
+        self.pointer.clear()
+        return True
 
 
         
